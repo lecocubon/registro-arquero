@@ -1,0 +1,114 @@
+@import 'tailwindcss';
+
+:root {
+  --c-ground: #f1f2ef;
+  --c-surface: #ffffff;
+  --c-surface2: #e8eae6;
+  --c-field: #ffffff;
+  --c-ink: #181c19;
+  --c-ink2: #4c544e;
+  --c-ink3: #79817b;
+  --c-line: #d4d9d2;
+  --c-line2: #b9c0b7;
+  --c-accent: #1e6b48;
+  --c-accent-ink: #165237;
+  --c-accent-soft: #e1ede6;
+  --c-on-accent: #ffffff;
+  --c-warn: #a0431c;
+  --c-warn-soft: #f6e7df;
+  color-scheme: light dark;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --c-ground: #101310;
+    --c-surface: #191d1a;
+    --c-surface2: #222722;
+    --c-field: #232823;
+    --c-ink: #e8ede8;
+    --c-ink2: #a6b0a8;
+    --c-ink3: #79837b;
+    --c-line: #2c322d;
+    --c-line2: #3c443e;
+    --c-accent: #54b98a;
+    --c-accent-ink: #7fd0a8;
+    --c-accent-soft: #182c22;
+    --c-on-accent: #0e1a14;
+    --c-warn: #e0906a;
+    --c-warn-soft: #2e2018;
+  }
+}
+
+@theme {
+  --font-display: 'Barlow Condensed', 'Arial Narrow', Arial, sans-serif;
+  --font-sans: 'IBM Plex Sans', -apple-system, 'Segoe UI', Arial, sans-serif;
+
+  --color-ground: var(--c-ground);
+  --color-surface: var(--c-surface);
+  --color-surface2: var(--c-surface2);
+  --color-field: var(--c-field);
+  --color-ink: var(--c-ink);
+  --color-ink2: var(--c-ink2);
+  --color-ink3: var(--c-ink3);
+  --color-line: var(--c-line);
+  --color-line2: var(--c-line2);
+  --color-accent: var(--c-accent);
+  --color-accent-ink: var(--c-accent-ink);
+  --color-accent-soft: var(--c-accent-soft);
+  --color-on-accent: var(--c-on-accent);
+  --color-warn: var(--c-warn);
+  --color-warn-soft: var(--c-warn-soft);
+
+  --spacing-tab: 60px;
+}
+
+@layer base {
+  html,
+  body,
+  #root {
+    height: 100%;
+  }
+  body {
+    margin: 0;
+    background: var(--c-ground);
+    color: var(--c-ink);
+    font-family: var(--font-sans);
+    font-size: 15px;
+    line-height: 1.5;
+    -webkit-font-smoothing: antialiased;
+    -webkit-tap-highlight-color: transparent;
+  }
+  button {
+    font: inherit;
+    color: inherit;
+    cursor: pointer;
+  }
+  input,
+  select {
+    font: inherit;
+  }
+  /* Sin animaciones decorativas: solo transiciones funcionales instantaneas. */
+  *,
+  *::before,
+  *::after {
+    animation: none !important;
+    transition: none !important;
+  }
+}
+
+@utility label-cap {
+  font-family: var(--font-display);
+  font-weight: 700;
+  letter-spacing: 0.13em;
+  text-transform: uppercase;
+}
+
+.pad-top-safe {
+  padding-top: calc(10px + env(safe-area-inset-top, 0px));
+}
+.pad-bottom-safe {
+  padding-bottom: env(safe-area-inset-bottom, 0px);
+}
+.bottom-safe-tab {
+  bottom: calc(var(--spacing-tab) + env(safe-area-inset-bottom, 0px));
+}
