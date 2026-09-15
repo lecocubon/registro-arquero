@@ -1,9 +1,11 @@
 import { PROGRAMA } from '../data/programa';
-import { idSesion, tieneDatos, type RegistroSerie, type RegistroSesion } from '../db/db';
+import { idSesion, type RegistroSerie, type RegistroSesion } from '../db/db';
 import { guardarNota } from '../db/repo';
-import { faseDe } from '../lib/periodizacion';
+import { faseDe, planSemana } from '../lib/periodizacion';
+import { esSerieEfectiva } from '../lib/series';
 import { fechaCorta } from '../lib/numeros';
 import { AvisoInstalar } from '../components/AvisoInstalar';
+import { CabeceraSesion } from '../components/CabeceraSesion';
 import { TarjetaEjercicio } from '../components/TarjetaEjercicio';
 import { useState } from 'react';
 
@@ -41,10 +43,11 @@ export function PantallaHoy({ semana, dia, onAbrir, todas, sesiones }: Props) {
     const plan = PROGRAMA.sesiones.find((s) => s.id === dia);
     if (!plan) return <p className="py-6 text-ink3">Sesion no encontrada.</p>;
 
-    const registros = new Map(
-      todas.filter((r) => r.semana === semana && r.sesionId === dia).map((r) => [r.id, r]),
-    );
-    const nota = sesiones.find((s) => s.id === idSesion(semana, dia))?.nota ?? '';
+    const deLaSesion = todas.filter((r) => r.semana === semana && r.sesionId === dia);
+    const registros = new Map(deLaSesion.map((r) => [r.id, r]));
+    const meta = sesiones.find((s) => s.id === idSesion(semana, dia));
+    const nota = meta?.nota ?? '';
+    const planificadas = plan.ejercicios.reduce((n, ej) => n + planSemana(semana, ej).series, 0);
 
     return (
       <>
@@ -58,6 +61,8 @@ export function PantallaHoy({ semana, dia, onAbrir, todas, sesiones }: Props) {
         <p className="mb-2.5 font-display text-[13px] font-bold tracking-[0.15em] text-ink3 uppercase">
           {plan.nombre} · {plan.lugar}
         </p>
+
+        <CabeceraSesion registros={deLaSesion} seriesPlanificadas={planificadas} inicio={meta?.inicio} />
 
         {plan.ejercicios.map((ej) => (
           <TarjetaEjercicio
@@ -90,7 +95,7 @@ export function PantallaHoy({ semana, dia, onAbrir, todas, sesiones }: Props) {
       <div className="grid gap-2.5">
         {PROGRAMA.sesiones.map((s) => {
           const registradas = todas.filter(
-            (r) => r.semana === semana && r.sesionId === s.id && tieneDatos(r),
+            (r) => r.semana === semana && r.sesionId === s.id && esSerieEfectiva(r),
           ).length;
           const meta = sesiones.find((x) => x.id === idSesion(semana, s.id));
           return (

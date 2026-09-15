@@ -1,9 +1,26 @@
 import type { Ejercicio } from '../data/programa';
 import { idSerie, type RegistroSerie } from '../db/db';
-import { alternarHecha, guardarCampo, ultimoRegistro } from '../db/repo';
+import {
+  agregarCalentamiento,
+  copiarValores,
+  guardarCampo,
+  iniciarDescanso,
+  marcarSerie,
+  quitarCalentamiento,
+  registrarTiempo,
+} from '../db/repo';
+import { descansoDe, formatoReloj } from '../lib/descanso';
 import { planSemana } from '../lib/periodizacion';
 import { incrementoSugerido } from '../lib/progresion';
+import {
+  esCalentamiento,
+  esSerieEfectiva,
+  serieAnterior,
+  ultimoRegistro,
+  valoresParaCopiar,
+} from '../lib/series';
 import { CampoNumero } from './CampoNumero';
+import { CampoTiempo } from './CampoTiempo';
 
 interface Props {
   semana: number;
@@ -12,6 +29,8 @@ interface Props {
   registros: Map<string, RegistroSerie>;
   todas: RegistroSerie[];
 }
+
+const FILA = 'grid grid-cols-[18px_46px_minmax(0,1fr)_minmax(0,1fr)_minmax(0,1fr)_44px] items-center gap-1.5';
 
 function textoReferencia(series: RegistroSerie[]): string {
   return series
@@ -24,35 +43,114 @@ function textoReferencia(series: RegistroSerie[]): string {
     .join(' · ');
 }
 
+function Anterior({ registro, tipo, onCopiar }: { registro?: RegistroSerie; tipo: Ejercicio['tipo']; onCopiar?: () => void }) {
+  const kg = registro?.kg ?? 0;
+  const contenido =
+    tipo === 'tiempo' && (registro?.segundos ?? 0) > 0 ? (
+      <>{registro?.segundos}s</>
+    ) : kg > 0 ? (
+      <>
+        {registro?.kg}
+        <br />×{registro?.reps ?? '?'}
+      </>
+    ) : (
+      '–'
+    );
+  return (
+    <button
+      type="button"
+      disabled={!onCopiar}
+      onClick={onCopiar}
+      aria-label={onCopiar ? 'Copiar valores de la vez anterior' : 'Sin registro anterior'}
+      className="flex h-[52px] items-center justify-center rounded-[10px] text-center text-[12px] leading-tight font-medium text-ink3 tabular-nums enabled:active:bg-surface2"
+    >
+      <span>{contenido}</span>
+    </button>
+  );
+}
+
+function BotonHecha({ hecha, etiqueta, onClick }: { hecha: boolean; etiqueta: string; onClick: () => void }) {
+  return (
+    <button
+      type="button"
+      aria-pressed={hecha}
+      aria-label={etiqueta}
+      onClick={onClick}
+      className={`flex h-[52px] items-center justify-center rounded-[10px] border text-[22px] font-bold ${
+        hecha ? 'border-accent bg-accent text-on-accent' : 'border-line text-ink3'
+      }`}
+    >
+      ✓
+    </button>
+  );
+}
+
 export function TarjetaEjercicio({ semana, sesionId, ejercicio, registros, todas }: Props) {
   const plan = planSemana(semana, ejercicio);
   const previo = ultimoRegistro(todas, ejercicio.id, semana);
   const planPrevio = previo ? planSemana(previo.semana, ejercicio) : null;
   const subir =
-    previo && planPrevio
-      ? incrementoSugerido(ejercicio, previo.series, planPrevio.rirObjetivo)
-      : null;
+    previo && planPrevio ? incrementoSugerido(ejercicio, previo.series, planPrevio.rirObjetivo) : null;
+  const descanso = descansoDe(ejercicio);
+
+  const propios = [...registros.values()].filter((r) => r.ejercicioId === ejercicio.id);
+  const calentamientos = propios.filter(esCalentamiento).length
+    ? Math.max(...propios.filter(esCalentamiento).map((r) => r.serie))
+    : 0;
+  const hechas = propios.filter((r) => esSerieEfectiva(r) && r.serie <= plan.series).length;
 
   const rango =
     ejercicio.reps[0] === ejercicio.reps[1] ? `${ejercicio.reps[0]}` : `${ejercicio.reps[0]}–${ejercicio.reps[1]}`;
   const unidad = ejercicio.tipo === 'tiempo' ? ' s' : '';
   const lado = ejercicio.porLado ? ' por lado' : '';
 
+  const marcar = async (serie: number, anterior?: RegistroSerie) => {
+    const marcada = await marcarSerie(
+      semana,
+      sesionId,
+      ejercicio.id,
+      serie,
+      valoresParaCopiar(ejercicio, anterior),
+    );
+    if (marcada) await iniciarDescanso(descanso, ejercicio.id);
+  };
+
   return (
     <section className="mb-3 overflow-hidden rounded-xl border border-line bg-surface">
-      <header className="flex items-baseline gap-3 px-3.5 pt-3 pb-2.5">
+      <header className="flex items-baseline gap-3 px-3.5 pt-3 pb-1">
         <span className="min-w-[22px] shrink-0 font-display text-[15px] font-bold text-accent">
           {ejercicio.bloque}
         </span>
         <h3 className="flex-1 text-[15px] leading-tight font-semibold">{ejercicio.nombre}</h3>
+        <span
+          className={`shrink-0 font-display text-[15px] font-bold tabular-nums ${
+            hechas >= plan.series ? 'text-accent' : 'text-ink3'
+          }`}
+          aria-label={`${hechas} de ${plan.series} series`}
+        >
+          {hechas}/{plan.series}
+        </span>
       </header>
 
-      <p className="px-3.5 pb-2.5 pl-[47px] text-[12.5px] text-ink3">
-        {plan.series} × {rango}
-        {unidad}
-        {lado}
-        {ejercicio.tipo === 'carga' ? ` · RIR ${plan.rirObjetivo}` : ''}
-      </p>
+      <div className="flex items-center justify-between gap-2 px-3.5 pb-2 pl-[47px]">
+        <p className="text-[12.5px] text-ink3">
+          {plan.series} × {rango}
+          {unidad}
+          {lado}
+          {ejercicio.tipo === 'carga' ? ` · RIR ${plan.rirObjetivo}` : ''}
+          {` · ⏱ ${formatoReloj(descanso * 1000)}`}
+        </p>
+        {ejercicio.tipo === 'carga' && (
+          <button
+            type="button"
+            onClick={() => void agregarCalentamiento(semana, sesionId, ejercicio.id, calentamientos + 1)}
+            aria-label="Agregar serie de calentamiento"
+            className="-my-1 h-9 shrink-0 rounded-lg px-2 text-[12.5px] font-medium text-accent"
+          >
+            + Calent.
+          </button>
+        )}
+      </div>
 
       {previo && (
         <p className="border-t border-line bg-surface2 px-3.5 py-2 pl-[47px] text-[12.5px] leading-snug text-ink2">
@@ -63,59 +161,132 @@ export function TarjetaEjercicio({ semana, sesionId, ejercicio, registros, todas
         </p>
       )}
 
-      <div className="px-3.5 pt-1 pb-3">
+      <div className="px-2.5 pt-1 pb-3">
+        {Array.from({ length: calentamientos }, (_, i) => i + 1).map((n) => {
+          const r = registros.get(idSerie(semana, sesionId, ejercicio.id, n, 'calentamiento'));
+          const ultimo = n === calentamientos;
+          return (
+            <div key={`c${n}`} className={`${FILA} py-[5px]`}>
+              <span className="text-center font-display text-[14px] font-bold text-warn" title="Calentamiento">
+                W
+              </span>
+              <span className="text-center text-[10px] leading-tight tracking-[0.04em] text-ink3 uppercase">
+                Calent.
+              </span>
+              <CampoNumero
+                etiqueta="kg"
+                ariaLabel={`${ejercicio.nombre}, calentamiento ${n}, kilos`}
+                valor={r?.kg ?? null}
+                onCambio={(v) =>
+                  void guardarCampo(semana, sesionId, ejercicio.id, n, 'kg', v, 'calentamiento')
+                }
+              />
+              <CampoNumero
+                etiqueta="Reps"
+                ariaLabel={`${ejercicio.nombre}, calentamiento ${n}, repeticiones`}
+                valor={r?.reps ?? null}
+                onCambio={(v) =>
+                  void guardarCampo(semana, sesionId, ejercicio.id, n, 'reps', v, 'calentamiento')
+                }
+              />
+              <span />
+              {ultimo ? (
+                <button
+                  type="button"
+                  onClick={() => void quitarCalentamiento(semana, sesionId, ejercicio.id, n)}
+                  aria-label={`Quitar calentamiento ${n}`}
+                  className="flex h-[52px] items-center justify-center rounded-[10px] text-[22px] text-ink3"
+                >
+                  ×
+                </button>
+              ) : (
+                <span />
+              )}
+            </div>
+          );
+        })}
+
         {Array.from({ length: plan.series }, (_, i) => i + 1).map((serie) => {
           const r = registros.get(idSerie(semana, sesionId, ejercicio.id, serie));
+          const hecha = r?.hecha ?? false;
+          const anterior = previo ? serieAnterior(previo.series, serie) : undefined;
+          const copiable = valoresParaCopiar(ejercicio, anterior);
+          const etiquetaHecha = `${ejercicio.nombre}, serie ${serie}: ${hecha ? 'desmarcar' : 'marcar hecha'}`;
+
           return (
-            <div key={serie} className="flex items-center gap-2 py-[5px]">
-              <span className="w-[22px] shrink-0 font-display text-[13px] font-semibold tracking-[0.06em] text-ink3">
+            <div
+              key={serie}
+              className={`${FILA} rounded-[12px] px-0 py-[5px] ${hecha ? 'bg-accent-soft' : ''}`}
+            >
+              <span
+                className={`text-center font-display text-[13px] font-semibold tracking-[0.06em] ${hecha ? 'text-accent-ink' : 'text-ink3'}`}
+              >
                 {serie}
               </span>
 
-              {ejercicio.tipo === 'salto' && (
+              {ejercicio.tipo === 'salto' ? (
                 <button
                   type="button"
-                  aria-pressed={r?.hecha ?? false}
-                  onClick={() => void alternarHecha(semana, sesionId, ejercicio.id, serie)}
-                  className={`flex h-[52px] flex-1 items-center justify-center rounded-[10px] border font-display text-[14px] font-semibold tracking-[0.1em] uppercase ${
-                    r?.hecha
-                      ? 'border-accent bg-accent-soft text-accent-ink'
-                      : 'border-line text-ink3'
+                  aria-pressed={hecha}
+                  onClick={() => void marcar(serie)}
+                  className={`col-span-5 flex h-[52px] items-center justify-center gap-2 rounded-[10px] border font-display text-[14px] font-semibold tracking-[0.1em] uppercase ${
+                    hecha ? 'border-accent bg-accent text-on-accent' : 'border-line text-ink3'
                   }`}
                 >
-                  {r?.hecha ? '✓ Hecha' : 'Marcar serie'}
+                  {hecha ? '✓ Hecha' : 'Marcar serie'}
                 </button>
-              )}
-
-              {ejercicio.tipo === 'tiempo' && (
-                <CampoNumero
-                  etiqueta="Segundos"
-                  ariaLabel={`${ejercicio.nombre}, serie ${serie}, segundos`}
-                  valor={r?.segundos ?? null}
-                  onCambio={(v) => void guardarCampo(semana, sesionId, ejercicio.id, serie, 'segundos', v)}
-                />
-              )}
-
-              {ejercicio.tipo === 'carga' && (
+              ) : (
                 <>
-                  <CampoNumero
-                    etiqueta="kg"
-                    ariaLabel={`${ejercicio.nombre}, serie ${serie}, kilos`}
-                    valor={r?.kg ?? null}
-                    onCambio={(v) => void guardarCampo(semana, sesionId, ejercicio.id, serie, 'kg', v)}
+                  <Anterior
+                    registro={anterior}
+                    tipo={ejercicio.tipo}
+                    onCopiar={
+                      copiable
+                        ? () => void copiarValores(semana, sesionId, ejercicio.id, serie, copiable)
+                        : undefined
+                    }
                   />
-                  <CampoNumero
-                    etiqueta="Reps"
-                    ariaLabel={`${ejercicio.nombre}, serie ${serie}, repeticiones`}
-                    valor={r?.reps ?? null}
-                    onCambio={(v) => void guardarCampo(semana, sesionId, ejercicio.id, serie, 'reps', v)}
-                  />
-                  <CampoNumero
-                    etiqueta="RIR"
-                    ariaLabel={`${ejercicio.nombre}, serie ${serie}, RIR`}
-                    valor={r?.rir ?? null}
-                    onCambio={(v) => void guardarCampo(semana, sesionId, ejercicio.id, serie, 'rir', v)}
-                  />
+
+                  {ejercicio.tipo === 'tiempo' ? (
+                    <div className="col-span-3 min-w-0">
+                      <CampoTiempo
+                        ariaLabel={`${ejercicio.nombre}, serie ${serie}, segundos`}
+                        valor={r?.segundos ?? null}
+                        objetivo={ejercicio.reps}
+                        onCambio={(v) =>
+                          void guardarCampo(semana, sesionId, ejercicio.id, serie, 'segundos', v)
+                        }
+                        onTerminar={(s) =>
+                          void registrarTiempo(semana, sesionId, ejercicio.id, serie, s).then(() =>
+                            iniciarDescanso(descanso, ejercicio.id),
+                          )
+                        }
+                      />
+                    </div>
+                  ) : (
+                    <>
+                      <CampoNumero
+                        etiqueta="kg"
+                        ariaLabel={`${ejercicio.nombre}, serie ${serie}, kilos`}
+                        valor={r?.kg ?? null}
+                        onCambio={(v) => void guardarCampo(semana, sesionId, ejercicio.id, serie, 'kg', v)}
+                      />
+                      <CampoNumero
+                        etiqueta="Reps"
+                        ariaLabel={`${ejercicio.nombre}, serie ${serie}, repeticiones`}
+                        valor={r?.reps ?? null}
+                        onCambio={(v) => void guardarCampo(semana, sesionId, ejercicio.id, serie, 'reps', v)}
+                      />
+                      <CampoNumero
+                        etiqueta="RIR"
+                        ariaLabel={`${ejercicio.nombre}, serie ${serie}, RIR`}
+                        valor={r?.rir ?? null}
+                        onCambio={(v) => void guardarCampo(semana, sesionId, ejercicio.id, serie, 'rir', v)}
+                      />
+                    </>
+                  )}
+
+                  <BotonHecha hecha={hecha} etiqueta={etiquetaHecha} onClick={() => void marcar(serie, anterior)} />
                 </>
               )}
             </div>

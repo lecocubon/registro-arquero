@@ -1,12 +1,17 @@
 import Dexie, { type Table } from 'dexie';
 
+/** Los calentamientos no cuentan para progresion, e1RM ni volumen. */
+export type TipoSerie = 'normal' | 'calentamiento';
+
 export interface RegistroSerie {
-  /** `${semana}|${sesionId}|${ejercicioId}|${serie}` */
+  /** `${semana}|${sesionId}|${ejercicioId}|${serie}`; calentamientos usan `c${serie}`. */
   id: string;
   semana: number;
   sesionId: string;
   ejercicioId: string;
   serie: number;
+  /** Ausente en registros anteriores a los calentamientos: equivale a 'normal'. */
+  tipo?: TipoSerie;
   kg: number | null;
   reps: number | null;
   rir: number | null;
@@ -22,6 +27,8 @@ export interface RegistroSesion {
   sesionId: string;
   fecha: string;
   nota: string;
+  /** Epoch ms de la primera serie tocada. */
+  inicio?: number;
   actualizado: number;
 }
 
@@ -62,8 +69,15 @@ export class ArqueroDB extends Dexie {
 
 export const db = new ArqueroDB();
 
-export function idSerie(semana: number, sesionId: string, ejercicioId: string, serie: number): string {
-  return `${semana}|${sesionId}|${ejercicioId}|${serie}`;
+export function idSerie(
+  semana: number,
+  sesionId: string,
+  ejercicioId: string,
+  serie: number,
+  tipo: TipoSerie = 'normal',
+): string {
+  const n = tipo === 'calentamiento' ? `c${serie}` : `${serie}`;
+  return `${semana}|${sesionId}|${ejercicioId}|${n}`;
 }
 
 export function idSesion(semana: number, sesionId: string): string {
@@ -81,13 +95,15 @@ export function serieVacia(
   sesionId: string,
   ejercicioId: string,
   serie: number,
+  tipo: TipoSerie = 'normal',
 ): RegistroSerie {
   return {
-    id: idSerie(semana, sesionId, ejercicioId, serie),
+    id: idSerie(semana, sesionId, ejercicioId, serie, tipo),
     semana,
     sesionId,
     ejercicioId,
     serie,
+    tipo,
     kg: null,
     reps: null,
     rir: null,
@@ -95,9 +111,4 @@ export function serieVacia(
     hecha: false,
     actualizado: 0,
   };
-}
-
-export function tieneDatos(r: RegistroSerie | undefined): boolean {
-  if (!r) return false;
-  return (r.kg ?? 0) > 0 || (r.reps ?? 0) > 0 || (r.segundos ?? 0) > 0 || r.hecha;
 }

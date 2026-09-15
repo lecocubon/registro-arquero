@@ -18,6 +18,7 @@ export function progresoPorEjercicio(
 ): FilaProgreso[] {
   const porEjercicio = new Map<string, number[]>();
   for (const r of series) {
+    if (r.tipo === 'calentamiento') continue;
     const valor = e1rm(r.kg, r.reps, r.rir);
     if (valor <= 0) continue;
     const idx = r.semana - 1;

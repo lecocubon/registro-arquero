@@ -66,6 +66,8 @@ function csv(filas: unknown[][]): string {
   return filas.map((f) => f.map(celda).join(',')).join('\n');
 }
 
+const ordenTipo = (r: RegistroSerie) => (r.tipo === 'calentamiento' ? 0 : 1);
+
 export function seriesACsv(
   series: RegistroSerie[],
   sesiones: RegistroSesion[],
@@ -73,14 +75,14 @@ export function seriesACsv(
 ): string {
   const fechas = new Map(sesiones.map((s) => [s.id, s.fecha]));
   const filas: unknown[][] = [
-    ['semana', 'sesion', 'fecha', 'bloque', 'ejercicio', 'tipo', 'serie', 'kg', 'reps', 'rir', 'segundos', 'hecha', 'e1rm'],
+    ['semana', 'sesion', 'fecha', 'bloque', 'ejercicio', 'tipo', 'serie', 'tipo_serie', 'kg', 'reps', 'rir', 'segundos', 'hecha', 'e1rm'],
   ];
   const ordenadas = [...series].sort(
-    (a, b) => a.semana - b.semana || a.sesionId.localeCompare(b.sesionId) || a.ejercicioId.localeCompare(b.ejercicioId) || a.serie - b.serie,
+    (a, b) => a.semana - b.semana || a.sesionId.localeCompare(b.sesionId) || a.ejercicioId.localeCompare(b.ejercicioId) || ordenTipo(a) - ordenTipo(b) || a.serie - b.serie,
   );
   for (const r of ordenadas) {
     const ej = ejercicioPorId(r.ejercicioId, programa);
-    const est = e1rm(r.kg, r.reps, r.rir);
+    const est = r.tipo === 'calentamiento' ? 0 : e1rm(r.kg, r.reps, r.rir);
     filas.push([
       r.semana,
       r.sesionId,
@@ -89,6 +91,7 @@ export function seriesACsv(
       ej?.nombre ?? r.ejercicioId,
       ej?.tipo ?? '',
       r.serie,
+      r.tipo ?? 'normal',
       r.kg,
       r.reps,
       r.rir,

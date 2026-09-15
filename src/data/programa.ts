@@ -23,6 +23,8 @@ export interface Ejercicio {
   /** Ignora la fase y mantiene siempre este RIR. */
   rirFijo?: number;
   porLado?: boolean;
+  /** Descanso tras cada serie, en segundos. Si falta, se usa `Programa.descansos`. */
+  descanso?: number;
 }
 
 export interface SesionPlan {
@@ -47,9 +49,18 @@ export interface Fase {
   seriesExtra?: Partial<Record<TipoEjercicio, number>>;
 }
 
+export interface DescansosPorDefecto {
+  principal: number;
+  carga: number;
+  tiempo: number;
+  salto: number;
+}
+
 export interface Programa {
   nombre: string;
   semanas: number;
+  /** Segundos de descanso cuando el ejercicio no define el suyo. */
+  descansos: DescansosPorDefecto;
   sesiones: SesionPlan[];
   fases: Fase[];
 }
@@ -57,6 +68,7 @@ export interface Programa {
 export const PROGRAMA: Programa = {
   nombre: 'Bajo los Tres Palos',
   semanas: 8,
+  descansos: { principal: 180, carga: 90, tiempo: 60, salto: 90 },
   fases: [
     {
       nombre: 'Calibracion',
@@ -123,7 +135,7 @@ export const PROGRAMA: Programa = {
       foco: 'Potencia lateral, unilateral y traccion',
       ejercicios: [
         { id: 'salto-lateral-una-pierna', bloque: 'A', nombre: 'Salto lateral a una pierna', series: 3, reps: [3, 3], rirObjetivo: 0, incremento: 0, tipo: 'salto', porLado: true },
-        { id: 'bulgara', bloque: 'B', nombre: 'Sentadilla bulgara con mancuernas', series: 3, reps: [8, 8], rirObjetivo: 3, incremento: 2, tipo: 'carga', rirFijo: 3, porLado: true },
+        { id: 'bulgara', bloque: 'B', nombre: 'Sentadilla bulgara con mancuernas', series: 3, reps: [8, 8], rirObjetivo: 3, incremento: 2, tipo: 'carga', rirFijo: 3, porLado: true, descanso: 120 },
         { id: 'empuje-cadera', bloque: 'C1', nombre: 'Empuje de cadera con barra', series: 3, reps: [8, 10], rirObjetivo: 2, incremento: 5, tipo: 'carga' },
         { id: 'jalon-pecho', bloque: 'C2', nombre: 'Jalon al pecho', series: 4, reps: [8, 10], rirObjetivo: 2, incremento: 5, tipo: 'carga' },
         { id: 'press-inclinado', bloque: 'D1', nombre: 'Press inclinado con mancuernas', series: 3, reps: [8, 10], rirObjetivo: 2, incremento: 2, tipo: 'carga' },

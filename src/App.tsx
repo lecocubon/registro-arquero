@@ -1,9 +1,11 @@
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useLiveQuery } from 'dexie-react-hooks';
+import { BarraDescanso } from './components/BarraDescanso';
 import { BarraPestanas, type Pestana } from './components/BarraPestanas';
 import { PROGRAMA } from './data/programa';
 import { db } from './db/db';
-import { fijarSemana, semanaActual } from './db/repo';
+import { fijarSemana, leerDescanso, semanaActual } from './db/repo';
+import { usePantallaActiva } from './lib/dispositivo';
 import { faseDe, limitarSemana } from './lib/periodizacion';
 import { PantallaDatos } from './screens/PantallaDatos';
 import { PantallaHoy } from './screens/PantallaHoy';
@@ -18,6 +20,22 @@ export default function App() {
   const todas = useLiveQuery(() => db.series.toArray(), [], []);
   const sesiones = useLiveQuery(() => db.sesiones.toArray(), [], []);
   const mediciones = useLiveQuery(() => db.mediciones.toArray(), [], []);
+  const descanso = useLiveQuery(() => leerDescanso(), [], null);
+  const cabecera = useRef<HTMLElement>(null);
+
+  usePantallaActiva(dia !== null || descanso !== null);
+
+  // La cabecera de la sesion se pega justo debajo de la barra superior.
+  useEffect(() => {
+    const el = cabecera.current;
+    if (!el) return;
+    const medir = () =>
+      document.documentElement.style.setProperty('--alto-cabecera', `${el.offsetHeight}px`);
+    medir();
+    const obs = new ResizeObserver(medir);
+    obs.observe(el);
+    return () => obs.disconnect();
+  }, []);
 
   const fase = faseDe(semana);
 
@@ -28,7 +46,7 @@ export default function App() {
 
   return (
     <>
-      <header className="pad-top-safe sticky top-0 z-30 flex items-center gap-3 border-b border-line bg-surface px-3.5 pb-2.5">
+      <header ref={cabecera} className="pad-top-safe sticky top-0 z-30 flex items-center gap-3 border-b border-line bg-surface px-3.5 pb-2.5">
         <h1 className="min-w-0 flex-1 truncate font-display text-[18px] leading-none font-bold tracking-[0.02em] uppercase">
           {PROGRAMA.nombre}
           <small className="mt-1 block font-sans text-[10.5px] font-normal tracking-[0.07em] text-ink3 uppercase">
@@ -60,7 +78,9 @@ export default function App() {
 
       <main
         className="mx-auto max-w-[640px] px-3.5 py-3.5"
-        style={{ paddingBottom: 'calc(var(--spacing-tab) + 24px + env(safe-area-inset-bottom, 0px))' }}
+        style={{
+          paddingBottom: `calc(var(--spacing-tab) + ${descanso ? 96 : 24}px + env(safe-area-inset-bottom, 0px))`,
+        }}
       >
         {pestana === 'hoy' && (
           <PantallaHoy
@@ -83,11 +103,14 @@ export default function App() {
         )}
       </main>
 
+      {descanso && <BarraDescanso key={descanso.fin} estado={descanso} />}
+
       <BarraPestanas
         activa={pestana}
         onCambio={(p) => {
+          // Cambiar de pestana no cierra la sesion abierta; tocar Hoy estando en Hoy vuelve a la lista.
+          if (p === 'hoy' && pestana === 'hoy') setDia(null);
           setPestana(p);
-          setDia(null);
           window.scrollTo(0, 0);
         }}
       />
