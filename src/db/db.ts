@@ -49,8 +49,11 @@ export interface Medicion {
   horizontalDer: number | null;
   peso: number | null;
   cintura: number | null;
-  /** % de grasa corporal. Ausente en mediciones antiguas. */
+  /** % de grasa corporal medida (bascula, InBody...). Ausente en mediciones antiguas. */
   grasa?: number | null;
+  cuello?: number | null;
+  cadera?: number | null;
+  nota?: string;
   /** 'reloj' si vino de Health Connect. Ausente = anotada a mano. */
   origen?: 'manual' | 'reloj';
 }

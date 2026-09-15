@@ -297,6 +297,17 @@ export async function reemplazarPorHoy(
   });
 }
 
+// ---------- altura (para IMC y grasa con cinta) ----------
+
+export async function leerAlturaCm(): Promise<number | null> {
+  const v = Number((await db.ajustes.get('alturaCm'))?.valor);
+  return Number.isFinite(v) && v >= 100 && v <= 250 ? v : null;
+}
+
+export async function fijarAlturaCm(cm: number): Promise<void> {
+  await db.ajustes.put({ clave: 'alturaCm', valor: cm });
+}
+
 // ---------- calculadora de discos ----------
 
 export async function leerBarraKg(): Promise<number> {

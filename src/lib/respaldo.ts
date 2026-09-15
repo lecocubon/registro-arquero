@@ -2,6 +2,7 @@ import { BIBLIOTECA, catalogoPorId, type EjercicioCatalogo } from '../data/bibli
 import { PROGRAMA, ejercicioPorId, type Programa, type ProgramaDef } from '../data/programa';
 import type { Medicion, RegistroSerie, RegistroSesion } from '../db/db';
 import { asimetria } from './asimetria';
+import { grasaNavyHombre, imc, indiceCinturaCadera } from './composicion';
 import { e1rm, redondear1 } from './e1rm';
 
 export const VERSION_RESPALDO = 2;
@@ -27,6 +28,8 @@ export interface Respaldo {
   /** v2: notas de tecnica por ejercicio. */
   notas: Record<string, string>;
   fotos: FotoRespaldo[];
+  /** v2: altura para IMC y grasa con cinta. */
+  alturaCm?: number | null;
 }
 
 export function construirRespaldo(datos: {
@@ -39,6 +42,7 @@ export function construirRespaldo(datos: {
   ejerciciosPropios?: EjercicioCatalogo[];
   notas?: Record<string, string>;
   fotos?: FotoRespaldo[];
+  alturaCm?: number | null;
 }): Respaldo {
   return {
     app: 'registro-arquero',
@@ -53,6 +57,7 @@ export function construirRespaldo(datos: {
     ejerciciosPropios: datos.ejerciciosPropios ?? [],
     notas: datos.notas ?? {},
     fotos: datos.fotos ?? [],
+    alturaCm: datos.alturaCm ?? null,
   };
 }
 
@@ -100,6 +105,7 @@ export function validarRespaldo(raw: unknown): Respaldo {
     fotos: Array.isArray(r.fotos)
       ? r.fotos.filter((f) => typeof f?.ejercicioId === 'string' && /^data:image\//.test(f?.dataUrl ?? ''))
       : [],
+    alturaCm: Number.isFinite(r.alturaCm) ? (r.alturaCm as number) : null,
   };
 }
 
@@ -151,9 +157,9 @@ export function seriesACsv(
   return csv(filas);
 }
 
-export function medicionesACsv(mediciones: Medicion[]): string {
+export function medicionesACsv(mediciones: Medicion[], alturaCm: number | null = null): string {
   const filas: unknown[][] = [
-    ['fecha', 'semana', 'salto_vertical_cm', 'lateral_izq_cm', 'lateral_der_cm', 'asimetria_lateral_pct', 'horizontal_izq_cm', 'horizontal_der_cm', 'asimetria_horizontal_pct', 'peso_kg', 'cintura_cm', 'grasa_pct', 'origen'],
+    ['fecha', 'semana', 'salto_vertical_cm', 'lateral_izq_cm', 'lateral_der_cm', 'asimetria_lateral_pct', 'horizontal_izq_cm', 'horizontal_der_cm', 'asimetria_horizontal_pct', 'peso_kg', 'cintura_cm', 'grasa_pct', 'origen', 'cuello_cm', 'cadera_cm', 'grasa_cinta_pct', 'imc', 'cintura_cadera', 'nota'],
   ];
   const ordenadas = [...mediciones].sort((a, b) => a.fecha.localeCompare(b.fecha));
   for (const m of ordenadas) {
@@ -173,6 +179,12 @@ export function medicionesACsv(mediciones: Medicion[]): string {
       m.cintura,
       m.grasa ?? '',
       m.origen ?? 'manual',
+      m.cuello ?? '',
+      m.cadera ?? '',
+      grasaNavyHombre(m.cintura, m.cuello, alturaCm) ?? '',
+      imc(m.peso, alturaCm) ?? '',
+      indiceCinturaCadera(m.cintura, m.cadera) ?? '',
+      m.nota ?? '',
     ]);
   }
   return csv(filas);

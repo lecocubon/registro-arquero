@@ -32,10 +32,13 @@ function ultimaPorDia(muestras: MuestraSalud[]): Map<string, MuestraSalud> {
   return porDia;
 }
 
-/** Semana del programa en que cae una fecha: la de la sesion registrada mas cercana hacia atras. */
+/**
+ * Semana del programa en que cae una fecha: la de la sesion registrada mas
+ * cercana hacia atras. Antes de la primera sesion es 0 ("antes del programa").
+ */
 export function semanaParaFecha(fecha: string, sesiones: RegistroSesion[], semanaActual: number): number {
   const previas = sesiones.filter((s) => s.fecha <= fecha).sort((a, b) => b.fecha.localeCompare(a.fecha));
-  return previas[0]?.semana ?? (sesiones.length ? 1 : semanaActual);
+  return previas[0]?.semana ?? (sesiones.length ? 0 : semanaActual);
 }
 
 const redondear = (v: number, decimales: number) => Math.round(v * 10 ** decimales) / 10 ** decimales;

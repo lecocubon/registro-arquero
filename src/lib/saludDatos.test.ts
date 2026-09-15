@@ -72,7 +72,7 @@ describe('peso y grasa desde el reloj', () => {
   it('asigna la semana según las sesiones registradas', () => {
     expect(semanaParaFecha('2026-09-09', sesiones, 5)).toBe(2);
     expect(semanaParaFecha('2026-09-01', sesiones, 5)).toBe(1);
-    expect(semanaParaFecha('2026-08-20', sesiones, 5)).toBe(1);
+    expect(semanaParaFecha('2026-08-20', sesiones, 5)).toBe(0);
     expect(semanaParaFecha('2026-08-20', [], 5)).toBe(5);
   });
 

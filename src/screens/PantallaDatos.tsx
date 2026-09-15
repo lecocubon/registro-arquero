@@ -1,6 +1,6 @@
 import { useRef, useState } from 'react';
 import { db, type Medicion, type RegistroSerie, type RegistroSesion } from '../db/db';
-import { fijarSemana, leerNotasEjercicios } from '../db/repo';
+import { fijarAlturaCm, fijarSemana, leerAlturaCm, leerNotasEjercicios } from '../db/repo';
 import { useArquero } from '../estado/arquero';
 import { PanelReloj } from '../components/Reloj';
 import { useInstalacion } from '../lib/instalacion';
@@ -118,6 +118,7 @@ export function PantallaDatos({ semana, todas, sesiones, mediciones }: Props) {
         }
       });
       await fijarSemana(datos.semana);
+      if (datos.alturaCm) await fijarAlturaCm(datos.alturaCm);
       avisar(`Importado: ${total} registros.`);
     } catch (e) {
       setMensaje('');
@@ -172,6 +173,7 @@ export function PantallaDatos({ semana, todas, sesiones, mediciones }: Props) {
                 ejerciciosPropios: catalogo.filter((e) => e.propio),
                 notas: await leerNotasEjercicios(),
                 fotos,
+                alturaCm: await leerAlturaCm(),
               });
               await descargar(`registro-arquero-${sello()}.json`, JSON.stringify(respaldo, null, 2), 'application/json');
               avisar('JSON exportado.');
@@ -200,7 +202,8 @@ export function PantallaDatos({ semana, todas, sesiones, mediciones }: Props) {
           type="button"
           className={BOTON}
           onClick={() => {
-            void descargar(`mediciones-${sello()}.csv`, medicionesACsv(mediciones), 'text/csv')
+            void leerAlturaCm()
+              .then((alturaCm) => descargar(`mediciones-${sello()}.csv`, medicionesACsv(mediciones, alturaCm), 'text/csv'))
               .then(() => avisar('CSV de mediciones exportado.'))
               .catch(() => undefined);
           }}
