@@ -134,6 +134,40 @@ describe('resumenSesion', () => {
   });
 });
 
+describe('duracion con ediciones posteriores', () => {
+  const t0 = Date.UTC(2026, 8, 1, 10, 0);
+  const minuto = 60_000;
+  const dia = 24 * 60 * minuto;
+  const entreno = Array.from({ length: 18 }, (_, i) =>
+    serie({ semana: 1, serie: i + 1, kg: 60, reps: 6, actualizado: t0 + i * 4 * minuto }),
+  );
+
+  it('corregir una serie dias despues no infla la duracion', () => {
+    const corregida = serie({ semana: 1, serie: 19, kg: 35, reps: 8, actualizado: t0 + 7 * dia });
+    const r = resumenSesion([...entreno, corregida], 21, t0, t0 + 14 * dia);
+    expect(r.enCurso).toBe(false);
+    expect(r.duracionMs).toBe(17 * 4 * minuto);
+  });
+
+  it('mientras se edita una sesion vieja, mide solo el bloque actual', () => {
+    const ahora = t0 + 7 * dia;
+    const corregida = serie({ semana: 1, serie: 19, kg: 35, reps: 8, actualizado: ahora - 2 * minuto });
+    const r = resumenSesion([...entreno, corregida], 21, t0, ahora);
+    expect(r.enCurso).toBe(true);
+    expect(r.duracionMs).toBe(2 * minuto);
+  });
+
+  it('el inicio guardado de otro dia no se usa', () => {
+    const r = resumenSesion(entreno, 21, t0 - 3 * dia, t0 + 2 * dia);
+    expect(r.duracionMs).toBe(17 * 4 * minuto);
+  });
+
+  it('el inicio guardado adelanta el comienzo si la primera serie se edito despues', () => {
+    const r = resumenSesion(entreno, 21, t0 - 5 * minuto, t0 + 2 * dia);
+    expect(r.duracionMs).toBe(17 * 4 * minuto + 5 * minuto);
+  });
+});
+
 describe('progreso con calentamientos', () => {
   it('el e1RM ignora las series de calentamiento', () => {
     const filas = progresoPorEjercicio([

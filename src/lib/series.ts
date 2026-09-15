@@ -72,9 +72,33 @@ export interface ResumenSesion {
   seriesPlanificadas: number;
 }
 
+interface Bloque {
+  desde: number;
+  hasta: number;
+  registros: number;
+}
+
+/** Agrupa marcas de tiempo en bloques separados por pausas mayores a la ventana. */
+export function bloquesDeActividad(marcas: number[]): Bloque[] {
+  const ventana = MINUTOS_SESION_ABIERTA * 60_000;
+  const bloques: Bloque[] = [];
+  for (const t of [...marcas].sort((a, b) => a - b)) {
+    const ultimo = bloques[bloques.length - 1];
+    if (ultimo && t - ultimo.hasta <= ventana) {
+      ultimo.hasta = t;
+      ultimo.registros += 1;
+    } else {
+      bloques.push({ desde: t, hasta: t, registros: 1 });
+    }
+  }
+  return bloques;
+}
+
 /**
- * Duracion: desde la primera serie tocada hasta ahora mientras haya actividad
- * reciente; despues queda congelada en la ultima actividad.
+ * Duracion del bloque continuo de entrenamiento, no desde la primera serie
+ * hasta la ultima edicion: corregir un valor dias despues no debe inflarla.
+ * Si hay actividad reciente, se mide el bloque actual y corre hasta ahora;
+ * si no, se usa el bloque con mas series registradas.
  */
 export function resumenSesion(
   registros: RegistroSerie[],
@@ -95,11 +119,21 @@ export function resumenSesion(
     return { duracionMs: null, enCurso: false, volumenKg, seriesHechas: 0, seriesPlanificadas };
   }
 
-  const primera = Math.min(...conDatos.map((r) => r.actualizado));
-  const ultima = Math.max(...conDatos.map((r) => r.actualizado));
-  const desde = inicio !== undefined && inicio <= primera ? inicio : primera;
-  const enCurso = ahora - ultima < MINUTOS_SESION_ABIERTA * 60_000;
-  const hasta = enCurso ? ahora : ultima;
+  const ventana = MINUTOS_SESION_ABIERTA * 60_000;
+  const bloques = bloquesDeActividad(conDatos.map((r) => r.actualizado));
+  const actual = bloques[bloques.length - 1] as Bloque;
+  const enCurso = ahora - actual.hasta < ventana;
+  const bloque = enCurso
+    ? actual
+    : bloques.reduce((mejor, b) => (b.registros >= mejor.registros ? b : mejor));
+
+  // `actualizado` cambia al editar, asi que el inicio guardado corrige un
+  // comienzo que parece mas tarde de lo real, siempre que sea del mismo bloque.
+  const desde =
+    inicio !== undefined && inicio <= bloque.desde && bloque.desde - inicio <= ventana
+      ? inicio
+      : bloque.desde;
+  const hasta = enCurso ? ahora : bloque.hasta;
 
   return {
     duracionMs: Math.max(0, hasta - desde),
