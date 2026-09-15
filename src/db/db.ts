@@ -33,6 +33,8 @@ export interface RegistroSesion {
   inicio?: number;
   /** Solo ese dia: id del ejercicio del programa -> id del que lo reemplaza. */
   reemplazos?: Record<string, string>;
+  /** Epoch ms de la ultima vez que se guardo en Health Connect. */
+  guardadaEnSalud?: number;
   actualizado: number;
 }
 
@@ -47,6 +49,10 @@ export interface Medicion {
   horizontalDer: number | null;
   peso: number | null;
   cintura: number | null;
+  /** % de grasa corporal. Ausente en mediciones antiguas. */
+  grasa?: number | null;
+  /** 'reloj' si vino de Health Connect. Ausente = anotada a mano. */
+  origen?: 'manual' | 'reloj';
 }
 
 export interface Ajuste {

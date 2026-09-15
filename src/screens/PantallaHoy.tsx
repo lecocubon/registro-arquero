@@ -7,6 +7,7 @@ import { esSerieEfectiva } from '../lib/series';
 import { fechaCorta } from '../lib/numeros';
 import { AvisoInstalar } from '../components/AvisoInstalar';
 import { CabeceraSesion } from '../components/CabeceraSesion';
+import { RecuperacionReloj, RelojSesion } from '../components/Reloj';
 import { TarjetaEjercicio } from '../components/TarjetaEjercicio';
 import { useState } from 'react';
 
@@ -89,6 +90,14 @@ export function PantallaHoy({ semana, dia, onAbrir, todas, sesiones }: Props) {
         )}
 
         <NotaDeSesion key={`${semana}|${dia}`} semana={semana} sesionId={dia} valor={nota} />
+        <RelojSesion
+          semana={semana}
+          sesionId={dia}
+          nombreSesion={plan.nombre}
+          registros={visibles}
+          meta={meta}
+          notas={nota}
+        />
         <p className="mt-3 mb-2 text-[12.5px] leading-relaxed text-ink3">
           Todo se guarda solo, tecla a tecla. Puedes cerrar la app cuando quieras.
         </p>
@@ -99,6 +108,7 @@ export function PantallaHoy({ semana, dia, onAbrir, todas, sesiones }: Props) {
   return (
     <>
       <AvisoInstalar />
+      <RecuperacionReloj />
       <p className="mb-3.5 rounded-lg bg-accent-soft px-3.5 py-2.5 text-[13.5px] leading-snug text-accent-ink">
         {fase.nota}
       </p>

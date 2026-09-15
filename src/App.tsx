@@ -98,7 +98,7 @@ export default function App() {
         )}
         {pestana === 'progreso' && <PantallaProgreso semana={semana} todas={todas} />}
         {pestana === 'programa' && <PantallaPrograma todas={todas} />}
-        {pestana === 'medidas' && <PantallaMedidas semana={semana} mediciones={mediciones} />}
+        {pestana === 'medidas' && <PantallaMedidas semana={semana} mediciones={mediciones} sesiones={sesiones} />}
         {pestana === 'datos' && (
           <PantallaDatos
             semana={semana}

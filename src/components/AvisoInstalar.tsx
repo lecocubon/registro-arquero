@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { useInstalacion } from '../lib/instalacion';
+import { esAppAndroid } from '../lib/salud';
 
 const CLAVE_OCULTO = 'arquero-aviso-instalar-oculto';
 
@@ -14,7 +15,7 @@ export function AvisoInstalar() {
     }
   });
 
-  if (instalada || oculto) return null;
+  if (instalada || oculto || esAppAndroid()) return null;
 
   const ocultar = () => {
     setOculto(true);

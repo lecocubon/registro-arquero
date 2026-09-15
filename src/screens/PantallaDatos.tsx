@@ -2,6 +2,7 @@ import { useRef, useState } from 'react';
 import { db, type Medicion, type RegistroSerie, type RegistroSesion } from '../db/db';
 import { fijarSemana, leerNotasEjercicios } from '../db/repo';
 import { useArquero } from '../estado/arquero';
+import { PanelReloj } from '../components/Reloj';
 import { useInstalacion } from '../lib/instalacion';
 import {
   construirRespaldo,
@@ -126,6 +127,8 @@ export function PantallaDatos({ semana, todas, sesiones, mediciones }: Props) {
           ? `Lista para usar sin conexion${instalada ? ' · instalada en el telefono' : ''}. Puedes activar el modo avion.`
           : 'Preparando la copia offline. Deja la app abierta unos segundos con conexion.'}
       </p>
+
+      <PanelReloj semana={semana} sesiones={sesiones} />
 
       <div className="grid gap-2.5">
         <button

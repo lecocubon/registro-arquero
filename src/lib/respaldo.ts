@@ -153,7 +153,7 @@ export function seriesACsv(
 
 export function medicionesACsv(mediciones: Medicion[]): string {
   const filas: unknown[][] = [
-    ['fecha', 'semana', 'salto_vertical_cm', 'lateral_izq_cm', 'lateral_der_cm', 'asimetria_lateral_pct', 'horizontal_izq_cm', 'horizontal_der_cm', 'asimetria_horizontal_pct', 'peso_kg', 'cintura_cm'],
+    ['fecha', 'semana', 'salto_vertical_cm', 'lateral_izq_cm', 'lateral_der_cm', 'asimetria_lateral_pct', 'horizontal_izq_cm', 'horizontal_der_cm', 'asimetria_horizontal_pct', 'peso_kg', 'cintura_cm', 'grasa_pct', 'origen'],
   ];
   const ordenadas = [...mediciones].sort((a, b) => a.fecha.localeCompare(b.fecha));
   for (const m of ordenadas) {
@@ -171,6 +171,8 @@ export function medicionesACsv(mediciones: Medicion[]): string {
       aHor === null ? '' : redondear1(aHor * 100),
       m.peso,
       m.cintura,
+      m.grasa ?? '',
+      m.origen ?? 'manual',
     ]);
   }
   return csv(filas);

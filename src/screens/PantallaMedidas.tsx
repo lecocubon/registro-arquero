@@ -1,12 +1,15 @@
 import { useState } from 'react';
 import { CampoNumero } from '../components/CampoNumero';
-import { hoy, type Medicion } from '../db/db';
+import { hoy, type Medicion, type RegistroSesion } from '../db/db';
+import { avisar } from '../components/Avisos';
+import { importarMedicionesDelReloj } from '../components/Reloj';
+import { useSalud } from '../lib/salud';
 import { borrarMedicion, guardarMedicion } from '../db/repo';
 import { asimetria, asimetriaAlta } from '../lib/asimetria';
 import { fechaCorta } from '../lib/numeros';
 import { redondear1 } from '../lib/e1rm';
 
-type Campos = Omit<Medicion, 'id' | 'fecha' | 'semana'>;
+type Campos = Omit<Medicion, 'id' | 'fecha' | 'semana' | 'origen'>;
 
 const VACIO: Campos = {
   saltoVertical: null,
@@ -16,6 +19,7 @@ const VACIO: Campos = {
   horizontalDer: null,
   peso: null,
   cintura: null,
+  grasa: null,
 };
 
 function Asimetria({ izq, der }: { izq: number | null; der: number | null }) {
@@ -33,7 +37,8 @@ function Asimetria({ izq, der }: { izq: number | null; der: number | null }) {
   );
 }
 
-export function PantallaMedidas({ semana, mediciones }: { semana: number; mediciones: Medicion[] }) {
+export function PantallaMedidas({ semana, mediciones, sesiones }: { semana: number; mediciones: Medicion[]; sesiones: RegistroSesion[] }) {
+  const { estado, tiene } = useSalud();
   const [campos, setCampos] = useState<Campos>(VACIO);
   const [aviso, setAviso] = useState('');
 
@@ -97,6 +102,9 @@ export function PantallaMedidas({ semana, mediciones }: { semana: number; medici
             onCambio={set('cintura')}
           />
         </div>
+        <div className="flex">
+          <CampoNumero etiqueta="Grasa (%)" alto="alto" valor={campos.grasa ?? null} onCambio={set('grasa')} />
+        </div>
       </div>
 
       <div className="mb-2 flex flex-wrap gap-x-4 gap-y-1 text-[12.5px] text-ink3">
@@ -125,6 +133,19 @@ export function PantallaMedidas({ semana, mediciones }: { semana: number; medici
         Guardar medicion
       </button>
       {aviso && <p className="mt-2 text-[13px] text-accent-ink">{aviso}</p>}
+      {estado?.disponible && tiene('peso') && (
+        <button
+          type="button"
+          onClick={() =>
+            void importarMedicionesDelReloj(sesiones, semana)
+              .then((n) => avisar(n ? `${n} ${n === 1 ? 'medición importada' : 'mediciones importadas'} del reloj` : 'No hay lecturas nuevas del reloj'))
+              .catch(() => avisar('No se pudo leer Health Connect', 'error'))
+          }
+          className="mt-2 h-11 w-full rounded-[10px] border border-line bg-surface text-[14px] font-semibold text-ink2"
+        >
+          Traer peso y grasa del reloj
+        </button>
+      )}
 
       {mediciones.length > 0 ? (
         <div className="mt-6">
@@ -141,6 +162,11 @@ export function PantallaMedidas({ semana, mediciones }: { semana: number; medici
                 <div className="mb-1 flex items-baseline justify-between">
                   <span className="font-display text-[14px] font-bold tracking-[0.08em] text-accent uppercase">
                     Semana {m.semana} · {fechaCorta(m.fecha)}
+                    {m.origen === 'reloj' && (
+                      <span className="ml-2 rounded-full bg-surface2 px-2 py-px font-sans text-[10.5px] font-semibold tracking-normal text-ink3 normal-case">
+                        reloj
+                      </span>
+                    )}
                   </span>
                   <button
                     type="button"
@@ -180,6 +206,12 @@ export function PantallaMedidas({ semana, mediciones }: { semana: number; medici
                   {m.peso !== null && (
                     <span>
                       Peso <b className="font-semibold text-ink tabular-nums">{m.peso} kg</b>
+                      {' · '}
+                    </span>
+                  )}
+                  {m.grasa !== null && m.grasa !== undefined && (
+                    <span>
+                      Grasa <b className="font-semibold text-ink tabular-nums">{m.grasa} %</b>
                       {' · '}
                     </span>
                   )}
