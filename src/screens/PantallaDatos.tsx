@@ -4,6 +4,7 @@ import { fijarSemana, leerNotasEjercicios } from '../db/repo';
 import { useArquero } from '../estado/arquero';
 import { PanelReloj } from '../components/Reloj';
 import { useInstalacion } from '../lib/instalacion';
+import { esAppAndroid } from '../lib/salud';
 import {
   construirRespaldo,
   medicionesACsv,
@@ -19,7 +20,23 @@ interface Props {
   mediciones: Medicion[];
 }
 
-function descargar(nombre: string, contenido: string, tipo: string) {
+async function descargar(nombre: string, contenido: string, tipo: string) {
+  if (esAppAndroid()) {
+    // El WebView de Android ignora las descargas <a download>: se escribe el
+    // archivo en la cache y se abre el menu de compartir (Drive, Archivos...).
+    const [{ Directory, Encoding, Filesystem }, { Share }] = await Promise.all([
+      import('@capacitor/filesystem'),
+      import('@capacitor/share'),
+    ]);
+    const { uri } = await Filesystem.writeFile({
+      path: nombre,
+      data: contenido,
+      directory: Directory.Cache,
+      encoding: Encoding.UTF8,
+    });
+    await Share.share({ title: nombre, files: [uri], dialogTitle: 'Guardar respaldo de Arquero' });
+    return;
+  }
   const blob = new Blob([contenido], { type: `${tipo};charset=utf-8` });
   const url = URL.createObjectURL(blob);
   const a = document.createElement('a');
@@ -118,15 +135,21 @@ export function PantallaDatos({ semana, todas, sesiones, mediciones }: Props) {
         seguridad.
       </p>
 
-      <p
-        className={`mb-4 rounded-lg px-3.5 py-2.5 text-[13px] leading-snug ${
-          listaSinConexion ? 'bg-accent-soft text-accent-ink' : 'bg-warn-soft text-warn'
-        }`}
-      >
-        {listaSinConexion
-          ? `Lista para usar sin conexion${instalada ? ' · instalada en el telefono' : ''}. Puedes activar el modo avion.`
-          : 'Preparando la copia offline. Deja la app abierta unos segundos con conexion.'}
-      </p>
+      {esAppAndroid() ? (
+        <p className="mb-4 rounded-lg bg-accent-soft px-3.5 py-2.5 text-[13px] leading-snug text-accent-ink">
+          App Android: todo viene dentro de la app y funciona sin conexión.
+        </p>
+      ) : (
+        <p
+          className={`mb-4 rounded-lg px-3.5 py-2.5 text-[13px] leading-snug ${
+            listaSinConexion ? 'bg-accent-soft text-accent-ink' : 'bg-warn-soft text-warn'
+          }`}
+        >
+          {listaSinConexion
+            ? `Lista para usar sin conexion${instalada ? ' · instalada en el telefono' : ''}. Puedes activar el modo avion.`
+            : 'Preparando la copia offline. Deja la app abierta unos segundos con conexion.'}
+        </p>
+      )}
 
       <PanelReloj semana={semana} sesiones={sesiones} />
 
@@ -150,9 +173,12 @@ export function PantallaDatos({ semana, todas, sesiones, mediciones }: Props) {
                 notas: await leerNotasEjercicios(),
                 fotos,
               });
-              descargar(`registro-arquero-${sello()}.json`, JSON.stringify(respaldo, null, 2), 'application/json');
+              await descargar(`registro-arquero-${sello()}.json`, JSON.stringify(respaldo, null, 2), 'application/json');
               avisar('JSON exportado.');
-            })();
+            })().catch((e: unknown) => {
+              // Cerrar el menu de compartir sin elegir destino tambien llega aca.
+              if (!(e instanceof Error && /cancel/i.test(e.message))) setError('No se pudo exportar el respaldo.');
+            });
           }}
         >
           Exportar JSON
@@ -162,8 +188,9 @@ export function PantallaDatos({ semana, todas, sesiones, mediciones }: Props) {
           type="button"
           className={BOTON}
           onClick={() => {
-            descargar(`entrenamiento-${sello()}.csv`, seriesACsv(todas, sesiones, programa, catalogo), 'text/csv');
-            avisar('CSV de entrenamiento exportado.');
+            void descargar(`entrenamiento-${sello()}.csv`, seriesACsv(todas, sesiones, programa, catalogo), 'text/csv')
+              .then(() => avisar('CSV de entrenamiento exportado.'))
+              .catch(() => undefined);
           }}
         >
           Exportar CSV entrenamiento
@@ -173,8 +200,9 @@ export function PantallaDatos({ semana, todas, sesiones, mediciones }: Props) {
           type="button"
           className={BOTON}
           onClick={() => {
-            descargar(`mediciones-${sello()}.csv`, medicionesACsv(mediciones), 'text/csv');
-            avisar('CSV de mediciones exportado.');
+            void descargar(`mediciones-${sello()}.csv`, medicionesACsv(mediciones), 'text/csv')
+              .then(() => avisar('CSV de mediciones exportado.'))
+              .catch(() => undefined);
           }}
         >
           Exportar CSV mediciones
