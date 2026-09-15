@@ -4,6 +4,8 @@ import {
   type EstadoDescanso,
 } from '../lib/descanso';
 import { tieneValores, type ValoresSerie } from '../lib/series';
+import type { EjercicioCatalogo } from '../data/biblioteca';
+import type { ProgramaDef } from '../data/programa';
 import {
   db,
   hoy,
@@ -138,6 +140,7 @@ async function tocarSesion(semana: number, sesionId: string): Promise<void> {
   const actual = await db.sesiones.get(id);
   const ahora = Date.now();
   await db.sesiones.put({
+    ...actual,
     id,
     semana,
     sesionId,
@@ -207,4 +210,100 @@ export async function guardarMedicion(m: Omit<Medicion, 'id'>): Promise<void> {
 
 export async function borrarMedicion(id: number): Promise<void> {
   await db.mediciones.delete(id);
+}
+
+// ---------- programa editable ----------
+
+const ID_PROGRAMA = 'activo';
+
+export async function leerPrograma(): Promise<ProgramaDef | null> {
+  return (await db.programas.get(ID_PROGRAMA))?.definicion ?? null;
+}
+
+export async function guardarPrograma(definicion: ProgramaDef): Promise<void> {
+  await db.programas.put({ id: ID_PROGRAMA, definicion, actualizado: Date.now() });
+}
+
+/** Vuelve al programa del archivo. El historial no se toca. */
+export async function restaurarPrograma(): Promise<void> {
+  await db.programas.delete(ID_PROGRAMA);
+}
+
+// ---------- biblioteca propia ----------
+
+export async function guardarEjercicioPropio(e: EjercicioCatalogo): Promise<void> {
+  await db.ejerciciosPropios.put({ ...e, propio: true });
+}
+
+export async function borrarEjercicioPropio(id: string): Promise<void> {
+  await db.transaction('rw', db.ejerciciosPropios, db.fotos, async () => {
+    await db.ejerciciosPropios.delete(id);
+    await db.fotos.delete(id);
+  });
+}
+
+export async function guardarFoto(ejercicioId: string, imagen: Blob): Promise<void> {
+  await db.fotos.put({ ejercicioId, imagen, actualizado: Date.now() });
+}
+
+export async function borrarFoto(ejercicioId: string): Promise<void> {
+  await db.fotos.delete(ejercicioId);
+}
+
+const PREFIJO_NOTA = 'nota:';
+
+export async function guardarNotaEjercicio(ejercicioId: string, nota: string): Promise<void> {
+  const clave = PREFIJO_NOTA + ejercicioId;
+  if (nota.trim()) await db.ajustes.put({ clave, valor: nota });
+  else await db.ajustes.delete(clave);
+}
+
+export async function leerNotaEjercicio(ejercicioId: string): Promise<string> {
+  const a = await db.ajustes.get(PREFIJO_NOTA + ejercicioId);
+  return typeof a?.valor === 'string' ? a.valor : '';
+}
+
+export async function leerNotasEjercicios(): Promise<Record<string, string>> {
+  const todas = await db.ajustes.where('clave').startsWith(PREFIJO_NOTA).toArray();
+  return Object.fromEntries(
+    todas.filter((a) => typeof a.valor === 'string').map((a) => [a.clave.slice(PREFIJO_NOTA.length), a.valor as string]),
+  );
+}
+
+// ---------- reemplazo por un dia ----------
+
+export async function reemplazarPorHoy(
+  semana: number,
+  sesionId: string,
+  originalId: string,
+  nuevoId: string | null,
+): Promise<void> {
+  await db.transaction('rw', db.sesiones, async () => {
+    const id = idSesion(semana, sesionId);
+    const actual = await db.sesiones.get(id);
+    const reemplazos = { ...(actual?.reemplazos ?? {}) };
+    if (nuevoId && nuevoId !== originalId) reemplazos[originalId] = nuevoId;
+    else delete reemplazos[originalId];
+    await db.sesiones.put({
+      ...actual,
+      id,
+      semana,
+      sesionId,
+      fecha: actual?.fecha ?? hoy(),
+      nota: actual?.nota ?? '',
+      reemplazos,
+      actualizado: Date.now(),
+    });
+  });
+}
+
+// ---------- calculadora de discos ----------
+
+export async function leerBarraKg(): Promise<number> {
+  const v = Number((await db.ajustes.get('barraKg'))?.valor);
+  return Number.isFinite(v) && v >= 0 ? v : 20;
+}
+
+export async function fijarBarraKg(kg: number): Promise<void> {
+  await db.ajustes.put({ clave: 'barraKg', valor: kg });
 }

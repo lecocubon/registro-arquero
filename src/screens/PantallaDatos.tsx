@@ -1,10 +1,12 @@
 import { useRef, useState } from 'react';
 import { db, type Medicion, type RegistroSerie, type RegistroSesion } from '../db/db';
-import { fijarSemana } from '../db/repo';
+import { fijarSemana, leerNotasEjercicios } from '../db/repo';
+import { useArquero } from '../estado/arquero';
 import { useInstalacion } from '../lib/instalacion';
 import {
   construirRespaldo,
   medicionesACsv,
+  type FotoRespaldo,
   seriesACsv,
   validarRespaldo,
 } from '../lib/respaldo';
@@ -28,6 +30,19 @@ function descargar(nombre: string, contenido: string, tipo: string) {
   setTimeout(() => URL.revokeObjectURL(url), 2000);
 }
 
+function aDataUrl(b: Blob): Promise<string> {
+  return new Promise((ok, falla) => {
+    const r = new FileReader();
+    r.onload = () => ok(String(r.result));
+    r.onerror = () => falla(r.error);
+    r.readAsDataURL(b);
+  });
+}
+
+async function deDataUrl(url: string): Promise<Blob> {
+  return (await fetch(url)).blob();
+}
+
 function sello(): string {
   return new Date().toISOString().slice(0, 10);
 }
@@ -37,6 +52,7 @@ const BOTON =
 
 export function PantallaDatos({ semana, todas, sesiones, mediciones }: Props) {
   const { instalada, listaSinConexion } = useInstalacion();
+  const { programa, catalogo, definicion, personalizado } = useArquero();
   const [mensaje, setMensaje] = useState('');
   const [error, setError] = useState('');
   const archivo = useRef<HTMLInputElement>(null);
@@ -56,12 +72,31 @@ export function PantallaDatos({ semana, todas, sesiones, mediciones }: Props) {
         `Vas a reemplazar TODO el historial de este telefono por el del archivo (${datos.series.length} series, ${datos.mediciones.length} mediciones). Esto no se puede deshacer. Continuar?`,
       );
       if (!ok) return;
-      await db.transaction('rw', db.series, db.sesiones, db.mediciones, db.ajustes, async () => {
+      // Las fotos se convierten antes: dentro de la transaccion no se puede esperar a fetch.
+      const fotos = await Promise.all(
+        datos.fotos.map(async (f) => ({ ejercicioId: f.ejercicioId, imagen: await deDataUrl(f.dataUrl), actualizado: Date.now() })),
+      );
+      const tablas = [db.series, db.sesiones, db.mediciones, db.ajustes, db.programas, db.ejerciciosPropios, db.fotos];
+      await db.transaction('rw', tablas, async () => {
         await Promise.all([db.series.clear(), db.sesiones.clear(), db.mediciones.clear()]);
         await db.series.bulkPut(datos.series);
         if (datos.sesiones.length) await db.sesiones.bulkPut(datos.sesiones);
         if (datos.mediciones.length) {
           await db.mediciones.bulkPut(datos.mediciones.map(({ id: _id, ...m }) => m as Medicion));
+        }
+        // Respaldos v1 no traen programa: se conserva el que haya en el telefono.
+        if (datos.version >= 2) {
+          await db.programas.clear();
+          if (datos.definicionPrograma) {
+            await db.programas.put({ id: 'activo', definicion: datos.definicionPrograma, actualizado: Date.now() });
+          }
+          await db.ejerciciosPropios.clear();
+          if (datos.ejerciciosPropios.length) await db.ejerciciosPropios.bulkPut(datos.ejerciciosPropios);
+          await db.fotos.clear();
+          if (fotos.length) await db.fotos.bulkPut(fotos);
+          await db.ajustes.where('clave').startsWith('nota:').delete();
+          const notas = Object.entries(datos.notas).map(([id, valor]) => ({ clave: `nota:${id}`, valor }));
+          if (notas.length) await db.ajustes.bulkPut(notas);
         }
       });
       await fijarSemana(datos.semana);
@@ -97,13 +132,24 @@ export function PantallaDatos({ semana, todas, sesiones, mediciones }: Props) {
           type="button"
           className={BOTON}
           onClick={() => {
-            const respaldo = construirRespaldo({ semana, series: todas, sesiones, mediciones });
-            descargar(
-              `registro-arquero-${sello()}.json`,
-              JSON.stringify(respaldo, null, 2),
-              'application/json',
-            );
-            avisar('JSON exportado.');
+            void (async () => {
+              const fotos: FotoRespaldo[] = await Promise.all(
+                (await db.fotos.toArray()).map(async (f) => ({ ejercicioId: f.ejercicioId, dataUrl: await aDataUrl(f.imagen) })),
+              );
+              const respaldo = construirRespaldo({
+                semana,
+                series: todas,
+                sesiones,
+                mediciones,
+                programa,
+                definicionPrograma: personalizado ? definicion : null,
+                ejerciciosPropios: catalogo.filter((e) => e.propio),
+                notas: await leerNotasEjercicios(),
+                fotos,
+              });
+              descargar(`registro-arquero-${sello()}.json`, JSON.stringify(respaldo, null, 2), 'application/json');
+              avisar('JSON exportado.');
+            })();
           }}
         >
           Exportar JSON
@@ -113,7 +159,7 @@ export function PantallaDatos({ semana, todas, sesiones, mediciones }: Props) {
           type="button"
           className={BOTON}
           onClick={() => {
-            descargar(`entrenamiento-${sello()}.csv`, seriesACsv(todas, sesiones), 'text/csv');
+            descargar(`entrenamiento-${sello()}.csv`, seriesACsv(todas, sesiones, programa, catalogo), 'text/csv');
             avisar('CSV de entrenamiento exportado.');
           }}
         >
@@ -153,8 +199,8 @@ export function PantallaDatos({ semana, todas, sesiones, mediciones }: Props) {
       )}
 
       <p className="mt-6 text-[12.5px] leading-relaxed text-ink3">
-        {todas.length} series y {mediciones.length} mediciones guardadas. Importar reemplaza todo el
-        historial actual.
+        {todas.length} series y {mediciones.length} mediciones guardadas. El JSON incluye también tu programa
+        editado, ejercicios propios, notas de técnica y fotos. Importar reemplaza todo lo actual.
       </p>
     </>
   );

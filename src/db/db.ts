@@ -1,4 +1,6 @@
 import Dexie, { type Table } from 'dexie';
+import type { EjercicioCatalogo } from '../data/biblioteca';
+import type { ProgramaDef } from '../data/programa';
 
 /** Los calentamientos no cuentan para progresion, e1RM ni volumen. */
 export type TipoSerie = 'normal' | 'calentamiento';
@@ -29,6 +31,8 @@ export interface RegistroSesion {
   nota: string;
   /** Epoch ms de la primera serie tocada. */
   inicio?: number;
+  /** Solo ese dia: id del ejercicio del programa -> id del que lo reemplaza. */
+  reemplazos?: Record<string, string>;
   actualizado: number;
 }
 
@@ -50,11 +54,27 @@ export interface Ajuste {
   valor: string | number;
 }
 
+export interface ProgramaGuardado {
+  /** Por ahora solo existe 'activo'. */
+  id: string;
+  definicion: ProgramaDef;
+  actualizado: number;
+}
+
+export interface FotoEjercicio {
+  ejercicioId: string;
+  imagen: Blob;
+  actualizado: number;
+}
+
 export class ArqueroDB extends Dexie {
   series!: Table<RegistroSerie, string>;
   sesiones!: Table<RegistroSesion, string>;
   mediciones!: Table<Medicion, number>;
   ajustes!: Table<Ajuste, string>;
+  programas!: Table<ProgramaGuardado, string>;
+  ejerciciosPropios!: Table<EjercicioCatalogo, string>;
+  fotos!: Table<FotoEjercicio, string>;
 
   constructor(nombre = 'registro-arquero') {
     super(nombre);
@@ -63,6 +83,11 @@ export class ArqueroDB extends Dexie {
       sesiones: 'id, semana, sesionId',
       mediciones: '++id, fecha, semana',
       ajustes: 'clave',
+    });
+    this.version(2).stores({
+      programas: 'id',
+      ejerciciosPropios: 'id',
+      fotos: 'ejercicioId',
     });
   }
 }

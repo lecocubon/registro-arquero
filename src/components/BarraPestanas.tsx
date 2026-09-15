@@ -1,8 +1,9 @@
-export type Pestana = 'hoy' | 'progreso' | 'medidas' | 'datos';
+export type Pestana = 'hoy' | 'progreso' | 'programa' | 'medidas' | 'datos';
 
 const ICONOS: Record<Pestana, { texto: string; path: string }> = {
   hoy: { texto: 'Hoy', path: 'M3 10.5 12 3l9 7.5M5.5 9.5V20h13V9.5' },
   progreso: { texto: 'Progreso', path: 'M4 20V10M10 20V4M16 20v-7M22 20H2' },
+  programa: { texto: 'Programa', path: 'M8 4h11M8 12h11M8 20h11M3.5 4h.01M3.5 12h.01M3.5 20h.01' },
   medidas: { texto: 'Medidas', path: 'M3 8h18v8H3zM7 8v4M11 8v3M15 8v4M19 8v3' },
   datos: { texto: 'Datos', path: 'M12 5c4 0 7-.9 7-2s-3-2-7-2-7 .9-7 2 3 2 7 2zM5 3v18c0 1.1 3 2 7 2s7-.9 7-2V3M5 12c0 1.1 3 2 7 2s7-.9 7-2' },
 };
@@ -21,7 +22,7 @@ export function BarraPestanas({ activa, onCambio }: Props) {
           type="button"
           aria-current={activa === p ? 'page' : undefined}
           onClick={() => onCambio(p)}
-          className={`flex h-tab flex-1 flex-col items-center justify-center gap-[3px] font-display text-[11.5px] font-semibold tracking-[0.13em] uppercase ${
+          className={`flex h-tab flex-1 flex-col items-center justify-center gap-[3px] font-display text-[10.5px] font-semibold tracking-[0.08em] uppercase ${
             activa === p ? 'text-accent' : 'text-ink3'
           }`}
         >

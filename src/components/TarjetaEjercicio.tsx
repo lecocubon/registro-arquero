@@ -1,5 +1,7 @@
+import { useState } from 'react';
+import { catalogoPorId } from '../data/biblioteca';
 import type { Ejercicio } from '../data/programa';
-import { idSerie, type RegistroSerie } from '../db/db';
+import { db, idSerie, type RegistroSerie } from '../db/db';
 import {
   agregarCalentamiento,
   copiarValores,
@@ -7,11 +9,14 @@ import {
   iniciarDescanso,
   marcarSerie,
   quitarCalentamiento,
+  reemplazarPorHoy,
   registrarTiempo,
 } from '../db/repo';
+import { useArquero } from '../estado/arquero';
 import { descansoDe, formatoReloj } from '../lib/descanso';
 import { planSemana } from '../lib/periodizacion';
 import { incrementoSugerido } from '../lib/progresion';
+import { NOMBRE_RECORD, recordsNuevos } from '../lib/records';
 import {
   esCalentamiento,
   esSerieEfectiva,
@@ -19,8 +24,13 @@ import {
   ultimoRegistro,
   valoresParaCopiar,
 } from '../lib/series';
+import { avisar } from './Avisos';
+import { CalculadoraDiscos } from './CalculadoraDiscos';
 import { CampoNumero } from './CampoNumero';
 import { CampoTiempo } from './CampoTiempo';
+import { Capa } from './Capa';
+import { FichaEjercicio } from './FichaEjercicio';
+import { ListaEjercicios } from './ListaEjercicios';
 
 interface Props {
   semana: number;
@@ -28,7 +38,13 @@ interface Props {
   ejercicio: Ejercicio;
   registros: Map<string, RegistroSerie>;
   todas: RegistroSerie[];
+  /** Si hoy se reemplazo, el ejercicio del programa. */
+  original?: Ejercicio;
+  /** Ids de la sesion de hoy, para no elegir un reemplazo repetido. */
+  idsSesion: Set<string>;
 }
+
+const ACCION = '-my-1 h-9 shrink-0 rounded-lg px-2 text-[12.5px] font-medium text-accent';
 
 const FILA = 'grid grid-cols-[18px_46px_minmax(0,1fr)_minmax(0,1fr)_minmax(0,1fr)_44px] items-center gap-1.5';
 
@@ -85,13 +101,18 @@ function BotonHecha({ hecha, etiqueta, onClick }: { hecha: boolean; etiqueta: st
   );
 }
 
-export function TarjetaEjercicio({ semana, sesionId, ejercicio, registros, todas }: Props) {
-  const plan = planSemana(semana, ejercicio);
+export function TarjetaEjercicio({ semana, sesionId, ejercicio, registros, todas, original, idsSesion }: Props) {
+  const { programa, catalogo } = useArquero();
+  const [capa, setCapa] = useState<null | 'ficha' | 'cambiar' | 'discos'>(null);
+  const plan = planSemana(semana, ejercicio, programa);
   const previo = ultimoRegistro(todas, ejercicio.id, semana);
-  const planPrevio = previo ? planSemana(previo.semana, ejercicio) : null;
+  const planPrevio = previo ? planSemana(previo.semana, ejercicio, programa) : null;
   const subir =
     previo && planPrevio ? incrementoSugerido(ejercicio, previo.series, planPrevio.rirObjetivo) : null;
-  const descanso = descansoDe(ejercicio);
+  const descanso = descansoDe(ejercicio, programa);
+  const info = catalogoPorId(ejercicio.id, catalogo);
+  const conBarra = Boolean(info?.equipo.some((q) => q === 'barra' || q === 'trap-bar'));
+  const idOriginal = original?.id ?? ejercicio.id;
 
   const propios = [...registros.values()].filter((r) => r.ejercicioId === ejercicio.id);
   const calentamientos = propios.filter(esCalentamiento).length
@@ -112,7 +133,31 @@ export function TarjetaEjercicio({ semana, sesionId, ejercicio, registros, todas
       serie,
       valoresParaCopiar(ejercicio, anterior),
     );
-    if (marcada) await iniciarDescanso(descanso, ejercicio.id);
+    if (!marcada) return;
+    await iniciarDescanso(descanso, ejercicio.id);
+    const guardada = await db.series.get(idSerie(semana, sesionId, ejercicio.id, serie));
+    const nuevos = guardada ? recordsNuevos(todas, guardada) : [];
+    if (guardada && nuevos.length) {
+      const nombres = nuevos.map((n) => NOMBRE_RECORD[n]).join(' y ');
+      avisar(`Récord · ${nombres}: ${guardada.kg} kg × ${guardada.reps}`, 'record');
+    }
+  };
+
+  // Primer kg anotado hoy (o la vez anterior), para abrir la calculadora con ese peso.
+  const kgHoy =
+    Array.from({ length: plan.series }, (_, i) => registros.get(idSerie(semana, sesionId, ejercicio.id, i + 1))?.kg).find(
+      (kg) => (kg ?? 0) > 0,
+    ) ??
+    previo?.series.find((r) => (r.kg ?? 0) > 0)?.kg ??
+    null;
+
+  const elegirReemplazo = async (nuevoId: string) => {
+    const conDatos = propios.some((r) => esSerieEfectiva(r));
+    const aviso =
+      'Ya anotaste series en este ejercicio hoy. Quedan guardadas, pero dejarás de verlas en la sesión. ¿Cambiar igual?';
+    if (conDatos && !window.confirm(aviso)) return;
+    await reemplazarPorHoy(semana, sesionId, idOriginal, nuevoId);
+    setCapa(null);
   };
 
   return (
@@ -121,7 +166,15 @@ export function TarjetaEjercicio({ semana, sesionId, ejercicio, registros, todas
         <span className="min-w-[22px] shrink-0 font-display text-[15px] font-bold text-accent">
           {ejercicio.bloque}
         </span>
-        <h3 className="flex-1 text-[15px] leading-tight font-semibold">{ejercicio.nombre}</h3>
+        <h3 className="min-w-0 flex-1 text-[15px] leading-tight font-semibold">
+          <button
+            type="button"
+            onClick={() => setCapa('ficha')}
+            className="text-left underline decoration-line2 underline-offset-4"
+          >
+            {ejercicio.nombre}
+          </button>
+        </h3>
         <span
           className={`shrink-0 font-display text-[15px] font-bold tabular-nums ${
             hechas >= plan.series ? 'text-accent' : 'text-ink3'
@@ -132,20 +185,41 @@ export function TarjetaEjercicio({ semana, sesionId, ejercicio, registros, todas
         </span>
       </header>
 
-      <div className="flex items-center justify-between gap-2 px-3.5 pb-2 pl-[47px]">
-        <p className="text-[12.5px] text-ink3">
-          {plan.series} × {rango}
-          {unidad}
-          {lado}
-          {ejercicio.tipo === 'carga' ? ` · RIR ${plan.rirObjetivo}` : ''}
-          {` · ⏱ ${formatoReloj(descanso * 1000)}`}
+      {original && (
+        <p className="mx-3.5 mb-1.5 ml-[47px] flex items-center justify-between gap-2 rounded-lg bg-warn-soft px-2.5 py-1.5 text-[12.5px] text-warn">
+          <span>Solo hoy, en lugar de {original.nombre}</span>
+          <button
+            type="button"
+            onClick={() => void reemplazarPorHoy(semana, sesionId, idOriginal, null)}
+            className="-my-1 h-8 shrink-0 font-semibold underline"
+          >
+            Deshacer
+          </button>
         </p>
+      )}
+
+      <p className="px-3.5 pl-[47px] text-[12.5px] text-ink3">
+        {plan.series} × {rango}
+        {unidad}
+        {lado}
+        {ejercicio.tipo === 'carga' ? ` · RIR ${plan.rirObjetivo}` : ''}
+        {` · ⏱ ${formatoReloj(descanso * 1000)}`}
+      </p>
+      <div className="flex flex-wrap items-center gap-x-1 px-3.5 pt-1 pb-2 pl-[39px]">
+        <button type="button" onClick={() => setCapa('cambiar')} className={ACCION}>
+          ⇄ Cambiar hoy
+        </button>
+        {conBarra && (
+          <button type="button" onClick={() => setCapa('discos')} className={ACCION}>
+            Discos
+          </button>
+        )}
         {ejercicio.tipo === 'carga' && (
           <button
             type="button"
             onClick={() => void agregarCalentamiento(semana, sesionId, ejercicio.id, calentamientos + 1)}
             aria-label="Agregar serie de calentamiento"
-            className="-my-1 h-9 shrink-0 rounded-lg px-2 text-[12.5px] font-medium text-accent"
+            className={ACCION}
           >
             + Calent.
           </button>
@@ -293,6 +367,21 @@ export function TarjetaEjercicio({ semana, sesionId, ejercicio, registros, todas
           );
         })}
       </div>
+      {capa === 'ficha' && <FichaEjercicio ejercicioId={ejercicio.id} onCerrar={() => setCapa(null)} />}
+      {capa === 'discos' && <CalculadoraDiscos kgInicial={kgHoy} onCerrar={() => setCapa(null)} />}
+      {capa === 'cambiar' && (
+        <Capa titulo={`Cambiar ${original?.nombre ?? ejercicio.nombre} por hoy`} onCerrar={() => setCapa(null)}>
+          <p className="mb-3 text-[13.5px] leading-relaxed text-ink2">
+            Se mantienen las series, reps y RIR del programa. El historial queda en el ejercicio que elijas.
+          </p>
+          <ListaEjercicios
+            filtroInicial={{ musculo: catalogoPorId(idOriginal, catalogo)?.musculo ?? '' }}
+            tipoFijo={ejercicio.tipo}
+            deshabilitados={new Set([...idsSesion].filter((id) => id !== ejercicio.id))}
+            onElegir={(e) => void elegirReemplazo(e.id)}
+          />
+        </Capa>
+      )}
     </section>
   );
 }

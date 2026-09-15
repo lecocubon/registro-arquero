@@ -1,14 +1,16 @@
 /**
- * Definicion del mesociclo. Editar SOLO este archivo para cambiar el programa:
- * ningun componente conoce ejercicios ni semanas.
+ * Programa por defecto del mesociclo. La app parte de este archivo y el editor
+ * guarda una copia modificada en el telefono; "Restaurar" vuelve a este.
+ * Aqui solo va la prescripcion: que es cada ejercicio vive en biblioteca.json.
  */
+import { BIBLIOTECA, catalogoPorId, type EjercicioCatalogo, type TipoEjercicio } from './biblioteca';
 
-export type TipoEjercicio = 'carga' | 'tiempo' | 'salto';
+export type { TipoEjercicio } from './biblioteca';
 
-export interface Ejercicio {
-  /** Estable: se usa como clave en IndexedDB. No renombrar sin migrar datos. */
+/** Prescripcion de un ejercicio dentro de una sesion. */
+export interface EjercicioPlan {
+  /** Id del ejercicio en la biblioteca. Tambien es la clave del historial. */
   id: string;
-  nombre: string;
   bloque: string;
   /** Series base; la fase puede ajustarlas. */
   series: number;
@@ -17,22 +19,19 @@ export interface Ejercicio {
   rirObjetivo: number;
   /** Incremento de carga sugerido, en kg. */
   incremento: number;
-  tipo: TipoEjercicio;
   /** Sigue el RIR de la fase en vez del propio. */
   principal?: boolean;
   /** Ignora la fase y mantiene siempre este RIR. */
   rirFijo?: number;
   porLado?: boolean;
-  /** Descanso tras cada serie, en segundos. Si falta, se usa `Programa.descansos`. */
+  /** Descanso tras cada serie, en segundos. Si falta, se usa `descansos`. */
   descanso?: number;
 }
 
-export interface SesionPlan {
-  id: string;
+/** Prescripcion resuelta con nombre y tipo de la biblioteca. */
+export interface Ejercicio extends EjercicioPlan {
   nombre: string;
-  lugar: string;
-  foco: string;
-  ejercicios: Ejercicio[];
+  tipo: TipoEjercicio;
 }
 
 export interface Fase {
@@ -56,16 +55,40 @@ export interface DescansosPorDefecto {
   salto: number;
 }
 
-export interface Programa {
+interface SesionBase {
+  id: string;
+  nombre: string;
+  lugar: string;
+  foco: string;
+}
+
+export interface SesionDef extends SesionBase {
+  ejercicios: EjercicioPlan[];
+}
+
+export interface SesionPlan extends SesionBase {
+  ejercicios: Ejercicio[];
+}
+
+interface ProgramaBase {
   nombre: string;
   semanas: number;
   /** Segundos de descanso cuando el ejercicio no define el suyo. */
   descansos: DescansosPorDefecto;
-  sesiones: SesionPlan[];
   fases: Fase[];
 }
 
-export const PROGRAMA: Programa = {
+/** Lo que se guarda y se edita. */
+export interface ProgramaDef extends ProgramaBase {
+  sesiones: SesionDef[];
+}
+
+/** Lo que usa la app: cada ejercicio con su nombre y tipo. */
+export interface Programa extends ProgramaBase {
+  sesiones: SesionPlan[];
+}
+
+export const PROGRAMA_BASE: ProgramaDef = {
   nombre: 'Bajo los Tres Palos',
   semanas: 8,
   descansos: { principal: 180, carga: 90, tiempo: 60, salto: 90 },
@@ -105,13 +128,13 @@ export const PROGRAMA: Programa = {
       lugar: 'Casa',
       foco: 'Tren superior, tronco y salto vertical',
       ejercicios: [
-        { id: 'salto-vertical-detenido', bloque: 'A', nombre: 'Salto vertical con aterrizaje detenido', series: 3, reps: [5, 5], rirObjetivo: 0, incremento: 0, tipo: 'salto' },
-        { id: 'dominadas', bloque: 'B1', nombre: 'Dominadas', series: 4, reps: [2, 4], rirObjetivo: 2, incremento: 2.5, tipo: 'carga', principal: true },
-        { id: 'talones-una-pierna', bloque: 'B2', nombre: 'Elevacion de talones a una pierna', series: 4, reps: [10, 15], rirObjetivo: 2, incremento: 2, tipo: 'carga', porLado: true },
-        { id: 'press-mancuernas', bloque: 'C1', nombre: 'Press con mancuernas', series: 4, reps: [6, 8], rirObjetivo: 2, incremento: 2, tipo: 'carga' },
-        { id: 'remo-unilateral', bloque: 'C2', nombre: 'Remo unilateral con mancuerna', series: 4, reps: [8, 10], rirObjetivo: 2, incremento: 2, tipo: 'carga', porLado: true },
-        { id: 'press-hombro-pie', bloque: 'D1', nombre: 'Press de hombro de pie', series: 3, reps: [8, 10], rirObjetivo: 2, incremento: 2, tipo: 'carga' },
-        { id: 'plancha-lateral', bloque: 'D2', nombre: 'Plancha lateral', series: 3, reps: [25, 40], rirObjetivo: 0, incremento: 0, tipo: 'tiempo', porLado: true },
+        { id: 'salto-vertical-detenido', bloque: 'A', series: 3, reps: [5, 5], rirObjetivo: 0, incremento: 0 },
+        { id: 'dominadas', bloque: 'B1', series: 4, reps: [2, 4], rirObjetivo: 2, incremento: 2.5, principal: true },
+        { id: 'talones-una-pierna', bloque: 'B2', series: 4, reps: [10, 15], rirObjetivo: 2, incremento: 2, porLado: true },
+        { id: 'press-mancuernas', bloque: 'C1', series: 4, reps: [6, 8], rirObjetivo: 2, incremento: 2 },
+        { id: 'remo-unilateral', bloque: 'C2', series: 4, reps: [8, 10], rirObjetivo: 2, incremento: 2, porLado: true },
+        { id: 'press-hombro-pie', bloque: 'D1', series: 3, reps: [8, 10], rirObjetivo: 2, incremento: 2 },
+        { id: 'plancha-lateral', bloque: 'D2', series: 3, reps: [25, 40], rirObjetivo: 0, incremento: 0, porLado: true },
       ],
     },
     {
@@ -120,12 +143,12 @@ export const PROGRAMA: Programa = {
       lugar: 'Gimnasio · 07:00',
       foco: 'Fuerza de tren inferior',
       ejercicios: [
-        { id: 'salto-contramovimiento', bloque: 'A', nombre: 'Salto vertical con contramovimiento', series: 3, reps: [4, 4], rirObjetivo: 0, incremento: 0, tipo: 'salto' },
-        { id: 'sentadilla-barra', bloque: 'B', nombre: 'Sentadilla con barra', series: 4, reps: [5, 6], rirObjetivo: 2, incremento: 5, tipo: 'carga', principal: true },
-        { id: 'press-banca', bloque: 'C1', nombre: 'Press banca con barra', series: 4, reps: [5, 6], rirObjetivo: 2, incremento: 2.5, tipo: 'carga', principal: true },
-        { id: 'curl-femoral', bloque: 'C2', nombre: 'Curl femoral tumbado', series: 4, reps: [8, 12], rirObjetivo: 2, incremento: 5, tipo: 'carga' },
-        { id: 'peso-muerto-rumano', bloque: 'D1', nombre: 'Peso muerto rumano', series: 3, reps: [6, 8], rirObjetivo: 3, incremento: 5, tipo: 'carga', rirFijo: 3 },
-        { id: 'face-pull', bloque: 'D2', nombre: 'Face pull o remo alto', series: 3, reps: [12, 15], rirObjetivo: 2, incremento: 2.5, tipo: 'carga' },
+        { id: 'salto-contramovimiento', bloque: 'A', series: 3, reps: [4, 4], rirObjetivo: 0, incremento: 0 },
+        { id: 'sentadilla-barra', bloque: 'B', series: 4, reps: [5, 6], rirObjetivo: 2, incremento: 5, principal: true },
+        { id: 'press-banca', bloque: 'C1', series: 4, reps: [5, 6], rirObjetivo: 2, incremento: 2.5, principal: true },
+        { id: 'curl-femoral', bloque: 'C2', series: 4, reps: [8, 12], rirObjetivo: 2, incremento: 5 },
+        { id: 'peso-muerto-rumano', bloque: 'D1', series: 3, reps: [6, 8], rirObjetivo: 3, incremento: 5, rirFijo: 3 },
+        { id: 'face-pull', bloque: 'D2', series: 3, reps: [12, 15], rirObjetivo: 2, incremento: 2.5 },
       ],
     },
     {
@@ -134,17 +157,35 @@ export const PROGRAMA: Programa = {
       lugar: 'Gimnasio · 07:00',
       foco: 'Potencia lateral, unilateral y traccion',
       ejercicios: [
-        { id: 'salto-lateral-una-pierna', bloque: 'A', nombre: 'Salto lateral a una pierna', series: 3, reps: [3, 3], rirObjetivo: 0, incremento: 0, tipo: 'salto', porLado: true },
-        { id: 'bulgara', bloque: 'B', nombre: 'Sentadilla bulgara con mancuernas', series: 3, reps: [8, 8], rirObjetivo: 3, incremento: 2, tipo: 'carga', rirFijo: 3, porLado: true, descanso: 120 },
-        { id: 'empuje-cadera', bloque: 'C1', nombre: 'Empuje de cadera con barra', series: 3, reps: [8, 10], rirObjetivo: 2, incremento: 5, tipo: 'carga' },
-        { id: 'jalon-pecho', bloque: 'C2', nombre: 'Jalon al pecho', series: 4, reps: [8, 10], rirObjetivo: 2, incremento: 5, tipo: 'carga' },
-        { id: 'press-inclinado', bloque: 'D1', nombre: 'Press inclinado con mancuernas', series: 3, reps: [8, 10], rirObjetivo: 2, incremento: 2, tipo: 'carga' },
-        { id: 'talones-sentado', bloque: 'D2', nombre: 'Elevacion de talones sentado', series: 3, reps: [12, 15], rirObjetivo: 2, incremento: 5, tipo: 'carga' },
-        { id: 'core-antiextension', bloque: 'E', nombre: 'Dead bug o rueda abdominal', series: 3, reps: [8, 10], rirObjetivo: 2, incremento: 0, tipo: 'carga' },
+        { id: 'salto-lateral-una-pierna', bloque: 'A', series: 3, reps: [3, 3], rirObjetivo: 0, incremento: 0, porLado: true },
+        { id: 'bulgara', bloque: 'B', series: 3, reps: [8, 8], rirObjetivo: 3, incremento: 2, rirFijo: 3, porLado: true, descanso: 120 },
+        { id: 'empuje-cadera', bloque: 'C1', series: 3, reps: [8, 10], rirObjetivo: 2, incremento: 5 },
+        { id: 'jalon-pecho', bloque: 'C2', series: 4, reps: [8, 10], rirObjetivo: 2, incremento: 5 },
+        { id: 'press-inclinado', bloque: 'D1', series: 3, reps: [8, 10], rirObjetivo: 2, incremento: 2 },
+        { id: 'talones-sentado', bloque: 'D2', series: 3, reps: [12, 15], rirObjetivo: 2, incremento: 5 },
+        { id: 'core-antiextension', bloque: 'E', series: 3, reps: [8, 10], rirObjetivo: 2, incremento: 0 },
       ],
     },
   ],
 };
+
+export function resolverEjercicio(plan: EjercicioPlan, catalogo: EjercicioCatalogo[]): Ejercicio {
+  const c = catalogoPorId(plan.id, catalogo);
+  // Un ejercicio propio borrado no debe romper la sesion: se muestra por su id.
+  return { ...plan, nombre: c?.nombre ?? plan.id, tipo: c?.tipo ?? 'carga' };
+}
+
+export function resolverPrograma(def: ProgramaDef, catalogo: EjercicioCatalogo[] = BIBLIOTECA): Programa {
+  return {
+    ...def,
+    sesiones: def.sesiones.map((s) => ({
+      ...s,
+      ejercicios: s.ejercicios.map((e) => resolverEjercicio(e, catalogo)),
+    })),
+  };
+}
+
+export const PROGRAMA: Programa = resolverPrograma(PROGRAMA_BASE);
 
 export function sesionPorId(id: string, programa: Programa = PROGRAMA): SesionPlan | undefined {
   return programa.sesiones.find((s) => s.id === id);
@@ -156,4 +197,20 @@ export function ejercicioPorId(id: string, programa: Programa = PROGRAMA): Ejerc
     if (e) return e;
   }
   return undefined;
+}
+
+/**
+ * Ejercicios de la sesion con los reemplazos de ese dia aplicados. El
+ * reemplazo hereda la prescripcion (series, reps, RIR) del ejercicio original.
+ */
+export function ejerciciosDelDia(
+  sesion: SesionPlan,
+  reemplazos: Record<string, string> | undefined,
+  catalogo: EjercicioCatalogo[],
+): { ejercicio: Ejercicio; original?: Ejercicio }[] {
+  return sesion.ejercicios.map((original) => {
+    const nuevoId = reemplazos?.[original.id];
+    if (!nuevoId || nuevoId === original.id) return { ejercicio: original };
+    return { ejercicio: resolverEjercicio({ ...original, id: nuevoId }, catalogo), original };
+  });
 }

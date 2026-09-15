@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import type { Medicion, RegistroSerie, RegistroSesion } from '../db/db';
+import { PROGRAMA_BASE } from '../data/programa';
 import { construirRespaldo, medicionesACsv, seriesACsv, validarRespaldo } from './respaldo';
 
 const serie: RegistroSerie = {
@@ -56,6 +57,45 @@ describe('respaldo JSON', () => {
     expect(() => validarRespaldo({ app: 'otra-cosa' })).toThrow(/no es un respaldo/i);
     expect(() => validarRespaldo(null)).toThrow();
     expect(() => validarRespaldo({ app: 'registro-arquero' })).toThrow(/faltan/i);
+  });
+});
+
+describe('respaldo v2', () => {
+  it('incluye programa editado, ejercicios propios, notas y fotos', () => {
+    const definicion = structuredClone(PROGRAMA_BASE);
+    definicion.nombre = 'Pretemporada';
+    const original = construirRespaldo({
+      semana: 2,
+      series: [serie],
+      sesiones: [sesion],
+      mediciones: [],
+      definicionPrograma: definicion,
+      ejerciciosPropios: [{ id: 'propio-x', nombre: 'Mío', tipo: 'carga', musculo: 'pecho', secundarios: [], equipo: ['otro'], indicaciones: [], propio: true }],
+      notas: { 'press-banca': 'agarre 81 cm' },
+      fotos: [{ ejercicioId: 'press-banca', dataUrl: 'data:image/jpeg;base64,AAAA' }],
+    });
+    const vuelta = validarRespaldo(JSON.parse(JSON.stringify(original)));
+    expect(vuelta.version).toBe(2);
+    expect(vuelta.definicionPrograma?.nombre).toBe('Pretemporada');
+    expect(vuelta.ejerciciosPropios[0]?.id).toBe('propio-x');
+    expect(vuelta.notas).toEqual({ 'press-banca': 'agarre 81 cm' });
+    expect(vuelta.fotos).toHaveLength(1);
+  });
+
+  it('acepta respaldos v1 sin los campos nuevos', () => {
+    const v1 = { app: 'registro-arquero', version: 1, semana: 3, series: [serie], sesiones: [], mediciones: [] };
+    const r = validarRespaldo(v1);
+    expect(r.version).toBe(1);
+    expect(r.definicionPrograma).toBeNull();
+    expect(r.ejerciciosPropios).toEqual([]);
+    expect(r.fotos).toEqual([]);
+  });
+
+  it('rechaza un programa dañado y descarta fotos que no son imágenes', () => {
+    const base = { app: 'registro-arquero', version: 2, series: [], mediciones: [] };
+    expect(() => validarRespaldo({ ...base, definicionPrograma: { nombre: 'x' } })).toThrow(/dañado/);
+    const r = validarRespaldo({ ...base, fotos: [{ ejercicioId: 'a', dataUrl: 'javascript:alert(1)' }] });
+    expect(r.fotos).toEqual([]);
   });
 });
 

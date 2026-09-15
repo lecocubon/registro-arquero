@@ -1,22 +1,27 @@
 import { useEffect, useRef, useState } from 'react';
 import { useLiveQuery } from 'dexie-react-hooks';
+import { Avisos } from './components/Avisos';
 import { BarraDescanso } from './components/BarraDescanso';
 import { BarraPestanas, type Pestana } from './components/BarraPestanas';
-import { PROGRAMA } from './data/programa';
 import { db } from './db/db';
 import { fijarSemana, leerDescanso, semanaActual } from './db/repo';
+import { useArquero } from './estado/arquero';
 import { usePantallaActiva } from './lib/dispositivo';
 import { faseDe, limitarSemana } from './lib/periodizacion';
 import { PantallaDatos } from './screens/PantallaDatos';
 import { PantallaHoy } from './screens/PantallaHoy';
 import { PantallaMedidas } from './screens/PantallaMedidas';
+import { PantallaPrograma } from './screens/PantallaPrograma';
 import { PantallaProgreso } from './screens/PantallaProgreso';
 
 export default function App() {
+  const { programa } = useArquero();
   const [pestana, setPestana] = useState<Pestana>('hoy');
   const [dia, setDia] = useState<string | null>(null);
 
-  const semana = useLiveQuery(() => semanaActual(), [], 1);
+  const semanaGuardada = useLiveQuery(() => semanaActual(), [], 1);
+  // Si el programa se acorta, la semana guardada puede quedar fuera de rango.
+  const semana = limitarSemana(semanaGuardada, programa);
   const todas = useLiveQuery(() => db.series.toArray(), [], []);
   const sesiones = useLiveQuery(() => db.sesiones.toArray(), [], []);
   const mediciones = useLiveQuery(() => db.mediciones.toArray(), [], []);
@@ -37,10 +42,10 @@ export default function App() {
     return () => obs.disconnect();
   }, []);
 
-  const fase = faseDe(semana);
+  const fase = faseDe(semana, programa);
 
   const cambiarSemana = (delta: number) => {
-    const nueva = limitarSemana(semana + delta);
+    const nueva = limitarSemana(semana + delta, programa);
     if (nueva !== semana) void fijarSemana(nueva);
   };
 
@@ -48,7 +53,7 @@ export default function App() {
     <>
       <header ref={cabecera} className="pad-top-safe sticky top-0 z-30 flex items-center gap-3 border-b border-line bg-surface px-3.5 pb-2.5">
         <h1 className="min-w-0 flex-1 truncate font-display text-[18px] leading-none font-bold tracking-[0.02em] uppercase">
-          {PROGRAMA.nombre}
+          {programa.nombre}
           <small className="mt-1 block font-sans text-[10.5px] font-normal tracking-[0.07em] text-ink3 uppercase">
             Semana {semana} · {fase.nombre}
           </small>
@@ -91,7 +96,8 @@ export default function App() {
             sesiones={sesiones}
           />
         )}
-        {pestana === 'progreso' && <PantallaProgreso todas={todas} />}
+        {pestana === 'progreso' && <PantallaProgreso semana={semana} todas={todas} />}
+        {pestana === 'programa' && <PantallaPrograma todas={todas} />}
         {pestana === 'medidas' && <PantallaMedidas semana={semana} mediciones={mediciones} />}
         {pestana === 'datos' && (
           <PantallaDatos
@@ -104,6 +110,7 @@ export default function App() {
       </main>
 
       {descanso && <BarraDescanso key={descanso.fin} estado={descanso} />}
+      <Avisos />
 
       <BarraPestanas
         activa={pestana}

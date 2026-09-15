@@ -1,4 +1,5 @@
-import { PROGRAMA } from '../data/programa';
+import { ejerciciosDelDia } from '../data/programa';
+import { useArquero } from '../estado/arquero';
 import { idSesion, type RegistroSerie, type RegistroSesion } from '../db/db';
 import { guardarNota } from '../db/repo';
 import { faseDe, planSemana } from '../lib/periodizacion';
@@ -37,17 +38,22 @@ function NotaDeSesion({ semana, sesionId, valor }: { semana: number; sesionId: s
 }
 
 export function PantallaHoy({ semana, dia, onAbrir, todas, sesiones }: Props) {
-  const fase = faseDe(semana);
+  const { programa, catalogo } = useArquero();
+  const fase = faseDe(semana, programa);
 
   if (dia) {
-    const plan = PROGRAMA.sesiones.find((s) => s.id === dia);
+    const plan = programa.sesiones.find((s) => s.id === dia);
     if (!plan) return <p className="py-6 text-ink3">Sesion no encontrada.</p>;
 
     const deLaSesion = todas.filter((r) => r.semana === semana && r.sesionId === dia);
     const registros = new Map(deLaSesion.map((r) => [r.id, r]));
     const meta = sesiones.find((s) => s.id === idSesion(semana, dia));
     const nota = meta?.nota ?? '';
-    const planificadas = plan.ejercicios.reduce((n, ej) => n + planSemana(semana, ej).series, 0);
+    const planificadas = plan.ejercicios.reduce((n, ej) => n + planSemana(semana, ej, programa).series, 0);
+    const delDia = ejerciciosDelDia(plan, meta?.reemplazos, catalogo);
+    const idsSesion = new Set(delDia.map((d) => d.ejercicio.id));
+    // Solo cuentan en la cabecera los ejercicios que hoy estan en la sesion.
+    const visibles = deLaSesion.filter((r) => idsSesion.has(r.ejercicioId));
 
     return (
       <>
@@ -62,18 +68,25 @@ export function PantallaHoy({ semana, dia, onAbrir, todas, sesiones }: Props) {
           {plan.nombre} · {plan.lugar}
         </p>
 
-        <CabeceraSesion registros={deLaSesion} seriesPlanificadas={planificadas} inicio={meta?.inicio} />
+        <CabeceraSesion registros={visibles} seriesPlanificadas={planificadas} inicio={meta?.inicio} />
 
-        {plan.ejercicios.map((ej) => (
+        {delDia.map(({ ejercicio, original }) => (
           <TarjetaEjercicio
-            key={ej.id}
+            key={original?.id ?? ejercicio.id}
             semana={semana}
             sesionId={dia}
-            ejercicio={ej}
+            ejercicio={ejercicio}
+            original={original}
+            idsSesion={idsSesion}
             registros={registros}
             todas={todas}
           />
         ))}
+        {!delDia.length && (
+          <p className="py-4 text-[14px] text-ink3">
+            Esta sesión no tiene ejercicios. Agrégalos en la pestaña Programa.
+          </p>
+        )}
 
         <NotaDeSesion key={`${semana}|${dia}`} semana={semana} sesionId={dia} valor={nota} />
         <p className="mt-3 mb-2 text-[12.5px] leading-relaxed text-ink3">
@@ -93,7 +106,7 @@ export function PantallaHoy({ semana, dia, onAbrir, todas, sesiones }: Props) {
         Sesiones de la semana
       </p>
       <div className="grid gap-2.5">
-        {PROGRAMA.sesiones.map((s) => {
+        {programa.sesiones.map((s) => {
           const registradas = todas.filter(
             (r) => r.semana === semana && r.sesionId === s.id && esSerieEfectiva(r),
           ).length;

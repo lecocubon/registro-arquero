@@ -1,8 +1,9 @@
 import { useEffect, useRef, useState } from 'react';
-import { ejercicioPorId } from '../data/programa';
+import { catalogoPorId } from '../data/biblioteca';
 import { sumarDescanso, terminarDescanso } from '../db/repo';
 import { formatoReloj, restanteMs, type EstadoDescanso } from '../lib/descanso';
 import { vibrar } from '../lib/dispositivo';
+import { useArquero } from '../estado/arquero';
 
 /** Si al volver a la app el descanso termino hace mas que esto, no se avisa. */
 const MARGEN_AVISO_MS = 5000;
@@ -12,6 +13,7 @@ const BOTON =
   'flex h-11 min-w-12 items-center justify-center rounded-[10px] border border-line px-2.5 font-display text-[15px] font-bold tracking-[0.04em] text-ink2';
 
 export function BarraDescanso({ estado }: { estado: EstadoDescanso }) {
+  const { catalogo } = useArquero();
   const [ahora, setAhora] = useState(() => Date.now());
   const avisado = useRef<number | null>(null);
 
@@ -36,7 +38,7 @@ export function BarraDescanso({ estado }: { estado: EstadoDescanso }) {
   }, [terminado, estado.fin]);
 
   const progreso = estado.total > 0 ? Math.min(1, restante / estado.total) : 0;
-  const nombre = ejercicioPorId(estado.ejercicioId)?.nombre;
+  const nombre = catalogoPorId(estado.ejercicioId, catalogo)?.nombre;
 
   return (
     <div

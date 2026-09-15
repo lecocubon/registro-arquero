@@ -1,9 +1,16 @@
-import { PROGRAMA, ejercicioPorId, type Programa } from '../data/programa';
+import { BIBLIOTECA, catalogoPorId, type EjercicioCatalogo } from '../data/biblioteca';
+import { PROGRAMA, ejercicioPorId, type Programa, type ProgramaDef } from '../data/programa';
 import type { Medicion, RegistroSerie, RegistroSesion } from '../db/db';
 import { asimetria } from './asimetria';
 import { e1rm, redondear1 } from './e1rm';
 
-export const VERSION_RESPALDO = 1;
+export const VERSION_RESPALDO = 2;
+
+export interface FotoRespaldo {
+  ejercicioId: string;
+  /** data:image/...;base64 */
+  dataUrl: string;
+}
 
 export interface Respaldo {
   app: 'registro-arquero';
@@ -14,6 +21,12 @@ export interface Respaldo {
   series: RegistroSerie[];
   sesiones: RegistroSesion[];
   mediciones: Medicion[];
+  /** v2: programa editado en la app; null si se usa el de fabrica. */
+  definicionPrograma: ProgramaDef | null;
+  ejerciciosPropios: EjercicioCatalogo[];
+  /** v2: notas de tecnica por ejercicio. */
+  notas: Record<string, string>;
+  fotos: FotoRespaldo[];
 }
 
 export function construirRespaldo(datos: {
@@ -22,6 +35,10 @@ export function construirRespaldo(datos: {
   sesiones: RegistroSesion[];
   mediciones: Medicion[];
   programa?: Programa;
+  definicionPrograma?: ProgramaDef | null;
+  ejerciciosPropios?: EjercicioCatalogo[];
+  notas?: Record<string, string>;
+  fotos?: FotoRespaldo[];
 }): Respaldo {
   return {
     app: 'registro-arquero',
@@ -32,7 +49,23 @@ export function construirRespaldo(datos: {
     series: datos.series,
     sesiones: datos.sesiones,
     mediciones: datos.mediciones,
+    definicionPrograma: datos.definicionPrograma ?? null,
+    ejerciciosPropios: datos.ejerciciosPropios ?? [],
+    notas: datos.notas ?? {},
+    fotos: datos.fotos ?? [],
   };
+}
+
+function esDefinicionPrograma(v: unknown): v is ProgramaDef {
+  if (typeof v !== 'object' || v === null) return false;
+  const p = v as Partial<ProgramaDef>;
+  return (
+    typeof p.nombre === 'string' &&
+    Number.isFinite(p.semanas) &&
+    Array.isArray(p.fases) &&
+    Array.isArray(p.sesiones) &&
+    typeof p.descansos === 'object'
+  );
 }
 
 /** Lanza Error con mensaje legible si el JSON no sirve. */
@@ -45,6 +78,13 @@ export function validarRespaldo(raw: unknown): Respaldo {
   }
   const sesiones = Array.isArray(r.sesiones) ? r.sesiones : [];
   const semana = Number.isFinite(r.semana) ? (r.semana as number) : 1;
+  if (r.definicionPrograma != null && !esDefinicionPrograma(r.definicionPrograma)) {
+    throw new Error('El programa guardado en el respaldo está dañado.');
+  }
+  const notas =
+    typeof r.notas === 'object' && r.notas !== null
+      ? Object.fromEntries(Object.entries(r.notas).filter(([, v]) => typeof v === 'string'))
+      : {};
   return {
     app: 'registro-arquero',
     version: Number(r.version) || VERSION_RESPALDO,
@@ -54,6 +94,12 @@ export function validarRespaldo(raw: unknown): Respaldo {
     series: r.series as RegistroSerie[],
     sesiones,
     mediciones: r.mediciones as Medicion[],
+    definicionPrograma: r.definicionPrograma ?? null,
+    ejerciciosPropios: Array.isArray(r.ejerciciosPropios) ? r.ejerciciosPropios : [],
+    notas,
+    fotos: Array.isArray(r.fotos)
+      ? r.fotos.filter((f) => typeof f?.ejercicioId === 'string' && /^data:image\//.test(f?.dataUrl ?? ''))
+      : [],
   };
 }
 
@@ -72,6 +118,7 @@ export function seriesACsv(
   series: RegistroSerie[],
   sesiones: RegistroSesion[],
   programa: Programa = PROGRAMA,
+  catalogo: EjercicioCatalogo[] = BIBLIOTECA,
 ): string {
   const fechas = new Map(sesiones.map((s) => [s.id, s.fecha]));
   const filas: unknown[][] = [
@@ -82,14 +129,15 @@ export function seriesACsv(
   );
   for (const r of ordenadas) {
     const ej = ejercicioPorId(r.ejercicioId, programa);
+    const cat = catalogoPorId(r.ejercicioId, catalogo);
     const est = r.tipo === 'calentamiento' ? 0 : e1rm(r.kg, r.reps, r.rir);
     filas.push([
       r.semana,
       r.sesionId,
       fechas.get(`${r.semana}|${r.sesionId}`) ?? '',
       ej?.bloque ?? '',
-      ej?.nombre ?? r.ejercicioId,
-      ej?.tipo ?? '',
+      cat?.nombre ?? ej?.nombre ?? r.ejercicioId,
+      cat?.tipo ?? ej?.tipo ?? '',
       r.serie,
       r.tipo ?? 'normal',
       r.kg,

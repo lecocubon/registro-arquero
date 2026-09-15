@@ -1,3 +1,4 @@
+import { BIBLIOTECA, catalogoPorId, type EjercicioCatalogo } from '../data/biblioteca';
 import { PROGRAMA, ejercicioPorId, type Programa } from '../data/programa';
 import type { RegistroSerie } from '../db/db';
 import { e1rm, variacionPorcentual } from './e1rm';
@@ -15,6 +16,7 @@ export interface FilaProgreso {
 export function progresoPorEjercicio(
   series: RegistroSerie[],
   programa: Programa = PROGRAMA,
+  catalogo: EjercicioCatalogo[] = BIBLIOTECA,
 ): FilaProgreso[] {
   const porEjercicio = new Map<string, number[]>();
   for (const r of series) {
@@ -37,7 +39,7 @@ export function progresoPorEjercicio(
     if (!conDatos.length) continue;
     filas.push({
       ejercicioId,
-      nombre: ejercicioPorId(ejercicioId, programa)?.nombre ?? ejercicioId,
+      nombre: catalogoPorId(ejercicioId, catalogo)?.nombre ?? ejercicioPorId(ejercicioId, programa)?.nombre ?? ejercicioId,
       porSemana,
       actual: conDatos[conDatos.length - 1] ?? 0,
       maximo: Math.max(...porSemana),

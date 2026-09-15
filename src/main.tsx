@@ -9,6 +9,7 @@ import '@fontsource/ibm-plex-sans/latin-500.css';
 import '@fontsource/ibm-plex-sans/latin-600.css';
 import './index.css';
 import App from './App';
+import { ProveedorArquero } from './estado/arquero';
 
 registerSW({ immediate: true });
 
@@ -17,6 +18,8 @@ if (!contenedor) throw new Error('Falta #root');
 
 createRoot(contenedor).render(
   <StrictMode>
-    <App />
+    <ProveedorArquero>
+      <App />
+    </ProveedorArquero>
   </StrictMode>,
 );
