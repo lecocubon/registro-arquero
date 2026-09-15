@@ -94,12 +94,39 @@ export function bloquesDeActividad(marcas: number[]): Bloque[] {
   return bloques;
 }
 
+export interface VentanaSesion {
+  desde: number;
+  /** Ultima actividad del bloque (sin extender hasta ahora). */
+  hasta: number;
+  enCurso: boolean;
+}
+
 /**
- * Duracion del bloque continuo de entrenamiento, no desde la primera serie
- * hasta la ultima edicion: corregir un valor dias despues no debe inflarla.
- * Si hay actividad reciente, se mide el bloque actual y corre hasta ahora;
- * si no, se usa el bloque con mas series registradas.
+ * Horario del bloque continuo de entrenamiento, no desde la primera serie
+ * hasta la ultima edicion: corregir un valor dias despues no debe estirarlo.
+ * Con actividad reciente es el bloque actual; si no, el que tiene mas series.
+ * Lo usan la duracion, el pulso de la sesion y el entrenamiento guardado.
  */
+export function ventanaSesion(
+  registros: RegistroSerie[],
+  inicio: number | undefined,
+  ahora: number,
+): VentanaSesion | null {
+  const conDatos = registros.filter(tieneDatos);
+  if (!conDatos.length) return null;
+  const ventana = MINUTOS_SESION_ABIERTA * 60_000;
+  const bloques = bloquesDeActividad(conDatos.map((r) => r.actualizado));
+  const actual = bloques[bloques.length - 1] as Bloque;
+  const enCurso = ahora - actual.hasta < ventana;
+  const bloque = enCurso ? actual : bloques.reduce((mejor, b) => (b.registros >= mejor.registros ? b : mejor));
+  // `actualizado` cambia al editar, asi que el inicio guardado corrige un
+  // comienzo que parece mas tarde de lo real, siempre que sea del mismo bloque.
+  const desde =
+    inicio !== undefined && inicio <= bloque.desde && bloque.desde - inicio <= ventana ? inicio : bloque.desde;
+  return { desde, hasta: bloque.hasta, enCurso };
+}
+
+/** Duracion, volumen y series de la sesion. La duracion corre hasta ahora mientras esta en curso. */
 export function resumenSesion(
   registros: RegistroSerie[],
   seriesPlanificadas: number,
@@ -115,29 +142,14 @@ export function resumenSesion(
     return kg > 0 && reps > 0 ? acc + kg * reps : acc;
   }, 0);
 
-  if (!conDatos.length) {
+  const v = ventanaSesion(registros, inicio, ahora);
+  if (!v) {
     return { duracionMs: null, enCurso: false, volumenKg, seriesHechas: 0, seriesPlanificadas };
   }
 
-  const ventana = MINUTOS_SESION_ABIERTA * 60_000;
-  const bloques = bloquesDeActividad(conDatos.map((r) => r.actualizado));
-  const actual = bloques[bloques.length - 1] as Bloque;
-  const enCurso = ahora - actual.hasta < ventana;
-  const bloque = enCurso
-    ? actual
-    : bloques.reduce((mejor, b) => (b.registros >= mejor.registros ? b : mejor));
-
-  // `actualizado` cambia al editar, asi que el inicio guardado corrige un
-  // comienzo que parece mas tarde de lo real, siempre que sea del mismo bloque.
-  const desde =
-    inicio !== undefined && inicio <= bloque.desde && bloque.desde - inicio <= ventana
-      ? inicio
-      : bloque.desde;
-  const hasta = enCurso ? ahora : bloque.hasta;
-
   return {
-    duracionMs: Math.max(0, hasta - desde),
-    enCurso,
+    duracionMs: Math.max(0, (v.enCurso ? ahora : v.hasta) - v.desde),
+    enCurso: v.enCurso,
     volumenKg,
     seriesHechas: trabajo.length,
     seriesPlanificadas,

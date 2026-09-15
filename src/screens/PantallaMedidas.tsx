@@ -143,7 +143,7 @@ export function PantallaMedidas({ semana, mediciones, sesiones }: { semana: numb
           }
           className="mt-2 h-11 w-full rounded-[10px] border border-line bg-surface text-[14px] font-semibold text-ink2"
         >
-          Traer peso y grasa del reloj
+          Traer peso y grasa de Health Connect
         </button>
       )}
 
@@ -164,7 +164,7 @@ export function PantallaMedidas({ semana, mediciones, sesiones }: { semana: numb
                     Semana {m.semana} · {fechaCorta(m.fecha)}
                     {m.origen === 'reloj' && (
                       <span className="ml-2 rounded-full bg-surface2 px-2 py-px font-sans text-[10.5px] font-semibold tracking-normal text-ink3 normal-case">
-                        reloj
+                        Health Connect
                       </span>
                     )}
                   </span>

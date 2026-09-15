@@ -22,7 +22,7 @@ import {
   type ResumenPulso,
   type ResumenSueno,
 } from '../lib/saludDatos';
-import { tieneDatos } from '../lib/series';
+import { ventanaSesion } from '../lib/series';
 import { avisar } from './Avisos';
 
 const ETIQUETA = 'mb-2.5 font-display text-[13px] font-bold tracking-[0.15em] text-ink3 uppercase';
@@ -167,9 +167,10 @@ export function RelojSesion({ semana, sesionId, nombreSesion, registros, meta, n
   const [pulso, setPulso] = useState<ResumenPulso | null | 'cargando'>(null);
   const [guardando, setGuardando] = useState(false);
 
-  const conDatos = registros.filter(tieneDatos);
-  const inicio = meta?.inicio ?? (conDatos.length ? Math.min(...conDatos.map((r) => r.actualizado)) : undefined);
-  const fin = conDatos.length ? Math.max(...conDatos.map((r) => r.actualizado)) : undefined;
+  // Mismo bloque que la duracion: una edicion dias despues no estira el horario.
+  const ventana = ventanaSesion(registros, meta?.inicio, Date.now());
+  const inicio = ventana?.desde;
+  const fin = ventana?.hasta;
   const hayVentana = inicio !== undefined && fin !== undefined && fin > inicio;
 
   useEffect(() => {

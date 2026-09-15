@@ -8,6 +8,7 @@ import {
   serieAnterior,
   ultimoRegistro,
   valoresParaCopiar,
+  ventanaSesion,
 } from './series';
 
 const ej = (id: string): Ejercicio => {
@@ -155,6 +156,13 @@ describe('duracion con ediciones posteriores', () => {
     const r = resumenSesion([...entreno, corregida], 21, t0, ahora);
     expect(r.enCurso).toBe(true);
     expect(r.duracionMs).toBe(2 * minuto);
+  });
+
+  it('la ventana para pulso y Samsung Health tampoco incluye la edición posterior', () => {
+    const corregida = serie({ semana: 1, serie: 19, kg: 35, reps: 8, actualizado: t0 + 7 * dia });
+    const v = ventanaSesion([...entreno, corregida], t0, t0 + 14 * dia);
+    expect(v).toEqual({ desde: t0, hasta: t0 + 17 * 4 * minuto, enCurso: false });
+    expect(ventanaSesion([], undefined, t0)).toBeNull();
   });
 
   it('el inicio guardado de otro dia no se usa', () => {
