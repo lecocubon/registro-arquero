@@ -6,6 +6,8 @@ import { BarraPestanas, type Pestana } from './components/BarraPestanas';
 import { db } from './db/db';
 import { fijarSemana, leerDescanso, semanaActual } from './db/repo';
 import { useArquero } from './estado/arquero';
+import { hayCapas } from './components/Capa';
+import { useBotonAtras } from './lib/atras';
 import { usePantallaActiva } from './lib/dispositivo';
 import { faseDe, limitarSemana } from './lib/periodizacion';
 import { PantallaDatos } from './screens/PantallaDatos';
@@ -29,6 +31,26 @@ export default function App() {
   const cabecera = useRef<HTMLElement>(null);
 
   usePantallaActiva(dia !== null || descanso !== null);
+
+  // Atras de Android: cierra la capa abierta, sale del dia de entrenamiento,
+  // vuelve a Hoy y recien ahi deja que la app se minimice.
+  useBotonAtras(() => {
+    if (hayCapas()) {
+      window.history.back();
+      return true;
+    }
+    if (dia !== null) {
+      setDia(null);
+      window.scrollTo(0, 0);
+      return true;
+    }
+    if (pestana !== 'hoy') {
+      setPestana('hoy');
+      window.scrollTo(0, 0);
+      return true;
+    }
+    return false;
+  });
 
   // La cabecera de la sesion se pega justo debajo de la barra superior.
   useEffect(() => {

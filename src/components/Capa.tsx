@@ -22,6 +22,11 @@ if (typeof window !== 'undefined') {
   });
 }
 
+/** Hay alguna pantalla superpuesta abierta (la cierra el "atras"). */
+export function hayCapas(): boolean {
+  return pila.length > 0;
+}
+
 interface Props {
   titulo: string;
   onCerrar: () => void;
