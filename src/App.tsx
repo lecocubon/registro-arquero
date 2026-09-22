@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import { useLiveQuery } from 'dexie-react-hooks';
-import { Avisos } from './components/Avisos';
+import { Avisos, avisar } from './components/Avisos';
 import { BarraDescanso } from './components/BarraDescanso';
 import { BarraPestanas, type Pestana } from './components/BarraPestanas';
 import { db } from './db/db';
@@ -15,6 +15,9 @@ import { PantallaHoy } from './screens/PantallaHoy';
 import { PantallaMedidas } from './screens/PantallaMedidas';
 import { PantallaPrograma } from './screens/PantallaPrograma';
 import { PantallaProgreso } from './screens/PantallaProgreso';
+
+/** Tiempo para el segundo "atras" que minimiza la app. */
+const VENTANA_SALIR_MS = 2000;
 
 export default function App() {
   const { programa } = useArquero();
@@ -33,7 +36,8 @@ export default function App() {
   usePantallaActiva(dia !== null || descanso !== null);
 
   // Atras de Android: cierra la capa abierta, sale del dia de entrenamiento,
-  // vuelve a Hoy y recien ahi deja que la app se minimice.
+  // vuelve a Hoy y, en Hoy, pide un segundo toque antes de minimizar.
+  const ultimoAtras = useRef(0);
   useBotonAtras(() => {
     if (hayCapas()) {
       window.history.back();
@@ -49,7 +53,11 @@ export default function App() {
       window.scrollTo(0, 0);
       return true;
     }
-    return false;
+    const ahora = Date.now();
+    if (ahora - ultimoAtras.current < VENTANA_SALIR_MS) return false;
+    ultimoAtras.current = ahora;
+    avisar('Toca atrás otra vez para salir');
+    return true;
   });
 
   // La cabecera de la sesion se pega justo debajo de la barra superior.
