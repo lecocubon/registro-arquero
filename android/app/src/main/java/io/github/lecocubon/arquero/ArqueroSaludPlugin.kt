@@ -1,6 +1,8 @@
 package io.github.lecocubon.arquero
 
+import android.content.ActivityNotFoundException
 import android.content.Intent
+import android.os.Build
 import androidx.activity.result.ActivityResult
 import androidx.health.connect.client.HealthConnectClient
 import androidx.health.connect.client.PermissionController
@@ -96,8 +98,21 @@ class ArqueroSaludPlugin : Plugin() {
 
     @PluginMethod
     fun abrirAjustes(call: PluginCall) {
-        activity.startActivity(Intent(HealthConnectClient.ACTION_HEALTH_CONNECT_SETTINGS))
-        call.resolve()
+        // En Android 14+ Health Connect es parte del sistema y la accion de androidx no existe.
+        val acciones = listOfNotNull(
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE) "android.health.connect.action.HEALTH_HOME_SETTINGS" else null,
+            HealthConnectClient.ACTION_HEALTH_CONNECT_SETTINGS,
+        )
+        for (accion in acciones) {
+            try {
+                activity.startActivity(Intent(accion))
+                call.resolve()
+                return
+            } catch (_: ActivityNotFoundException) {
+                // se prueba la siguiente
+            }
+        }
+        call.reject("No se pudo abrir Health Connect")
     }
 
     @PluginMethod

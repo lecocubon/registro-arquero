@@ -62,8 +62,8 @@ export function PanelReloj({ semana, sesiones }: { semana: number; sesiones: Reg
         ) : (
           <>
             <p className="mb-2 text-[13.5px] leading-relaxed text-ink2">
-              Samsung Health comparte con Health Connect lo que mide tu Galaxy Watch. Arquero lee peso, % de grasa,
-              pulso y sueño, y guarda tus sesiones como entrenamientos de fuerza.
+              Samsung Health comparte con Health Connect lo que mide tu reloj o pulsera. Arquero lee peso, % de
+              grasa, pulso y sueño, y guarda tus sesiones como entrenamientos de fuerza.
             </p>
             <ul className="mb-3 grid grid-cols-2 gap-x-3 gap-y-1 text-[13px]">
               {(Object.keys(NOMBRE_PERMISO) as PermisoSalud[]).map((p) => {
