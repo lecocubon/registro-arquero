@@ -1,6 +1,15 @@
 import { describe, expect, it } from 'vitest';
 import { PROGRAMA, ejercicioPorId, type Ejercicio } from '../data/programa';
-import { faseDe, limitarSemana, planSemana } from './periodizacion';
+import {
+  faseDe,
+  finMesociclo,
+  inicioMesociclo,
+  limitarSemana,
+  numeroMesociclo,
+  planSemana,
+  semanaRelativa,
+  semanasDelMesociclo,
+} from './periodizacion';
 
 const ej = (id: string): Ejercicio => {
   const e = ejercicioPorId(id);
@@ -10,19 +19,55 @@ const ej = (id: string): Ejercicio => {
 
 describe('faseDe', () => {
   it('mapea cada semana a su fase', () => {
-    expect(faseDe(1).nombre).toBe('Calibracion');
-    expect(faseDe(2).nombre).toBe('Calibracion');
+    expect(faseDe(1).nombre).toBe('Calibración');
+    expect(faseDe(2).nombre).toBe('Calibración');
     expect(faseDe(3).nombre).toBe('Carga');
     expect(faseDe(5).nombre).toBe('Carga');
-    expect(faseDe(6).nombre).toBe('Acumulacion');
+    expect(faseDe(6).nombre).toBe('Acumulación');
     expect(faseDe(8).nombre).toBe('Descarga y retest');
   });
 
   it('acota semanas fuera de rango', () => {
     expect(limitarSemana(0)).toBe(1);
     expect(limitarSemana(99)).toBe(PROGRAMA.semanas);
-    expect(faseDe(0).nombre).toBe('Calibracion');
+    expect(faseDe(0).nombre).toBe('Calibración');
     expect(faseDe(99).nombre).toBe('Descarga y retest');
+  });
+});
+
+describe('mesociclos', () => {
+  // Segundo mesociclo: el historial sigue en la semana 9, las fases vuelven a empezar.
+  const segundo = { ...PROGRAMA, mesociclo: 2, desde: 9 };
+
+  it('el primer mesociclo empieza en la semana 1', () => {
+    expect(inicioMesociclo(PROGRAMA)).toBe(1);
+    expect(finMesociclo(PROGRAMA)).toBe(8);
+    expect(numeroMesociclo(PROGRAMA)).toBe(1);
+  });
+
+  it('un programa sin datos de mesociclo se trata como el primero', () => {
+    const viejo = { ...PROGRAMA, mesociclo: undefined, desde: undefined };
+    expect(inicioMesociclo(viejo)).toBe(1);
+    expect(numeroMesociclo(viejo)).toBe(1);
+    expect(semanaRelativa(3, viejo)).toBe(3);
+  });
+
+  it('las semanas del segundo mesociclo van de la 9 a la 16', () => {
+    expect(semanasDelMesociclo(segundo)).toEqual([9, 10, 11, 12, 13, 14, 15, 16]);
+    expect(finMesociclo(segundo)).toBe(16);
+    expect(limitarSemana(17, segundo)).toBe(16);
+  });
+
+  it('las fases se repiten en cada mesociclo', () => {
+    expect(semanaRelativa(9, segundo)).toBe(1);
+    expect(faseDe(9, segundo).nombre).toBe('Calibración');
+    expect(faseDe(11, segundo).nombre).toBe('Carga');
+    expect(faseDe(16, segundo).nombre).toBe('Descarga y retest');
+  });
+
+  it('se puede volver a semanas de mesociclos anteriores para corregir datos', () => {
+    expect(limitarSemana(2, segundo)).toBe(2);
+    expect(semanaRelativa(2, segundo)).toBe(1);
   });
 });
 
@@ -73,6 +118,12 @@ describe('planSemana (semana, ejercicio) => series y RIR', () => {
     expect(planSemana(6, salto).series).toBe(4);
     expect(planSemana(7, salto).series).toBe(4);
     expect(planSemana(7, sentadilla).series).toBe(4); // el extra es solo para saltos
+  });
+
+  it('la movilidad no se recorta en la descarga', () => {
+    const gato = ej('gato-camello');
+    expect(planSemana(1, gato).series).toBe(2);
+    expect(planSemana(8, gato).series).toBe(2); // sin factor de descarga
   });
 
   it('no aplica RIR de fase a tiempo ni a salto', () => {

@@ -11,7 +11,7 @@ export interface SeriesMusculo {
 
 /**
  * Series de trabajo por grupo muscular en una semana: 1 al musculo principal
- * y 0,5 a cada secundario. Calentamientos y ejercicios de tiempo no suman.
+ * y 0,5 a cada secundario. Calentamientos, tiempo y movilidad no suman.
  */
 export function seriesPorMusculo(
   registros: RegistroSerie[],
@@ -23,7 +23,7 @@ export function seriesPorMusculo(
   for (const r of registros) {
     if (r.semana !== semana || !esSerieEfectiva(r)) continue;
     const e = catalogoPorId(r.ejercicioId, catalogo);
-    if (!e || e.tipo === 'tiempo') continue;
+    if (!e || e.tipo === 'tiempo' || e.tipo === 'movilidad') continue;
     sumar(e.musculo, 1);
     for (const s of e.secundarios) if (s !== e.musculo) sumar(s, PESO_SECUNDARIO);
   }

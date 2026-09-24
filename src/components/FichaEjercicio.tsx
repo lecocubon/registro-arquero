@@ -6,13 +6,14 @@ import { borrarFoto, guardarFoto, guardarNotaEjercicio, leerNotaEjercicio } from
 import { useArquero } from '../estado/arquero';
 import { redondear1 } from '../lib/e1rm';
 import { fechaCorta } from '../lib/numeros';
+import { inicioMesociclo } from '../lib/periodizacion';
 import { METRICAS, historialDe, metricaPorSemana, recordsDe, type Metrica } from '../lib/records';
 import { esCalentamiento } from '../lib/series';
 import { avisar } from './Avisos';
 import { BarrasSemana } from './BarrasSemana';
 import { Capa } from './Capa';
 import { FormEjercicioPropio } from './FormEjercicioPropio';
-import { ImagenEjercicio } from './ImagenEjercicio';
+import { FotosEjercicio } from './ImagenEjercicio';
 
 type Pestana = 'resumen' | 'historial' | 'tecnica';
 
@@ -73,7 +74,8 @@ export function FichaEjercicio({ ejercicioId, onCerrar }: { ejercicioId: string;
 
   const esCarga = ejercicio.tipo === 'carga';
   const records = recordsDe(series, ejercicioId);
-  const valores = metricaPorSemana(series, ejercicioId, metrica, programa.semanas);
+  const desdeSemana = inicioMesociclo(programa);
+  const valores = metricaPorSemana(series, ejercicioId, metrica, programa.semanas, desdeSemana);
   const maximo = Math.max(0, ...valores);
   const historial = historialDe(series, ejercicioId);
   const nombreSesion = (id: string) => programa.sesiones.find((s) => s.id === id)?.nombre ?? id;
@@ -102,7 +104,7 @@ export function FichaEjercicio({ ejercicioId, onCerrar }: { ejercicioId: string;
         ) : undefined
       }
     >
-      <ImagenEjercicio ejercicio={ejercicio} tamano="grande" />
+      <FotosEjercicio ejercicio={ejercicio} />
       <div className="mt-2 flex gap-2">
         <input
           ref={archivo}
@@ -194,7 +196,7 @@ export function FichaEjercicio({ ejercicioId, onCerrar }: { ejercicioId: string;
                     {redondear1(maximo)} kg
                     <span className="ml-2 font-sans text-[12px] font-normal text-ink3">mejor semana</span>
                   </div>
-                  <BarrasSemana valores={valores} maximo={maximo} />
+                  <BarrasSemana valores={valores} maximo={maximo} desde={desdeSemana} />
                 </>
               ) : (
                 <p className="py-3 text-[13.5px] text-ink3">Todavía no hay series con kg y reps.</p>

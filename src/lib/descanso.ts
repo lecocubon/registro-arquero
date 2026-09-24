@@ -8,10 +8,14 @@ export interface EstadoDescanso {
   ejercicioId: string;
 }
 
+/** Movilidad sin descanso configurado: se enlaza un ejercicio con otro. */
+const DESCANSO_MOVILIDAD = 0;
+
 export function descansoDe(ejercicio: Ejercicio, programa: Programa = PROGRAMA): number {
   if (ejercicio.descanso !== undefined) return ejercicio.descanso;
   if (ejercicio.principal) return programa.descansos.principal;
-  return programa.descansos[ejercicio.tipo];
+  // Un programa guardado antes de la movilidad no trae ese descanso.
+  return programa.descansos[ejercicio.tipo] ?? DESCANSO_MOVILIDAD;
 }
 
 export function nuevoDescanso(segundos: number, ejercicioId: string, ahora: number): EstadoDescanso {

@@ -53,6 +53,8 @@ export interface DescansosPorDefecto {
   carga: number;
   tiempo: number;
   salto: number;
+  /** Ausente en programas guardados antes del dia de movilidad. */
+  movilidad?: number;
 }
 
 interface SesionBase {
@@ -70,9 +72,18 @@ export interface SesionPlan extends SesionBase {
   ejercicios: Ejercicio[];
 }
 
-interface ProgramaBase {
-  nombre: string;
+/** Donde cae el mesociclo en el historial, que usa semanas absolutas. */
+export interface Mesociclo {
+  /** Semanas que dura un mesociclo. Las fases se definen sobre estas. */
   semanas: number;
+  /** Numero de mesociclo; sube al empezar uno nuevo. Ausente = 1. */
+  mesociclo?: number;
+  /** Semana absoluta en que empieza este mesociclo. Ausente = 1. */
+  desde?: number;
+}
+
+interface ProgramaBase extends Mesociclo {
+  nombre: string;
   /** Segundos de descanso cuando el ejercicio no define el suyo. */
   descansos: DescansosPorDefecto;
   fases: Fase[];
@@ -91,22 +102,24 @@ export interface Programa extends ProgramaBase {
 export const PROGRAMA_BASE: ProgramaDef = {
   nombre: 'Bajo los Tres Palos',
   semanas: 8,
-  descansos: { principal: 180, carga: 90, tiempo: 60, salto: 90 },
+  mesociclo: 1,
+  desde: 1,
+  descansos: { principal: 180, carga: 90, tiempo: 60, salto: 90, movilidad: 0 },
   fases: [
     {
-      nombre: 'Calibracion',
+      nombre: 'Calibración',
       semanas: [1, 2],
       rirPrincipal: 3,
-      nota: 'Principales a 3 RIR. Buscas tus cargas reales, no records.',
+      nota: 'Principales a 3 RIR. Buscas tus cargas reales, no récords.',
     },
     {
       nombre: 'Carga',
       semanas: [3, 5],
       rirPrincipal: 2,
-      nota: 'Principales a 2 RIR. Doble progresion activa.',
+      nota: 'Principales a 2 RIR. Doble progresión activa.',
     },
     {
-      nombre: 'Acumulacion',
+      nombre: 'Acumulación',
       semanas: [6, 7],
       rirPrincipal: 1,
       seriesExtra: { salto: 1 },
@@ -118,52 +131,68 @@ export const PROGRAMA_BASE: ProgramaDef = {
       rirTodos: 4,
       factorSeries: 0.6,
       seriesMinimas: 2,
-      nota: 'Misma carga, menos series, 4 RIR. Al final: bateria de medicion.',
+      nota: 'Misma carga, menos series, 4 RIR. Al final: batería de medición.',
     },
   ],
   sesiones: [
     {
       id: 'lunes',
       nombre: 'Lunes',
-      lugar: 'Casa',
-      foco: 'Tren superior, tronco y salto vertical',
+      lugar: 'Gimnasio · 07:00',
+      foco: 'Tren superior, tracción y salto vertical',
       ejercicios: [
         { id: 'salto-vertical-detenido', bloque: 'A', series: 3, reps: [5, 5], rirObjetivo: 0, incremento: 0 },
-        { id: 'dominadas', bloque: 'B1', series: 4, reps: [2, 4], rirObjetivo: 2, incremento: 2.5, principal: true },
-        { id: 'talones-una-pierna', bloque: 'B2', series: 4, reps: [10, 15], rirObjetivo: 2, incremento: 2, porLado: true },
-        { id: 'press-mancuernas', bloque: 'C1', series: 4, reps: [6, 8], rirObjetivo: 2, incremento: 2 },
-        { id: 'remo-unilateral', bloque: 'C2', series: 4, reps: [8, 10], rirObjetivo: 2, incremento: 2, porLado: true },
-        { id: 'press-hombro-pie', bloque: 'D1', series: 3, reps: [8, 10], rirObjetivo: 2, incremento: 2 },
+        { id: 'jalon-pecho', bloque: 'B1', series: 4, reps: [8, 10], rirObjetivo: 2, incremento: 5, principal: true },
+        { id: 'press-banca', bloque: 'B2', series: 4, reps: [5, 6], rirObjetivo: 2, incremento: 2.5, principal: true },
+        { id: 'remo-polea-sentado', bloque: 'C1', series: 3, reps: [10, 12], rirObjetivo: 2, incremento: 5 },
+        { id: 'press-hombro-maquina', bloque: 'C2', series: 3, reps: [8, 10], rirObjetivo: 2, incremento: 2.5 },
+        { id: 'face-pull', bloque: 'D1', series: 3, reps: [12, 15], rirObjetivo: 2, incremento: 2.5 },
         { id: 'plancha-lateral', bloque: 'D2', series: 3, reps: [25, 40], rirObjetivo: 0, incremento: 0, porLado: true },
       ],
     },
     {
       id: 'martes',
-      nombre: 'Martes',
+      nombre: 'Miércoles',
       lugar: 'Gimnasio · 07:00',
       foco: 'Fuerza de tren inferior',
       ejercicios: [
         { id: 'salto-contramovimiento', bloque: 'A', series: 3, reps: [4, 4], rirObjetivo: 0, incremento: 0 },
         { id: 'sentadilla-barra', bloque: 'B', series: 4, reps: [5, 6], rirObjetivo: 2, incremento: 5, principal: true },
-        { id: 'press-banca', bloque: 'C1', series: 4, reps: [5, 6], rirObjetivo: 2, incremento: 2.5, principal: true },
+        { id: 'prensa', bloque: 'C1', series: 3, reps: [8, 10], rirObjetivo: 2, incremento: 10 },
         { id: 'curl-femoral', bloque: 'C2', series: 4, reps: [8, 12], rirObjetivo: 2, incremento: 5 },
         { id: 'peso-muerto-rumano', bloque: 'D1', series: 3, reps: [6, 8], rirObjetivo: 3, incremento: 5, rirFijo: 3 },
-        { id: 'face-pull', bloque: 'D2', series: 3, reps: [12, 15], rirObjetivo: 2, incremento: 2.5 },
+        { id: 'abductor-maquina', bloque: 'D2', series: 3, reps: [12, 15], rirObjetivo: 2, incremento: 5 },
       ],
     },
     {
       id: 'jueves',
-      nombre: 'Jueves',
+      nombre: 'Viernes',
       lugar: 'Gimnasio · 07:00',
-      foco: 'Potencia lateral, unilateral y traccion',
+      foco: 'Potencia lateral, unilateral y cadena posterior',
       ejercicios: [
         { id: 'salto-lateral-una-pierna', bloque: 'A', series: 3, reps: [3, 3], rirObjetivo: 0, incremento: 0, porLado: true },
         { id: 'bulgara', bloque: 'B', series: 3, reps: [8, 8], rirObjetivo: 3, incremento: 2, rirFijo: 3, porLado: true, descanso: 120 },
         { id: 'empuje-cadera', bloque: 'C1', series: 3, reps: [8, 10], rirObjetivo: 2, incremento: 5 },
-        { id: 'jalon-pecho', bloque: 'C2', series: 4, reps: [8, 10], rirObjetivo: 2, incremento: 5 },
-        { id: 'press-inclinado', bloque: 'D1', series: 3, reps: [8, 10], rirObjetivo: 2, incremento: 2 },
-        { id: 'talones-sentado', bloque: 'D2', series: 3, reps: [12, 15], rirObjetivo: 2, incremento: 5 },
-        { id: 'core-antiextension', bloque: 'E', series: 3, reps: [8, 10], rirObjetivo: 2, incremento: 0 },
+        { id: 'press-inclinado', bloque: 'C2', series: 3, reps: [8, 10], rirObjetivo: 2, incremento: 2 },
+        { id: 'talones-de-pie', bloque: 'D1', series: 3, reps: [12, 15], rirObjetivo: 2, incremento: 5 },
+        { id: 'core-antiextension', bloque: 'D2', series: 3, reps: [8, 10], rirObjetivo: 2, incremento: 0 },
+      ],
+    },
+    {
+      id: 'movilidad',
+      nombre: 'Movilidad',
+      lugar: 'Casa · colchoneta',
+      foco: 'Movilidad y respiración, sin peso',
+      ejercicios: [
+        { id: 'respiracion-diafragmatica', bloque: 'A', series: 2, reps: [60, 60], rirObjetivo: 0, incremento: 0, descanso: 0 },
+        { id: 'gato-camello', bloque: 'B1', series: 2, reps: [10, 10], rirObjetivo: 0, incremento: 0 },
+        { id: 'rotacion-columna-sentado', bloque: 'B2', series: 2, reps: [8, 8], rirObjetivo: 0, incremento: 0, porLado: true },
+        { id: 'bascula-pelvica-puente', bloque: 'C1', series: 2, reps: [10, 10], rirObjetivo: 0, incremento: 0 },
+        { id: 'isquios-90-90', bloque: 'C2', series: 2, reps: [10, 10], rirObjetivo: 0, incremento: 0, porLado: true },
+        { id: 'flexor-cadera-rodillas', bloque: 'D1', series: 2, reps: [30, 30], rirObjetivo: 0, incremento: 0, porLado: true, descanso: 0 },
+        { id: 'aductor-tumbado-lado', bloque: 'D2', series: 2, reps: [30, 30], rirObjetivo: 0, incremento: 0, porLado: true, descanso: 0 },
+        { id: 'superman-suelo', bloque: 'E1', series: 2, reps: [10, 10], rirObjetivo: 0, incremento: 0 },
+        { id: 'postura-nino', bloque: 'E2', series: 1, reps: [40, 40], rirObjetivo: 0, incremento: 0, descanso: 0 },
       ],
     },
   ],

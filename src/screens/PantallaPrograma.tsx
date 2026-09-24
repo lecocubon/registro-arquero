@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { catalogoPorId } from '../data/biblioteca';
 import type { ProgramaDef } from '../data/programa';
 import type { RegistroSerie } from '../db/db';
-import { guardarPrograma, restaurarPrograma } from '../db/repo';
+import { fijarSemana, guardarPrograma, restaurarPrograma } from '../db/repo';
 import { useArquero } from '../estado/arquero';
 import { avisar } from '../components/Avisos';
 import { Capa } from '../components/Capa';
@@ -11,6 +11,7 @@ import { FichaEjercicio } from '../components/FichaEjercicio';
 import { FormEjercicioPropio } from '../components/FormEjercicioPropio';
 import { ListaEjercicios } from '../components/ListaEjercicios';
 import { descansoDe, formatoReloj } from '../lib/descanso';
+import { finMesociclo, inicioMesociclo, numeroMesociclo } from '../lib/periodizacion';
 import {
   actualizarDatosPrograma,
   actualizarEjercicio,
@@ -24,6 +25,7 @@ import {
   eliminarSesion,
   moverEjercicio,
   moverSesion,
+  nuevoMesociclo,
   quitarEjercicio,
   quitarFase,
   revisarPrograma,
@@ -353,12 +355,13 @@ function EditorFases({ onCerrar }: { onCerrar: () => void }) {
             ['carga', 'Accesorios'],
             ['tiempo', 'Tiempo'],
             ['salto', 'Saltos'],
+            ['movilidad', 'Movilidad'],
           ] as const
         ).map(([clave, nombre]) => (
           <div key={clave} className="flex">
             <CampoNumero
               etiqueta={nombre}
-              valor={d.descansos[clave]}
+              valor={d.descansos[clave] ?? 0}
               onCambio={(v) => v !== null && guardar(() => actualizarDatosPrograma(d, { descansos: { ...d.descansos, [clave]: v } }))}
             />
           </div>
@@ -427,6 +430,32 @@ export function PantallaPrograma({ todas }: { todas: RegistroSerie[] }) {
   const [capa, setCapa] = useState<null | 'fases' | 'nuevo-ejercicio' | { sesion: string } | { ficha: string }>(null);
   const avisos = revisarPrograma(definicion);
 
+  /**
+   * Cierra el bloque actual y abre el siguiente. Las semanas del historial no
+   * se reinician: siguen subiendo, asi que los dos mesociclos se pueden
+   * comparar y nada se sobreescribe.
+   */
+  const empezarMesociclo = () => {
+    const numero = numeroMesociclo(programa);
+    const proxima = finMesociclo(programa) + 1;
+    const aviso =
+      `¿Cerrar el mesociclo ${numero} (semanas ${inicioMesociclo(programa)} a ${finMesociclo(programa)}) y empezar el ${numero + 1}?
+
+` +
+      `Lo registrado queda tal cual y el programa no cambia: el nuevo bloque parte en la semana ${proxima} y vuelve a la primera fase.`;
+    if (!window.confirm(aviso)) return;
+    let desde = proxima;
+    if (
+      guardar(() => {
+        const r = nuevoMesociclo(definicion);
+        desde = r.desde;
+        return r.programa;
+      })
+    ) {
+      void fijarSemana(desde).then(() => avisar(`Mesociclo ${numero + 1} · semana ${desde}`));
+    }
+  };
+
   return (
     <>
       <div role="tablist" className="mb-4 grid grid-cols-2 gap-1 rounded-xl bg-surface2 p-1">
@@ -463,8 +492,15 @@ export function PantallaPrograma({ todas }: { todas: RegistroSerie[] }) {
             <p className="mt-0.5 text-[13px] text-ink3">
               {programa.semanas} semanas · {programa.fases.length} fases · {programa.sesiones.length} sesiones
             </p>
+            <p className="mt-0.5 text-[13px] text-ink3">
+              Mesociclo {numeroMesociclo(programa)} · semanas {inicioMesociclo(programa)} a {finMesociclo(programa)} del
+              historial
+            </p>
             <button type="button" onClick={() => setCapa('fases')} className={`${BOTON_SEC} mt-3 w-full`}>
               Fases, semanas y descansos
+            </button>
+            <button type="button" onClick={empezarMesociclo} className={`${BOTON_SEC} mt-2 w-full`}>
+              Empezar mesociclo {numeroMesociclo(programa) + 1}
             </button>
           </section>
 

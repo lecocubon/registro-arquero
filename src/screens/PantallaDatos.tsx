@@ -1,8 +1,9 @@
-import { useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { db, type Medicion, type RegistroSerie, type RegistroSesion } from '../db/db';
 import { fijarAlturaCm, fijarSemana, leerAlturaCm, leerNotasEjercicios } from '../db/repo';
 import { useArquero } from '../estado/arquero';
 import { PanelReloj } from '../components/Reloj';
+import { avisosPermitidos, pedirAvisos } from '../lib/avisoDescanso';
 import { useInstalacion } from '../lib/instalacion';
 import { esAppAndroid } from '../lib/salud';
 import {
@@ -67,6 +68,59 @@ function sello(): string {
 
 const BOTON =
   'h-[52px] w-full rounded-[11px] border border-line bg-surface font-display text-[15px] font-bold tracking-[0.1em] text-ink uppercase';
+const ETIQUETA = 'mb-2.5 font-display text-[13px] font-bold tracking-[0.15em] text-ink3 uppercase';
+
+/** Permiso para que el fin del descanso suene con la pantalla apagada. */
+function PanelAvisos() {
+  const [permitido, setPermitido] = useState<boolean | null>(null);
+  const [rechazado, setRechazado] = useState(false);
+
+  useEffect(() => {
+    let vigente = true;
+    void avisosPermitidos().then((v) => vigente && setPermitido(v));
+    return () => {
+      vigente = false;
+    };
+  }, []);
+
+  if (!esAppAndroid()) return null;
+
+  return (
+    <section className="mb-6">
+      <p className={ETIQUETA}>Aviso de descanso</p>
+      <div className="rounded-xl border border-line bg-surface px-3.5 py-3">
+        <p className="mb-2 text-[13.5px] leading-relaxed text-ink2">
+          Con el permiso de notificaciones, el fin del descanso suena y vibra aunque tengas la pantalla apagada o el
+          teléfono en el bolsillo.
+        </p>
+        {permitido === true ? (
+          <p className="text-[13px] font-semibold text-accent-ink">✓ Avisos activados</p>
+        ) : (
+          <>
+            <button
+              type="button"
+              onClick={() =>
+                void pedirAvisos().then((ok) => {
+                  setPermitido(ok);
+                  setRechazado(!ok);
+                })
+              }
+              className="h-11 w-full rounded-[10px] border border-line bg-surface text-[14px] font-semibold text-ink2"
+            >
+              Permitir avisos
+            </button>
+            {rechazado && (
+              <p className="mt-2 text-[12.5px] leading-snug text-ink3">
+                Si no aparece el permiso, actívalo en Ajustes del teléfono → Aplicaciones → Arquero →
+                Notificaciones.
+              </p>
+            )}
+          </>
+        )}
+      </div>
+    </section>
+  );
+}
 
 export function PantallaDatos({ semana, todas, sesiones, mediciones }: Props) {
   const { instalada, listaSinConexion } = useInstalacion();
@@ -151,6 +205,8 @@ export function PantallaDatos({ semana, todas, sesiones, mediciones }: Props) {
             : 'Preparando la copia offline. Deja la app abierta unos segundos con conexion.'}
         </p>
       )}
+
+      <PanelAvisos />
 
       <PanelReloj semana={semana} sesiones={sesiones} />
 

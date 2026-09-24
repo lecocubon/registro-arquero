@@ -1,3 +1,4 @@
+import { existsSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
 import { BIBLIOTECA, catalogoPorId, filtrarBiblioteca, normalizarTexto } from '../data/biblioteca';
 import { PROGRAMA, PROGRAMA_BASE, ejerciciosDelDia, resolverPrograma } from '../data/programa';
@@ -19,6 +20,15 @@ describe('biblioteca', () => {
       expect(e.equipo.length, e.id).toBeGreaterThan(0);
       expect(e.indicaciones.length, e.id).toBeGreaterThan(0);
       expect(e.secundarios, e.id).not.toContain(e.musculo);
+    }
+  });
+
+  it('cada ejercicio de la base trae sus dos fotos, inicio y final', () => {
+    for (const e of BIBLIOTECA) {
+      if (!e.fuenteImagen) continue;
+      for (const sufijo of ['', '-fin']) {
+        expect(existsSync(`public/ejercicios/${e.id}${sufijo}.webp`), `${e.id}${sufijo}`).toBe(true);
+      }
     }
   });
 

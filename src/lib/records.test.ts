@@ -76,6 +76,11 @@ describe('récords personales', () => {
     expect(metricaPorSemana(historial, 'sentadilla-barra', 'volumenSesion', 3)).toEqual([720, 325, 0]);
   });
 
+  it('en el segundo mesociclo las semanas se cuentan desde su inicio', () => {
+    const nuevas = [s({ semana: 9, kg: 80, reps: 5, rir: 2 }), s({ semana: 11, kg: 85, reps: 5, rir: 2 })];
+    expect(metricaPorSemana([...historial, ...nuevas], 'sentadilla-barra', 'peso', 4, 9)).toEqual([80, 0, 85, 0]);
+  });
+
   it('el historial va de lo más reciente a lo más antiguo, calentamientos primero', () => {
     const h = historialDe(historial, 'sentadilla-barra');
     expect(h.map((x) => x.semana)).toEqual([2, 1]);

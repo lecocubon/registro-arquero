@@ -6,6 +6,7 @@ import type { RegistroSerie } from '../db/db';
 import { useArquero } from '../estado/arquero';
 import { redondear1 } from '../lib/e1rm';
 import { seriesPorMusculo } from '../lib/musculos';
+import { inicioMesociclo } from '../lib/periodizacion';
 import { progresoPorEjercicio } from '../lib/progreso';
 
 const ETIQUETA = 'mb-2.5 font-display text-[13px] font-bold tracking-[0.15em] text-ink3 uppercase';
@@ -107,7 +108,7 @@ export function PantallaProgreso({ semana, todas }: { semana: number; todas: Reg
                   )}
                 </span>
               </div>
-              <BarrasSemana valores={f.porSemana} maximo={f.maximo} />
+              <BarrasSemana valores={f.porSemana} maximo={f.maximo} desde={inicioMesociclo(programa)} />
             </button>
           ))}
           <p className="pt-2 text-[13px] leading-relaxed text-ink3">

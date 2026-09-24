@@ -1,6 +1,7 @@
 import type { EjercicioCatalogo } from '../data/biblioteca';
 import type { EjercicioPlan, Fase, ProgramaDef, SesionDef } from '../data/programa';
 import { normalizarTexto } from '../data/biblioteca';
+import { finMesociclo, numeroMesociclo } from './periodizacion';
 
 /**
  * Operaciones puras del editor: cada una recibe el programa y devuelve uno
@@ -61,6 +62,19 @@ export function actualizarDatosPrograma(
     }
   }
   return nuevo;
+}
+
+/**
+ * Cierra el mesociclo en curso y abre el siguiente. El historial guarda
+ * semanas absolutas, que siguen subiendo: nada se mezcla ni se pierde, y el
+ * programa (rutinas, fases, cargas de referencia) queda igual.
+ */
+export function nuevoMesociclo(def: ProgramaDef): { programa: ProgramaDef; desde: number } {
+  const nuevo = clonar(def);
+  const desde = finMesociclo(def) + 1;
+  nuevo.mesociclo = numeroMesociclo(def) + 1;
+  nuevo.desde = desde;
+  return { programa: nuevo, desde };
 }
 
 // ---------- sesiones ----------
@@ -127,6 +141,7 @@ export function siguienteBloque(ejercicios: EjercicioPlan[]): string {
 export function planPorDefecto(e: EjercicioCatalogo, bloque: string): EjercicioPlan {
   if (e.tipo === 'tiempo') return { id: e.id, bloque, series: 3, reps: [20, 40], rirObjetivo: 0, incremento: 0 };
   if (e.tipo === 'salto') return { id: e.id, bloque, series: 3, reps: [3, 5], rirObjetivo: 0, incremento: 0 };
+  if (e.tipo === 'movilidad') return { id: e.id, bloque, series: 2, reps: [8, 10], rirObjetivo: 0, incremento: 0 };
   const barra = e.equipo.includes('barra') || e.equipo.includes('trap-bar');
   return { id: e.id, bloque, series: 3, reps: [8, 10], rirObjetivo: 2, incremento: barra ? 2.5 : 2 };
 }

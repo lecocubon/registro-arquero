@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { catalogoPorId } from '../data/biblioteca';
+import { catalogoPorId, soloSeMarca } from '../data/biblioteca';
 import type { Ejercicio } from '../data/programa';
 import { db, idSerie, type RegistroSerie } from '../db/db';
 import {
@@ -203,7 +203,7 @@ export function TarjetaEjercicio({ semana, sesionId, ejercicio, registros, todas
         {unidad}
         {lado}
         {ejercicio.tipo === 'carga' ? ` · RIR ${plan.rirObjetivo}` : ''}
-        {` · ⏱ ${formatoReloj(descanso * 1000)}`}
+        {descanso > 0 ? ` · ⏱ ${formatoReloj(descanso * 1000)}` : ''}
       </p>
       <div className="flex flex-wrap items-center gap-x-1 px-3.5 pt-1 pb-2 pl-[39px]">
         <button type="button" onClick={() => setCapa('cambiar')} className={ACCION}>
@@ -298,7 +298,7 @@ export function TarjetaEjercicio({ semana, sesionId, ejercicio, registros, todas
                 {serie}
               </span>
 
-              {ejercicio.tipo === 'salto' ? (
+              {soloSeMarca(ejercicio.tipo) ? (
                 <button
                   type="button"
                   aria-pressed={hecha}

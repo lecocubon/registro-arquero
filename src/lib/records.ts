@@ -101,15 +101,17 @@ export function recordsNuevos(todas: RegistroSerie[], serie: RegistroSerie): Tip
   return nuevos;
 }
 
+/** Un valor por semana del mesociclo; `desde` es su primera semana absoluta. */
 export function metricaPorSemana(
   series: RegistroSerie[],
   ejercicioId: string,
   metrica: Metrica,
   semanas: number,
+  desde = 1,
 ): number[] {
   const valores = new Array<number>(semanas).fill(0);
   const poner = (semana: number, v: number) => {
-    const i = semana - 1;
+    const i = semana - desde;
     if (i >= 0 && i < semanas && v > (valores[i] ?? 0)) valores[i] = v;
   };
   if (metrica === 'volumenSesion') {

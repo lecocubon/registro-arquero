@@ -10,6 +10,7 @@ import {
   duplicarSesion,
   eliminarSesion,
   moverEjercicio,
+  nuevoMesociclo,
   quitarFase,
   revisarPrograma,
   siguienteBloque,
@@ -25,15 +26,15 @@ const cat = (id: string): EjercicioCatalogo => {
 describe('editor de programa', () => {
   it('no modifica el programa original', () => {
     const copia = structuredClone(PROGRAMA_BASE);
-    agregarEjercicio(PROGRAMA_BASE, 'martes', cat('prensa'));
-    moverEjercicio(PROGRAMA_BASE, 'martes', 'press-banca', -1);
+    agregarEjercicio(PROGRAMA_BASE, 'martes', cat('extension-cuadriceps'));
+    moverEjercicio(PROGRAMA_BASE, 'martes', 'sentadilla-barra', -1);
     expect(PROGRAMA_BASE).toEqual(copia);
   });
 
   it('agrega un ejercicio con prescripción por defecto y el siguiente bloque', () => {
-    const p = agregarEjercicio(PROGRAMA_BASE, 'martes', cat('prensa'));
+    const p = agregarEjercicio(PROGRAMA_BASE, 'martes', cat('extension-cuadriceps'));
     const martes = p.sesiones.find((s) => s.id === 'martes');
-    expect(martes?.ejercicios.at(-1)).toMatchObject({ id: 'prensa', bloque: 'E', series: 3, reps: [8, 10], rirObjetivo: 2 });
+    expect(martes?.ejercicios.at(-1)).toMatchObject({ id: 'extension-cuadriceps', bloque: 'E', series: 3, reps: [8, 10], rirObjetivo: 2 });
   });
 
   it('no permite repetir un ejercicio en la misma sesión', () => {
@@ -46,8 +47,8 @@ describe('editor de programa', () => {
   });
 
   it('acota valores sin impedir escribir', () => {
-    const p = actualizarEjercicio(PROGRAMA_BASE, 'martes', 'press-banca', { series: 99, reps: [12, 1], rirObjetivo: -3, descanso: 9 });
-    const e = p.sesiones.find((s) => s.id === 'martes')?.ejercicios.find((x) => x.id === 'press-banca');
+    const p = actualizarEjercicio(PROGRAMA_BASE, 'lunes', 'press-banca', { series: 99, reps: [12, 1], rirObjetivo: -3, descanso: 9 });
+    const e = p.sesiones.find((s) => s.id === 'lunes')?.ejercicios.find((x) => x.id === 'press-banca');
     expect(e?.series).toBe(20);
     expect(e?.reps).toEqual([12, 1]); // mínimo sobre máximo: se avisa, no se corrige al vuelo
     expect(e?.rirObjetivo).toBe(0);
@@ -81,9 +82,29 @@ describe('editor de programa', () => {
 
   it('elimina sesiones y avisa si una queda vacía', () => {
     const p = eliminarSesion(PROGRAMA_BASE, 'lunes');
-    expect(p.sesiones.map((s) => s.id)).toEqual(['martes', 'jueves']);
+    expect(p.sesiones.map((s) => s.id)).toEqual(['martes', 'jueves', 'movilidad']);
     const vacia = agregarSesion(PROGRAMA_BASE, 'Sábado').programa;
     expect(revisarPrograma(vacia)).toContain('La sesión Sábado no tiene ejercicios.');
+  });
+
+  it('el mesociclo nuevo sigue las semanas del anterior', () => {
+    const uno = nuevoMesociclo(PROGRAMA_BASE);
+    expect(uno.desde).toBe(9);
+    expect(uno.programa.mesociclo).toBe(2);
+    expect(uno.programa.desde).toBe(9);
+    // Las rutinas y las fases no se tocan.
+    expect(uno.programa.sesiones).toEqual(PROGRAMA_BASE.sesiones);
+    expect(uno.programa.fases).toEqual(PROGRAMA_BASE.fases);
+    const dos = nuevoMesociclo(uno.programa);
+    expect(dos.desde).toBe(17);
+    expect(dos.programa.mesociclo).toBe(3);
+  });
+
+  it('un programa de fábrica sin mesociclo arranca el segundo en la semana siguiente', () => {
+    const { mesociclo: _m, desde: _d, ...viejo } = PROGRAMA_BASE;
+    const r = nuevoMesociclo(viejo);
+    expect(r.desde).toBe(PROGRAMA_BASE.semanas + 1);
+    expect(r.programa.mesociclo).toBe(2);
   });
 
   it('las fases avisan semanas sin cubrir y no se quedan sin ninguna', () => {

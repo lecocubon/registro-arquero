@@ -3,17 +3,24 @@ import { nombreMusculo, type EjercicioCatalogo } from '../data/biblioteca';
 import { db } from '../db/db';
 import { useArquero } from '../estado/arquero';
 
+/** Cuadro de la biblioteca: la posicion final es otro archivo, con sufijo. */
+type Cuadro = 'inicio' | 'fin';
+
 interface Props {
   ejercicio: EjercicioCatalogo | undefined;
   tamano: 'mini' | 'grande';
+  cuadro?: Cuadro;
+  /** Se llama si la foto de la biblioteca no carga. */
+  onFallo?: () => void;
 }
 
 /** Foto propia si existe; si no, la de la biblioteca; si no, un marcador con el musculo. */
-export function ImagenEjercicio({ ejercicio, tamano }: Props) {
+export function ImagenEjercicio({ ejercicio, tamano, cuadro = 'inicio', onFallo }: Props) {
   const { conFoto } = useArquero();
   const [urlPropia, setUrlPropia] = useState<string | null>(null);
   const [falloFabrica, setFalloFabrica] = useState(false);
-  const tieneFoto = ejercicio ? conFoto.has(ejercicio.id) : false;
+  // La foto propia reemplaza la posicion inicial; para la final no hay.
+  const tieneFoto = ejercicio ? conFoto.has(ejercicio.id) && cuadro === 'inicio' : false;
 
   useEffect(() => {
     if (!ejercicio || !tieneFoto) {
@@ -33,8 +40,11 @@ export function ImagenEjercicio({ ejercicio, tamano }: Props) {
     };
   }, [ejercicio, tieneFoto]);
 
+  const sufijo = cuadro === 'fin' ? '-fin' : '';
   const fabrica =
-    ejercicio?.fuenteImagen && !falloFabrica ? `${import.meta.env.BASE_URL}ejercicios/${ejercicio.id}.webp` : null;
+    ejercicio?.fuenteImagen && !falloFabrica
+      ? `${import.meta.env.BASE_URL}ejercicios/${ejercicio.id}${sufijo}.webp`
+      : null;
   const src = urlPropia ?? fabrica;
   const clase =
     tamano === 'mini'
@@ -60,8 +70,40 @@ export function ImagenEjercicio({ ejercicio, tamano }: Props) {
       alt=""
       loading="lazy"
       decoding="async"
-      onError={() => setFalloFabrica(true)}
+      onError={() => {
+        setFalloFabrica(true);
+        onFallo?.();
+      }}
       className={`${clase} bg-white object-cover`}
     />
+  );
+}
+
+const PIE = 'mt-1 text-center text-[10.5px] tracking-[0.08em] text-ink3 uppercase';
+
+/**
+ * Las dos posiciones del movimiento, inicio y final. Con una sola foto (propia
+ * o ejercicio sin posicion final en la base) se muestra solo una, grande.
+ */
+export function FotosEjercicio({ ejercicio }: { ejercicio: EjercicioCatalogo | undefined }) {
+  const { conFoto } = useArquero();
+  const [sinFinal, setSinFinal] = useState(false);
+  const propia = ejercicio ? conFoto.has(ejercicio.id) : false;
+
+  if (propia || sinFinal || !ejercicio?.fuenteImagen) {
+    return <ImagenEjercicio ejercicio={ejercicio} tamano="grande" />;
+  }
+
+  return (
+    <div className="grid grid-cols-2 gap-2">
+      <div>
+        <ImagenEjercicio ejercicio={ejercicio} tamano="grande" />
+        <p className={PIE}>Inicio</p>
+      </div>
+      <div>
+        <ImagenEjercicio ejercicio={ejercicio} tamano="grande" cuadro="fin" onFallo={() => setSinFinal(true)} />
+        <p className={PIE}>Final</p>
+      </div>
+    </div>
   );
 }

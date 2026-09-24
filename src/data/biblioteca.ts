@@ -1,6 +1,6 @@
 import datos from './biblioteca.json';
 
-export type TipoEjercicio = 'carga' | 'tiempo' | 'salto';
+export type TipoEjercicio = 'carga' | 'tiempo' | 'salto' | 'movilidad';
 
 export type Musculo =
   | 'pecho'
@@ -96,7 +96,13 @@ export const TIPOS: { id: TipoEjercicio; nombre: string; detalle: string }[] = [
   { id: 'carga', nombre: 'Carga', detalle: 'kg, reps y RIR' },
   { id: 'tiempo', nombre: 'Tiempo', detalle: 'segundos' },
   { id: 'salto', nombre: 'Salto', detalle: 'solo marcar hecho' },
+  { id: 'movilidad', nombre: 'Movilidad', detalle: 'solo marcar hecho' },
 ];
+
+/** Tipos sin numeros que anotar: la serie solo se marca. */
+export function soloSeMarca(tipo: TipoEjercicio): boolean {
+  return tipo === 'salto' || tipo === 'movilidad';
+}
 
 export const BIBLIOTECA = datos as EjercicioCatalogo[];
 

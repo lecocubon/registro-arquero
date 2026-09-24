@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { ejercicioPorId, type Ejercicio } from '../data/programa';
+import { PROGRAMA, ejercicioPorId, type Ejercicio } from '../data/programa';
 import type { RegistroSerie } from '../db/db';
 import { progresoPorEjercicio } from './progreso';
 import {
@@ -183,5 +183,21 @@ describe('progreso con calentamientos', () => {
       serie({ semana: 1, serie: 1, kg: 60, reps: 6, rir: 3 }),
     ]);
     expect(filas[0]?.porSemana[0]).toBeCloseTo(60 * (1 + 9 / 30), 10);
+  });
+
+  it('el grafico del segundo mesociclo parte en su primera semana', () => {
+    const historial = [
+      serie({ semana: 2, serie: 1, kg: 60, reps: 5, rir: 2 }), // mesociclo anterior
+      serie({ semana: 9, serie: 1, kg: 70, reps: 5, rir: 2 }),
+      serie({ semana: 10, serie: 1, kg: 75, reps: 5, rir: 2 }),
+    ];
+    const segundo = { ...PROGRAMA, mesociclo: 2, desde: 9 };
+    const fila = progresoPorEjercicio(historial, segundo)[0];
+    expect(fila?.porSemana).toHaveLength(8);
+    expect(fila?.porSemana[0]).toBeGreaterThan(0); // semana 9
+    expect(fila?.porSemana[1]).toBeGreaterThan(0); // semana 10
+    // Lo del mesociclo anterior no se cuela en el grafico ni en el porcentaje.
+    expect(fila?.porSemana.slice(2).every((v) => v === 0)).toBe(true);
+    expect(fila?.maximo).toBeCloseTo(75 * (1 + 7 / 30), 10);
   });
 });

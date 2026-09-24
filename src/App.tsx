@@ -9,7 +9,7 @@ import { useArquero } from './estado/arquero';
 import { hayCapas } from './components/Capa';
 import { useBotonAtras } from './lib/atras';
 import { usePantallaActiva } from './lib/dispositivo';
-import { faseDe, limitarSemana } from './lib/periodizacion';
+import { faseDe, inicioMesociclo, limitarSemana, numeroMesociclo, semanaRelativa } from './lib/periodizacion';
 import { PantallaDatos } from './screens/PantallaDatos';
 import { PantallaHoy } from './screens/PantallaHoy';
 import { PantallaMedidas } from './screens/PantallaMedidas';
@@ -73,6 +73,11 @@ export default function App() {
   }, []);
 
   const fase = faseDe(semana, programa);
+  // El historial usa semanas absolutas; el subtitulo ubica la semana dentro del mesociclo.
+  const subtitulo =
+    semana < inicioMesociclo(programa)
+      ? `Semana ${semana} · mesociclo anterior`
+      : `Mesociclo ${numeroMesociclo(programa)} · semana ${semanaRelativa(semana, programa)} de ${programa.semanas} · ${fase.nombre}`;
 
   const cambiarSemana = (delta: number) => {
     const nueva = limitarSemana(semana + delta, programa);
@@ -84,8 +89,8 @@ export default function App() {
       <header ref={cabecera} className="pad-top-safe sticky top-0 z-30 flex items-center gap-3 border-b border-line bg-surface px-3.5 pb-2.5">
         <h1 className="min-w-0 flex-1 truncate font-display text-[18px] leading-none font-bold tracking-[0.02em] uppercase">
           {programa.nombre}
-          <small className="mt-1 block font-sans text-[10.5px] font-normal tracking-[0.07em] text-ink3 uppercase">
-            Semana {semana} · {fase.nombre}
+          <small className="mt-1 block truncate font-sans text-[10.5px] font-normal tracking-[0.07em] text-ink3 uppercase">
+            {subtitulo}
           </small>
         </h1>
         <div className="flex items-center gap-0.5 rounded-full bg-surface2 p-[3px]">

@@ -2,11 +2,12 @@ import { BIBLIOTECA, catalogoPorId, type EjercicioCatalogo } from '../data/bibli
 import { PROGRAMA, ejercicioPorId, type Programa } from '../data/programa';
 import type { RegistroSerie } from '../db/db';
 import { e1rm, variacionPorcentual } from './e1rm';
+import { inicioMesociclo } from './periodizacion';
 
 export interface FilaProgreso {
   ejercicioId: string;
   nombre: string;
-  /** Mejor e1RM de cada semana; indice 0 = semana 1. 0 = sin datos. */
+  /** Mejor e1RM de cada semana del mesociclo; indice 0 = su primera semana. 0 = sin datos. */
   porSemana: number[];
   actual: number;
   maximo: number;
@@ -19,11 +20,12 @@ export function progresoPorEjercicio(
   catalogo: EjercicioCatalogo[] = BIBLIOTECA,
 ): FilaProgreso[] {
   const porEjercicio = new Map<string, number[]>();
+  const desde = inicioMesociclo(programa);
   for (const r of series) {
     if (r.tipo === 'calentamiento') continue;
     const valor = e1rm(r.kg, r.reps, r.rir);
     if (valor <= 0) continue;
-    const idx = r.semana - 1;
+    const idx = r.semana - desde;
     if (idx < 0 || idx >= programa.semanas) continue;
     let arr = porEjercicio.get(r.ejercicioId);
     if (!arr) {

@@ -1,3 +1,4 @@
+import { cancelarAvisoDescanso, programarAvisoDescanso } from '../lib/avisoDescanso';
 import {
   ajustarDescanso as calcularAjuste,
   nuevoDescanso,
@@ -182,26 +183,34 @@ export async function iniciarDescanso(segundos: number, ejercicioId: string): Pr
   if (segundos <= 0) return;
   const estado = nuevoDescanso(segundos, ejercicioId, Date.now());
   await db.ajustes.put({ clave: CLAVE_DESCANSO, valor: JSON.stringify(estado) });
+  // El aviso del sistema es lo unico que suena con la pantalla apagada.
+  void programarAvisoDescanso(estado.fin);
 }
 
 export async function sumarDescanso(deltaSegundos: number): Promise<void> {
-  await db.transaction('rw', db.ajustes, async () => {
+  const siguiente = await db.transaction('rw', db.ajustes, async () => {
     const actual = await leerDescanso();
-    if (!actual) return;
+    if (!actual) return null;
     const nuevo = calcularAjuste(actual, deltaSegundos, Date.now());
     if (nuevo) await db.ajustes.put({ clave: CLAVE_DESCANSO, valor: JSON.stringify(nuevo) });
     else await db.ajustes.delete(CLAVE_DESCANSO);
+    return nuevo;
   });
+  if (siguiente) void programarAvisoDescanso(siguiente.fin);
+  else void cancelarAvisoDescanso();
 }
 
 /** Si se pasa `fin`, solo borra ese descanso (no uno mas nuevo iniciado entremedio). */
 export async function terminarDescanso(fin?: number): Promise<void> {
-  await db.transaction('rw', db.ajustes, async () => {
+  const borrado = await db.transaction('rw', db.ajustes, async () => {
     const actual = await leerDescanso();
-    if (!actual) return;
-    if (fin !== undefined && actual.fin !== fin) return;
+    if (!actual) return false;
+    if (fin !== undefined && actual.fin !== fin) return false;
     await db.ajustes.delete(CLAVE_DESCANSO);
+    return true;
   });
+  // Omitir el descanso no debe dejar el aviso programado; si ya sono, no pasa nada.
+  if (borrado) void cancelarAvisoDescanso();
 }
 
 export async function guardarMedicion(m: Omit<Medicion, 'id'>): Promise<void> {
