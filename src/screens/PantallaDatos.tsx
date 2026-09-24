@@ -3,6 +3,7 @@ import { db, type Medicion, type RegistroSerie, type RegistroSesion } from '../d
 import { fijarAlturaCm, fijarSemana, leerAlturaCm, leerNotasEjercicios } from '../db/repo';
 import { useArquero } from '../estado/arquero';
 import { PanelReloj } from '../components/Reloj';
+import { exportarArchivo, guardarEnDocumentos } from '../lib/archivos';
 import { avisosPermitidos, pedirAvisos } from '../lib/avisoDescanso';
 import { useInstalacion } from '../lib/instalacion';
 import { esAppAndroid } from '../lib/salud';
@@ -19,34 +20,6 @@ interface Props {
   todas: RegistroSerie[];
   sesiones: RegistroSesion[];
   mediciones: Medicion[];
-}
-
-async function descargar(nombre: string, contenido: string, tipo: string) {
-  if (esAppAndroid()) {
-    // El WebView de Android ignora las descargas <a download>: se escribe el
-    // archivo en la cache y se abre el menu de compartir (Drive, Archivos...).
-    const [{ Directory, Encoding, Filesystem }, { Share }] = await Promise.all([
-      import('@capacitor/filesystem'),
-      import('@capacitor/share'),
-    ]);
-    const { uri } = await Filesystem.writeFile({
-      path: nombre,
-      data: contenido,
-      directory: Directory.Cache,
-      encoding: Encoding.UTF8,
-    });
-    await Share.share({ title: nombre, files: [uri], dialogTitle: 'Guardar respaldo de Arquero' });
-    return;
-  }
-  const blob = new Blob([contenido], { type: `${tipo};charset=utf-8` });
-  const url = URL.createObjectURL(blob);
-  const a = document.createElement('a');
-  a.href = url;
-  a.download = nombre;
-  document.body.appendChild(a);
-  a.click();
-  a.remove();
-  setTimeout(() => URL.revokeObjectURL(url), 2000);
 }
 
 function aDataUrl(b: Blob): Promise<string> {
@@ -68,6 +41,8 @@ function sello(): string {
 
 const BOTON =
   'h-[52px] w-full rounded-[11px] border border-line bg-surface font-display text-[15px] font-bold tracking-[0.1em] text-ink uppercase';
+const PRINCIPAL =
+  'h-[52px] w-full rounded-[11px] bg-accent font-display text-[15px] font-bold tracking-[0.1em] text-on-accent uppercase';
 const ETIQUETA = 'mb-2.5 font-display text-[13px] font-bold tracking-[0.15em] text-ink3 uppercase';
 
 /** Permiso para que el fin del descanso suene con la pantalla apagada. */
@@ -135,6 +110,26 @@ export function PantallaDatos({ semana, todas, sesiones, mediciones }: Props) {
     setTimeout(() => setMensaje(''), 3000);
   };
 
+  /** El JSON completo del respaldo, con fotos incluidas. */
+  const armarRespaldo = async (): Promise<string> => {
+    const fotos: FotoRespaldo[] = await Promise.all(
+      (await db.fotos.toArray()).map(async (f) => ({ ejercicioId: f.ejercicioId, dataUrl: await aDataUrl(f.imagen) })),
+    );
+    const respaldo = construirRespaldo({
+      semana,
+      series: todas,
+      sesiones,
+      mediciones,
+      programa,
+      definicionPrograma: personalizado ? definicion : null,
+      ejerciciosPropios: catalogo.filter((e) => e.propio),
+      notas: await leerNotasEjercicios(),
+      fotos,
+      alturaCm: await leerAlturaCm(),
+    });
+    return JSON.stringify(respaldo, null, 2);
+  };
+
   const importar = async (file: File) => {
     setError('');
     try {
@@ -186,8 +181,9 @@ export function PantallaDatos({ semana, todas, sesiones, mediciones }: Props) {
         Datos
       </p>
       <p className="mb-3 text-[13.5px] leading-relaxed text-ink2">
-        Todo vive solo en este telefono. Exporta el JSON de vez en cuando: es tu unica copia de
-        seguridad.
+        Todo vive solo en este teléfono. Guarda una copia de vez en cuando: es tu única copia de
+        seguridad.{' '}
+        {esAppAndroid() && 'Las copias quedan en la carpeta Documentos/Arquero, y las abres desde Mis Archivos.'}
       </p>
 
       {esAppAndroid() ? (
@@ -211,42 +207,42 @@ export function PantallaDatos({ semana, todas, sesiones, mediciones }: Props) {
       <PanelReloj semana={semana} sesiones={sesiones} />
 
       <div className="grid gap-2.5">
+        {esAppAndroid() && (
+          <button
+            type="button"
+            className={PRINCIPAL}
+            onClick={() => {
+              void armarRespaldo()
+                .then((json) => guardarEnDocumentos(`registro-arquero-${sello()}.json`, json))
+                .then((ruta) => avisar(`Copia guardada en ${ruta}`))
+                .catch(() => setError('No se pudo guardar la copia en el telefono.'));
+            }}
+          >
+            Guardar copia en el teléfono
+          </button>
+        )}
+
         <button
           type="button"
           className={BOTON}
           onClick={() => {
-            void (async () => {
-              const fotos: FotoRespaldo[] = await Promise.all(
-                (await db.fotos.toArray()).map(async (f) => ({ ejercicioId: f.ejercicioId, dataUrl: await aDataUrl(f.imagen) })),
-              );
-              const respaldo = construirRespaldo({
-                semana,
-                series: todas,
-                sesiones,
-                mediciones,
-                programa,
-                definicionPrograma: personalizado ? definicion : null,
-                ejerciciosPropios: catalogo.filter((e) => e.propio),
-                notas: await leerNotasEjercicios(),
-                fotos,
-                alturaCm: await leerAlturaCm(),
+            void armarRespaldo()
+              .then((json) => exportarArchivo(`registro-arquero-${sello()}.json`, json, 'application/json'))
+              .then(() => avisar(esAppAndroid() ? 'JSON compartido.' : 'JSON exportado.'))
+              .catch((e: unknown) => {
+                // Cerrar el menu de compartir sin elegir destino tambien llega aca.
+                if (!(e instanceof Error && /cancel/i.test(e.message))) setError('No se pudo exportar el respaldo.');
               });
-              await descargar(`registro-arquero-${sello()}.json`, JSON.stringify(respaldo, null, 2), 'application/json');
-              avisar('JSON exportado.');
-            })().catch((e: unknown) => {
-              // Cerrar el menu de compartir sin elegir destino tambien llega aca.
-              if (!(e instanceof Error && /cancel/i.test(e.message))) setError('No se pudo exportar el respaldo.');
-            });
           }}
         >
-          Exportar JSON
+          {esAppAndroid() ? 'Compartir JSON' : 'Exportar JSON'}
         </button>
 
         <button
           type="button"
           className={BOTON}
           onClick={() => {
-            void descargar(`entrenamiento-${sello()}.csv`, seriesACsv(todas, sesiones, programa, catalogo), 'text/csv')
+            void exportarArchivo(`entrenamiento-${sello()}.csv`, seriesACsv(todas, sesiones, programa, catalogo), 'text/csv')
               .then(() => avisar('CSV de entrenamiento exportado.'))
               .catch(() => undefined);
           }}
@@ -259,7 +255,7 @@ export function PantallaDatos({ semana, todas, sesiones, mediciones }: Props) {
           className={BOTON}
           onClick={() => {
             void leerAlturaCm()
-              .then((alturaCm) => descargar(`mediciones-${sello()}.csv`, medicionesACsv(mediciones, alturaCm), 'text/csv'))
+              .then((alturaCm) => exportarArchivo(`mediciones-${sello()}.csv`, medicionesACsv(mediciones, alturaCm), 'text/csv'))
               .then(() => avisar('CSV de mediciones exportado.'))
               .catch(() => undefined);
           }}
