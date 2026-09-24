@@ -142,9 +142,9 @@ export const PROGRAMA_BASE: ProgramaDef = {
       foco: 'Tren superior, tracción y salto vertical',
       ejercicios: [
         { id: 'salto-vertical-detenido', bloque: 'A', series: 3, reps: [5, 5], rirObjetivo: 0, incremento: 0 },
-        { id: 'jalon-pecho', bloque: 'B1', series: 4, reps: [8, 10], rirObjetivo: 2, incremento: 5, principal: true },
+        { id: 'dominadas', bloque: 'B1', series: 4, reps: [3, 5], rirObjetivo: 2, incremento: 2.5, principal: true },
         { id: 'press-banca', bloque: 'B2', series: 4, reps: [5, 6], rirObjetivo: 2, incremento: 2.5, principal: true },
-        { id: 'remo-polea-sentado', bloque: 'C1', series: 3, reps: [10, 12], rirObjetivo: 2, incremento: 5 },
+        { id: 'remo-pecho-apoyado', bloque: 'C1', series: 3, reps: [10, 12], rirObjetivo: 2, incremento: 2 },
         { id: 'press-hombro-maquina', bloque: 'C2', series: 3, reps: [8, 10], rirObjetivo: 2, incremento: 2.5 },
         { id: 'face-pull', bloque: 'D1', series: 3, reps: [12, 15], rirObjetivo: 2, incremento: 2.5 },
         { id: 'plancha-lateral', bloque: 'D2', series: 3, reps: [25, 40], rirObjetivo: 0, incremento: 0, porLado: true },

@@ -12,21 +12,33 @@ const CANAL = 'descanso';
 
 type Plugin = typeof import('@capacitor/local-notifications')['LocalNotifications'];
 
-async function plugin(): Promise<Plugin | null> {
+/**
+ * El plugin viene envuelto: los plugins de Capacitor son un Proxy que
+ * convierte cualquier propiedad en una llamada nativa, asi que devolverlo
+ * suelto desde una funcion async hace que el `await` lo tome por promesa y
+ * llame a `LocalNotifications.then()`, que no existe.
+ */
+async function plugin(): Promise<{ ln: Plugin } | null> {
   if (!Capacitor.isNativePlatform()) return null;
   try {
-    return (await import('@capacitor/local-notifications')).LocalNotifications;
+    const { LocalNotifications } = await import('@capacitor/local-notifications');
+    return { ln: LocalNotifications };
   } catch {
     return null;
   }
 }
 
-/** ¿Se pueden mostrar avisos? Sin preguntar nada al usuario. */
+/**
+ * ¿Se pueden mostrar avisos? Sin preguntar nada al usuario. Se consulta
+ * `areEnabled` y no el permiso: lo que importa es si el sistema los deja
+ * salir, que tambien cubre los avisos apagados desde los ajustes.
+ */
 export async function avisosPermitidos(): Promise<boolean> {
-  const ln = await plugin();
-  if (!ln) return false;
+  const p = await plugin();
+  if (!p) return false;
+  const { ln } = p;
   try {
-    return (await ln.checkPermissions()).display === 'granted';
+    return (await ln.areEnabled()).value;
   } catch {
     return false;
   }
@@ -34,14 +46,14 @@ export async function avisosPermitidos(): Promise<boolean> {
 
 /** Pide el permiso (Android 13+) y deja listo el canal. Devuelve si quedo concedido. */
 export async function pedirAvisos(): Promise<boolean> {
-  const ln = await plugin();
-  if (!ln) return false;
+  const p = await plugin();
+  if (!p) return false;
+  const { ln } = p;
   try {
-    let { display } = await ln.checkPermissions();
-    if (display !== 'granted' && display !== 'denied') {
-      display = (await ln.requestPermissions()).display;
+    if (!(await ln.areEnabled()).value) {
+      await ln.requestPermissions();
+      if (!(await ln.areEnabled()).value) return false;
     }
-    if (display !== 'granted') return false;
     await ln.createChannel({
       id: CANAL,
       name: 'Fin del descanso',
@@ -58,8 +70,9 @@ export async function pedirAvisos(): Promise<boolean> {
 
 /** Programa el aviso para la hora en que termina el descanso. */
 export async function programarAvisoDescanso(fin: number): Promise<void> {
-  const ln = await plugin();
-  if (!ln) return;
+  const p = await plugin();
+  if (!p) return;
+  const { ln } = p;
   if (fin - Date.now() < 1000) return;
   if (!(await pedirAvisos())) return;
   try {
@@ -80,8 +93,9 @@ export async function programarAvisoDescanso(fin: number): Promise<void> {
 }
 
 export async function cancelarAvisoDescanso(): Promise<void> {
-  const ln = await plugin();
-  if (!ln) return;
+  const p = await plugin();
+  if (!p) return;
+  const { ln } = p;
   try {
     await ln.cancel({ notifications: [{ id: ID_AVISO }] });
   } catch {
