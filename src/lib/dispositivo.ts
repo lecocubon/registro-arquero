@@ -46,19 +46,28 @@ export function usePantallaActiva(activa: boolean): void {
 const ALTO_TECLADO = 150;
 
 /**
- * True mientras el teclado del telefono esta abierto. Lo que se mide es
- * cuanto encogio el viewport visible: no hay evento de teclado en la web.
+ * True mientras el teclado del telefono esta abierto. No hay evento de
+ * teclado en la web, asi que se mide el alto disponible; en la app nativa
+ * Capacitor achica todo el WebView (tambien `innerHeight`), por eso se
+ * compara contra el alto mas grande visto y no contra `innerHeight`.
  */
 export function useTecladoAbierto(): boolean {
   const [abierto, setAbierto] = useState(false);
 
   useEffect(() => {
-    const vv = window.visualViewport;
-    if (!vv) return;
-    const medir = () => setAbierto(window.innerHeight - vv.height > ALTO_TECLADO);
+    let maximo = 0;
+    const medir = () => {
+      const alto = window.visualViewport?.height ?? window.innerHeight;
+      maximo = Math.max(maximo, alto);
+      setAbierto(maximo - alto > ALTO_TECLADO);
+    };
     medir();
-    vv.addEventListener('resize', medir);
-    return () => vv.removeEventListener('resize', medir);
+    window.addEventListener('resize', medir);
+    window.visualViewport?.addEventListener('resize', medir);
+    return () => {
+      window.removeEventListener('resize', medir);
+      window.visualViewport?.removeEventListener('resize', medir);
+    };
   }, []);
 
   return abierto;
