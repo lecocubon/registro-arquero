@@ -145,7 +145,7 @@ export const PROGRAMA_BASE: ProgramaDef = {
         { id: 'bulgara', bloque: 'B', series: 3, reps: [8, 8], rirObjetivo: 3, incremento: 2, rirFijo: 3, porLado: true, descanso: 120 },
         { id: 'empuje-cadera', bloque: 'C1', series: 3, reps: [8, 10], rirObjetivo: 2, incremento: 5 },
         { id: 'press-inclinado', bloque: 'C2', series: 3, reps: [8, 10], rirObjetivo: 2, incremento: 2 },
-        { id: 'talones-de-pie', bloque: 'D1', series: 3, reps: [12, 15], rirObjetivo: 2, incremento: 5 },
+        { id: 'talones-cajon-mancuernas', bloque: 'D1', series: 3, reps: [12, 15], rirObjetivo: 2, incremento: 2 },
         { id: 'core-antiextension', bloque: 'D2', series: 3, reps: [8, 10], rirObjetivo: 2, incremento: 0 },
       ],
     },

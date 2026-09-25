@@ -4,7 +4,7 @@ import {
   nuevoDescanso,
   type EstadoDescanso,
 } from '../lib/descanso';
-import { tieneValores, type ValoresSerie } from '../lib/series';
+import { tieneDatos, tieneValores, type ValoresSerie } from '../lib/series';
 import type { EjercicioCatalogo } from '../data/biblioteca';
 import type { ProgramaDef } from '../data/programa';
 import {
@@ -100,6 +100,59 @@ export async function registrarTiempo(
     const actual = await leerSerie(semana, sesionId, ejercicioId, serie, 'normal');
     await db.series.put({ ...actual, segundos, hecha: true, actualizado: Date.now() });
     await tocarSesion(semana, sesionId);
+  });
+}
+
+/** Serie extra al final del ejercicio, mas alla de las que pide el programa. */
+export async function agregarSerie(
+  semana: number,
+  sesionId: string,
+  ejercicioId: string,
+  numero: number,
+): Promise<void> {
+  const nueva = serieVacia(semana, sesionId, ejercicioId, numero);
+  await db.series.put({ ...nueva, actualizado: Date.now() });
+}
+
+export async function quitarSerie(
+  semana: number,
+  sesionId: string,
+  ejercicioId: string,
+  numero: number,
+): Promise<void> {
+  await db.series.delete(idSerie(semana, sesionId, ejercicioId, numero));
+}
+
+/**
+ * Pasa las series de ese dia a otro ejercicio. Sirve cuando el registro
+ * quedo bajo el ejercicio equivocado: la misma sentadilla en multipower y
+ * en barra libre son cargas distintas y mezclarlas ensucia la referencia.
+ * Devuelve cuantas series se movieron.
+ */
+export async function moverSeries(
+  semana: number,
+  sesionId: string,
+  desdeId: string,
+  hastaId: string,
+): Promise<number> {
+  if (desdeId === hastaId) return 0;
+  return db.transaction('rw', db.series, async () => {
+    const delDia = await db.series.where('[semana+sesionId]').equals([semana, sesionId]).toArray();
+    const mudanza = delDia.filter((r) => r.ejercicioId === desdeId);
+    if (!mudanza.length) return 0;
+    const destino = delDia.filter((r) => r.ejercicioId === hastaId);
+    if (destino.some(tieneDatos)) {
+      throw new Error('Ese ejercicio ya tiene series anotadas ese dia.');
+    }
+    await db.series.bulkDelete([...mudanza, ...destino].map((r) => r.id));
+    await db.series.bulkPut(
+      mudanza.map((r) => ({
+        ...r,
+        id: idSerie(semana, sesionId, hastaId, r.serie, r.tipo ?? 'normal'),
+        ejercicioId: hastaId,
+      })),
+    );
+    return mudanza.length;
   });
 }
 

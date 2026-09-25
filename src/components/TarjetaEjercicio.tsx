@@ -4,11 +4,13 @@ import type { Ejercicio } from '../data/programa';
 import { db, idSerie, type RegistroSerie } from '../db/db';
 import {
   agregarCalentamiento,
+  agregarSerie,
   copiarValores,
   guardarCampo,
   iniciarDescanso,
   marcarSerie,
   quitarCalentamiento,
+  quitarSerie,
   reemplazarPorHoy,
   registrarTiempo,
 } from '../db/repo';
@@ -16,11 +18,13 @@ import { useArquero } from '../estado/arquero';
 import { descansoDe, formatoReloj } from '../lib/descanso';
 import { planSemana } from '../lib/periodizacion';
 import { incrementoSugerido } from '../lib/progresion';
+import { sugerirCarga } from '../lib/sugerencia';
 import { NOMBRE_RECORD, recordsNuevos } from '../lib/records';
 import {
   esCalentamiento,
   esSerieEfectiva,
   serieAnterior,
+  tieneDatos,
   ultimoRegistro,
   valoresParaCopiar,
 } from '../lib/series';
@@ -109,6 +113,8 @@ export function TarjetaEjercicio({ semana, sesionId, ejercicio, registros, todas
   const planPrevio = previo ? planSemana(previo.semana, ejercicio, programa) : null;
   const subir =
     previo && planPrevio ? incrementoSugerido(ejercicio, previo.series, planPrevio.rirObjetivo) : null;
+  // Si no toca doble progresion, la carga se estima desde el e1RM de la vez anterior.
+  const sugerida = subir === null && previo ? sugerirCarga(ejercicio, previo.series, plan.rirObjetivo) : null;
   const descanso = descansoDe(ejercicio, programa);
   const info = catalogoPorId(ejercicio.id, catalogo);
   const conBarra = Boolean(info?.equipo.some((q) => q === 'barra' || q === 'trap-bar'));
@@ -118,7 +124,12 @@ export function TarjetaEjercicio({ semana, sesionId, ejercicio, registros, todas
   const calentamientos = propios.filter(esCalentamiento).length
     ? Math.max(...propios.filter(esCalentamiento).map((r) => r.serie))
     : 0;
-  const hechas = propios.filter((r) => esSerieEfectiva(r) && r.serie <= plan.series).length;
+  const hechas = propios.filter(esSerieEfectiva).length;
+  // Las series extra que se agregaron hoy se dibujan despues de las del plan.
+  const trabajo = propios.filter((r) => !esCalentamiento(r));
+  const filas = Math.max(plan.series, ...trabajo.map((r) => r.serie), 0);
+  const sobraUltima =
+    filas > plan.series && !tieneDatos(registros.get(idSerie(semana, sesionId, ejercicio.id, filas)));
 
   const rango =
     ejercicio.reps[0] === ejercicio.reps[1] ? `${ejercicio.reps[0]}` : `${ejercicio.reps[0]}–${ejercicio.reps[1]}`;
@@ -224,6 +235,24 @@ export function TarjetaEjercicio({ semana, sesionId, ejercicio, registros, todas
             + Calent.
           </button>
         )}
+        <button
+          type="button"
+          onClick={() => void agregarSerie(semana, sesionId, ejercicio.id, filas + 1)}
+          aria-label="Agregar una serie mas"
+          className={ACCION}
+        >
+          + Serie
+        </button>
+        {sobraUltima && (
+          <button
+            type="button"
+            onClick={() => void quitarSerie(semana, sesionId, ejercicio.id, filas)}
+            aria-label="Quitar la ultima serie"
+            className={ACCION}
+          >
+            − Serie
+          </button>
+        )}
       </div>
 
       {previo && (
@@ -231,6 +260,13 @@ export function TarjetaEjercicio({ semana, sesionId, ejercicio, registros, todas
           Semana {previo.semana}: <b className="font-semibold text-ink">{textoReferencia(previo.series)}</b>
           {subir !== null && (
             <span className="font-semibold text-accent"> — cumpliste el rango, sube {subir} kg</span>
+          )}
+          {sugerida && (
+            <span className="font-semibold text-accent">
+              {' '}
+              — para {sugerida.reps} reps con RIR {plan.rirObjetivo},{' '}
+              {sugerida.direccion === 'subir' ? 'prueba' : 'baja a'} {sugerida.kg} kg
+            </span>
           )}
         </p>
       )}
@@ -280,7 +316,7 @@ export function TarjetaEjercicio({ semana, sesionId, ejercicio, registros, todas
           );
         })}
 
-        {Array.from({ length: plan.series }, (_, i) => i + 1).map((serie) => {
+        {Array.from({ length: filas }, (_, i) => i + 1).map((serie) => {
           const r = registros.get(idSerie(semana, sesionId, ejercicio.id, serie));
           const hecha = r?.hecha ?? false;
           const anterior = previo ? serieAnterior(previo.series, serie) : undefined;

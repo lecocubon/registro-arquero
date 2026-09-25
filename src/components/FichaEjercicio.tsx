@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from 'react';
 import { useLiveQuery } from 'dexie-react-hooks';
 import { TIPOS, catalogoPorId, nombreEquipo, nombreMusculo } from '../data/biblioteca';
 import { db } from '../db/db';
-import { borrarFoto, guardarFoto, guardarNotaEjercicio, leerNotaEjercicio } from '../db/repo';
+import { borrarFoto, guardarFoto, guardarNotaEjercicio, leerNotaEjercicio, moverSeries } from '../db/repo';
 import { useArquero } from '../estado/arquero';
 import { redondear1 } from '../lib/e1rm';
 import { fechaCorta } from '../lib/numeros';
@@ -13,6 +13,7 @@ import { avisar } from './Avisos';
 import { BarrasSemana } from './BarrasSemana';
 import { Capa } from './Capa';
 import { FormEjercicioPropio } from './FormEjercicioPropio';
+import { ListaEjercicios } from './ListaEjercicios';
 import { FotosEjercicio } from './ImagenEjercicio';
 
 type Pestana = 'resumen' | 'historial' | 'tecnica';
@@ -63,6 +64,8 @@ export function FichaEjercicio({ ejercicioId, onCerrar }: { ejercicioId: string;
   const [pestana, setPestana] = useState<Pestana>('resumen');
   const [metrica, setMetrica] = useState<Metrica>('e1rm');
   const [editando, setEditando] = useState(false);
+  // Dia cuyas series se van a pasar a otro ejercicio.
+  const [mudanza, setMudanza] = useState<{ semana: number; sesionId: string } | null>(null);
   const archivo = useRef<HTMLInputElement>(null);
 
   if (!ejercicio) {
@@ -237,9 +240,18 @@ export function FichaEjercicio({ ejercicioId, onCerrar }: { ejercicioId: string;
               const f = fecha(h.semana, h.sesionId);
               return (
                 <li key={`${h.semana}|${h.sesionId}`} className="rounded-xl border border-line bg-surface px-3.5 py-2.5">
-                  <div className="font-display text-[14px] font-bold tracking-[0.06em] text-accent uppercase">
-                    Semana {h.semana} · {nombreSesion(h.sesionId)}
-                    {f ? ` · ${fechaCorta(f)}` : ''}
+                  <div className="flex items-baseline justify-between gap-2">
+                    <span className="font-display text-[14px] font-bold tracking-[0.06em] text-accent uppercase">
+                      Semana {h.semana} · {nombreSesion(h.sesionId)}
+                      {f ? ` · ${fechaCorta(f)}` : ''}
+                    </span>
+                    <button
+                      type="button"
+                      onClick={() => setMudanza({ semana: h.semana, sesionId: h.sesionId })}
+                      className="-my-1 h-8 shrink-0 text-[12.5px] font-medium text-ink3 underline"
+                    >
+                      ⇄ Mover
+                    </button>
                   </div>
                   <div className="mt-1 flex flex-wrap gap-x-3 gap-y-1 text-[13.5px] text-ink2 tabular-nums">
                     {h.series.map((s) => (
@@ -294,6 +306,32 @@ export function FichaEjercicio({ ejercicioId, onCerrar }: { ejercicioId: string;
           <p className={SUBTITULO}>Tus notas</p>
           <NotaTecnica ejercicioId={ejercicioId} />
         </>
+      )}
+
+      {mudanza && (
+        <Capa titulo={`Mover la semana ${mudanza.semana}`} onCerrar={() => setMudanza(null)}>
+          <p className="mb-3 text-[13.5px] leading-relaxed text-ink2">
+            Elige a qué ejercicio pasar las series de ese día. Sirve cuando lo hiciste en otra máquina: la
+            referencia y el e1RM quedan separados, que es lo correcto, porque son cargas distintas.
+          </p>
+          <ListaEjercicios
+            filtroInicial={{ musculo: ejercicio.musculo }}
+            tipoFijo={ejercicio.tipo}
+            deshabilitados={new Set([ejercicioId])}
+            onElegir={(e) => {
+              const aviso = `¿Pasar las series de la semana ${mudanza.semana} a ${e.nombre}? El historial de ${ejercicio.nombre} deja de contarlas.`;
+              if (!window.confirm(aviso)) return;
+              void moverSeries(mudanza.semana, mudanza.sesionId, ejercicioId, e.id)
+                .then((n) => {
+                  setMudanza(null);
+                  avisar(`${n} ${n === 1 ? 'serie movida' : 'series movidas'} a ${e.nombre}`);
+                })
+                .catch((error: unknown) => {
+                  avisar(error instanceof Error ? error.message : 'No se pudo mover', 'error');
+                });
+            }}
+          />
+        </Capa>
       )}
 
       {editando && ejercicio.propio && (
