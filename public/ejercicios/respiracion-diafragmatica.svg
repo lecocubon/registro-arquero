@@ -1,0 +1,36 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 360 240" width="360" height="240" role="img" aria-label="Respiracion diafragmatica: tumbado, se mueve el abdomen y no el pecho">
+  <style>
+    .mat { fill: #d7ded9 }
+    .cuerpo { stroke: #2a352e; stroke-width: 15; stroke-linecap: round; fill: none }
+    .brazo { stroke: #6f7d75; stroke-width: 10; stroke-linecap: round; fill: none }
+    .cabeza { fill: #2a352e }
+    .mano { fill: #1E6B48 }
+    .flecha { stroke: #1E6B48; stroke-width: 4; fill: none; stroke-linecap: round }
+    .quieto { stroke: #9aa7a0; stroke-width: 3; fill: none; stroke-linecap: round }
+    .rot { fill: #1E6B48 }
+    .txt { font: 600 13.5px system-ui, sans-serif; fill: #1E6B48 }
+    .gris { font: 600 13.5px system-ui, sans-serif; fill: #8b968f; text-anchor: start }
+    .nota { font: 400 12.5px system-ui, sans-serif; fill: #7d8a83; text-anchor: middle }
+  </style>
+
+  <rect class="mat" x="18" y="186" width="324" height="12" rx="6" />
+
+  <!-- figura tumbada de lado: cabeza a la izquierda, rodillas dobladas -->
+  <circle class="cabeza" cx="62" cy="158" r="19" />
+  <path class="cuerpo" d="M84 166 H214" />
+  <path class="cuerpo" d="M214 166 L262 136" />
+  <path class="cuerpo" d="M262 136 L296 176" />
+  <path class="brazo" d="M108 160 L150 150" />
+  <circle class="mano" cx="162" cy="148" r="11" />
+
+  <!-- el abdomen sube -->
+  <path class="flecha" d="M162 130 V100" />
+  <path class="rot" d="M162 90 l7 14 h-14 z" />
+  <text class="txt" x="176" y="96">Sube el abdomen</text>
+
+  <!-- el pecho se queda quieto -->
+  <path class="quieto" d="M104 120 L120 136 M120 120 L104 136" />
+  <text class="gris" x="26" y="112">El pecho no se mueve</text>
+
+  <text class="nota" x="180" y="218">Inhala 4 s por la nariz, exhala 6 s por la boca</text>
+</svg>

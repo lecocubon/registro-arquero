@@ -1,0 +1,41 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 360 240" width="360" height="240" role="img" aria-label="Elevacion de puntas apoyado en la pared: espalda en la pared y puntas arriba">
+  <style>
+    .pared { fill: #d7ded9 }
+    .suelo { stroke: #c9d2cc; stroke-width: 4; stroke-linecap: round }
+    .cuerpo { stroke: #2a352e; stroke-width: 15; stroke-linecap: round; fill: none }
+    .brazo { stroke: #6f7d75; stroke-width: 10; stroke-linecap: round; fill: none }
+    .cabeza { fill: #2a352e }
+    .hueso { fill: #2a352e }
+    .pie { stroke: #1E6B48; stroke-width: 12; stroke-linecap: round; fill: none }
+    .flecha { stroke: #1E6B48; stroke-width: 4; fill: none; stroke-linecap: round }
+    .rot { fill: #1E6B48 }
+    .guia { stroke: #1E6B48; stroke-width: 2.5; stroke-dasharray: 5 4; fill: none }
+    .izq { font: 600 13.5px system-ui, sans-serif; fill: #1E6B48; text-anchor: start }
+    .medio { font: 600 13.5px system-ui, sans-serif; fill: #1E6B48; text-anchor: middle }
+    .nota { font: 400 12.5px system-ui, sans-serif; fill: #7d8a83; text-anchor: middle }
+  </style>
+
+  <rect class="pared" x="34" y="14" width="20" height="172" rx="4" />
+  <line class="suelo" x1="34" y1="186" x2="330" y2="186" />
+
+  <!-- cabeza, tronco y pierna recta, con la espalda en la pared -->
+  <circle class="cabeza" cx="78" cy="46" r="19" />
+  <path class="cuerpo" d="M72 68 L78 116" />
+  <path class="brazo" d="M76 82 L106 122" />
+  <path class="cuerpo" d="M78 116 L124 176" />
+
+  <!-- pie: talon en el suelo y punta levantada -->
+  <circle class="hueso" cx="130" cy="176" r="10" />
+  <path class="pie" d="M138 174 L182 152" />
+  <path class="flecha" d="M192 146 V112" />
+  <path class="rot" d="M192 102 l7 14 h-14 z" />
+  <text class="medio" x="248" y="118">Puntas arriba</text>
+
+  <path class="guia" d="M120 60 L94 72" />
+  <text class="izq" x="124" y="56">Espalda en la pared</text>
+
+  <path class="guia" d="M56 196 H124 M56 192 V202 M124 192 V202" />
+  <text class="izq" x="132" y="202">Talones a un paso</text>
+
+  <text class="nota" x="180" y="230">Baja las puntas en 3 s, sin dejarte caer</text>
+</svg>

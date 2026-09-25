@@ -52,6 +52,8 @@ export interface EjercicioCatalogo {
   pasos?: string[];
   /** Id en free-exercise-db (dominio publico). Solo lo usa scripts/imagenes.py. */
   fuenteImagen?: string;
+  /** La imagen es un dibujo propio en public/ejercicios/<id>.svg, no una foto. */
+  dibujo?: boolean;
   /** Creado por el usuario en la app. */
   propio?: boolean;
 }

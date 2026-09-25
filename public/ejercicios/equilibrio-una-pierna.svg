@@ -1,0 +1,39 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 360 240" width="360" height="240" role="img" aria-label="Equilibrio a una pierna: peso repartido entre pulgar, menique y talon">
+  <style>
+    .suelo { stroke: #c9d2cc; stroke-width: 4; stroke-linecap: round }
+    .cuerpo { stroke: #2a352e; stroke-width: 15; stroke-linecap: round; fill: none }
+    .brazo { stroke: #6f7d75; stroke-width: 10; stroke-linecap: round; fill: none }
+    .cabeza { fill: #2a352e }
+    .planta { fill: #e4e9e5; stroke: #cfd8d2; stroke-width: 2 }
+    .apoyo { fill: #1E6B48 }
+    .medio { font: 600 13.5px system-ui, sans-serif; fill: #1E6B48; text-anchor: middle }
+    .etq { font: 600 12px system-ui, sans-serif; fill: #1E6B48; text-anchor: middle }
+    .nota { font: 400 12.5px system-ui, sans-serif; fill: #7d8a83; text-anchor: middle }
+  </style>
+
+  <line class="suelo" x1="24" y1="196" x2="176" y2="196" />
+
+  <!-- figura de frente sobre una pierna -->
+  <circle class="cabeza" cx="96" cy="42" r="19" />
+  <path class="cuerpo" d="M96 64 V122" />
+  <path class="brazo" d="M96 80 L58 110" />
+  <path class="brazo" d="M96 80 L134 110" />
+  <path class="cuerpo" d="M96 122 V188" />
+  <path class="cuerpo" d="M96 122 L138 138" />
+  <path class="cuerpo" d="M138 138 L146 180" />
+  <circle class="apoyo" cx="96" cy="192" r="9" />
+
+  <!-- planta con los tres apoyos -->
+  <g transform="translate(232 62)">
+    <path class="planta" d="M22 108 Q10 82 17 54 Q23 30 41 26 Q62 22 73 36 Q84 47 86 66 Q88 87 77 105 Q64 121 46 121 Q31 121 22 108 Z" />
+    <circle class="apoyo" cx="28" cy="32" r="10" />
+    <circle class="apoyo" cx="80" cy="48" r="9" />
+    <circle class="apoyo" cx="48" cy="112" r="10" />
+    <text class="etq" x="12" y="12">Pulgar</text>
+    <text class="etq" x="94" y="30">Meñique</text>
+    <text class="etq" x="48" y="140">Talón</text>
+  </g>
+  <text class="medio" x="272" y="40">Tres apoyos firmes</text>
+
+  <text class="nota" x="180" y="232">Cuando te salga fácil, cierra los ojos</text>
+</svg>

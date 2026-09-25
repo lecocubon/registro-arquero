@@ -1,0 +1,36 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 360 240" width="360" height="240" role="img" aria-label="Sentarse sobre los dedos: de rodillas, dedos flexionados y peso sobre los talones">
+  <style>
+    .mat { fill: #d7ded9 }
+    .cuerpo { stroke: #2a352e; stroke-width: 15; stroke-linecap: round; fill: none }
+    .brazo { stroke: #6f7d75; stroke-width: 10; stroke-linecap: round; fill: none }
+    .cabeza { fill: #2a352e }
+    .pie { stroke: #1E6B48; stroke-width: 12; stroke-linecap: round; fill: none }
+    .guia { stroke: #1E6B48; stroke-width: 2.5; stroke-dasharray: 5 5; fill: none }
+    .izq { font: 600 13.5px system-ui, sans-serif; fill: #1E6B48; text-anchor: start }
+    .der { font: 600 13.5px system-ui, sans-serif; fill: #1E6B48; text-anchor: end }
+    .nota { font: 400 12.5px system-ui, sans-serif; fill: #7d8a83; text-anchor: middle }
+  </style>
+
+  <rect class="mat" x="18" y="176" width="324" height="12" rx="6" />
+
+  <!-- tronco y cabeza -->
+  <circle class="cabeza" cx="160" cy="46" r="19" />
+  <path class="cuerpo" d="M166 68 L158 136" />
+  <path class="brazo" d="M164 88 L214 134" />
+  <!-- muslo hasta la rodilla, apoyada en la colchoneta -->
+  <path class="cuerpo" d="M158 136 L240 170" />
+  <!-- pierna de la rodilla al tobillo, sobre la colchoneta -->
+  <path class="cuerpo" d="M240 170 L158 170" />
+  <!-- pie: talon arriba (donde se sienta) y dedos doblados al suelo -->
+  <path class="pie" d="M158 170 L148 146" />
+  <path class="pie" d="M158 172 L166 178" />
+
+  <path class="guia" d="M120 148 L140 146" />
+  <text class="izq" x="18" y="132">Te sientas</text>
+  <text class="izq" x="18" y="148">en los talones</text>
+
+  <path class="guia" d="M238 204 L172 182" />
+  <text class="der" x="342" y="212">Dedos doblados bajo el pie</text>
+
+  <text class="nota" x="180" y="234">Las manos adelante regulan el peso</text>
+</svg>

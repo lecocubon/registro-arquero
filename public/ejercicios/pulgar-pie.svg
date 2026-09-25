@@ -1,0 +1,39 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 360 240" width="360" height="240" role="img" aria-label="Control del pulgar: primero sube solo el pulgar, despues solo los otros cuatro dedos">
+  <style>
+    .planta { fill: #e4e9e5; stroke: #cfd8d2; stroke-width: 2 }
+    .dedo { fill: #2a352e }
+    .arriba { fill: #1E6B48 }
+    .flecha { stroke: #1E6B48; stroke-width: 4; fill: none; stroke-linecap: round }
+    .rot { fill: #1E6B48 }
+    .txt { font: 600 14px system-ui, sans-serif; fill: #5b6b62; text-anchor: middle }
+    .nota { font: 400 12.5px system-ui, sans-serif; fill: #7d8a83; text-anchor: middle }
+  </style>
+
+  <!-- pie izquierdo del dibujo: sube el pulgar -->
+  <g transform="translate(20 34)">
+    <path class="planta" d="M34 128 Q22 96 30 62 Q36 34 58 30 Q84 26 98 42 Q110 56 112 78 Q114 104 100 126 Q84 146 62 146 Q44 146 34 128 Z" />
+    <circle class="arriba" cx="44" cy="30" r="13" />
+    <circle class="dedo" cx="68" cy="20" r="9" />
+    <circle class="dedo" cx="86" cy="23" r="8" />
+    <circle class="dedo" cx="101" cy="30" r="7.5" />
+    <circle class="dedo" cx="113" cy="40" r="7" />
+    <path class="flecha" d="M44 12 V-4" />
+    <path class="rot" d="M44 -12 l7 13 h-14 z" />
+  </g>
+  <text class="txt" x="92" y="222">Solo el pulgar</text>
+
+  <!-- pie derecho del dibujo: suben los otros cuatro -->
+  <g transform="translate(200 34)">
+    <path class="planta" d="M34 128 Q22 96 30 62 Q36 34 58 30 Q84 26 98 42 Q110 56 112 78 Q114 104 100 126 Q84 146 62 146 Q44 146 34 128 Z" />
+    <circle class="dedo" cx="44" cy="30" r="13" />
+    <circle class="arriba" cx="68" cy="20" r="9" />
+    <circle class="arriba" cx="86" cy="23" r="8" />
+    <circle class="arriba" cx="101" cy="30" r="7.5" />
+    <circle class="arriba" cx="113" cy="40" r="7" />
+    <path class="flecha" d="M90 6 V-8" />
+    <path class="rot" d="M90 -16 l7 13 h-14 z" />
+  </g>
+  <text class="txt" x="272" y="222">Y solo los otros cuatro</text>
+
+  <text class="nota" x="180" y="238">Ida y vuelta es una repetición</text>
+</svg>

@@ -24,9 +24,13 @@ describe('biblioteca', () => {
     }
   });
 
-  it('cada ejercicio de la base trae sus dos fotos, inicio y final', () => {
+  it('cada ejercicio tiene imagen: dos fotos o un dibujo propio', () => {
     for (const e of BIBLIOTECA) {
-      if (!e.fuenteImagen) continue;
+      if (e.dibujo) {
+        expect(existsSync(`public/ejercicios/${e.id}.svg`), e.id).toBe(true);
+        continue;
+      }
+      expect(Boolean(e.fuenteImagen), `${e.id} sin imagen`).toBe(true);
       for (const sufijo of ['', '-fin']) {
         expect(existsSync(`public/ejercicios/${e.id}${sufijo}.webp`), `${e.id}${sufijo}`).toBe(true);
       }

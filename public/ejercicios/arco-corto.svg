@@ -1,0 +1,38 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 360 240" width="360" height="240" role="img" aria-label="Pie corto: el arco sube y los dedos siguen planos">
+  <style>
+    .suelo { stroke: #c9d2cc; stroke-width: 4; stroke-linecap: round }
+    .hueso { fill: #2a352e }
+    .pierna { stroke: #d7ded9; stroke-width: 16; stroke-linecap: round }
+    .arco { fill: none; stroke: #2a352e; stroke-width: 5; stroke-linecap: round }
+    .flecha { stroke: #1E6B48; stroke-width: 4; fill: none; stroke-linecap: round }
+    .rot { fill: #1E6B48 }
+    .txt { font: 600 14px system-ui, sans-serif; fill: #5b6b62; text-anchor: middle }
+    .nota { font: 400 12.5px system-ui, sans-serif; fill: #7d8a83; text-anchor: middle }
+  </style>
+
+  <!-- panel izquierdo: pie relajado -->
+  <line class="suelo" x1="20" y1="180" x2="160" y2="180" />
+  <line class="pierna" x1="62" y1="150" x2="56" y2="60" />
+  <circle class="hueso" cx="48" cy="168" r="11" />
+  <circle class="hueso" cx="120" cy="168" r="11" />
+  <circle class="hueso" cx="139" cy="172" r="5" />
+  <circle class="hueso" cx="150" cy="174" r="4.5" />
+  <circle class="hueso" cx="159" cy="176" r="4" />
+  <path class="arco" d="M54 160 Q84 148 113 160" />
+  <text class="txt" x="90" y="208">Relajado</text>
+
+  <!-- panel derecho: arco corto -->
+  <line class="suelo" x1="200" y1="180" x2="340" y2="180" />
+  <line class="pierna" x1="242" y1="150" x2="236" y2="60" />
+  <circle class="hueso" cx="228" cy="168" r="11" />
+  <circle class="hueso" cx="300" cy="168" r="11" />
+  <circle class="hueso" cx="319" cy="172" r="5" />
+  <circle class="hueso" cx="330" cy="174" r="4.5" />
+  <circle class="hueso" cx="339" cy="176" r="4" />
+  <path class="arco" d="M234 158 Q264 124 293 158" />
+  <path class="flecha" d="M264 166 V130" />
+  <path class="rot" d="M264 118 l7 14 h-14 z" />
+  <text class="txt" x="270" y="208">Arco arriba</text>
+
+  <text class="nota" x="180" y="232">El talón y los dedos no se mueven del suelo</text>
+</svg>

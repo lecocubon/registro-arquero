@@ -40,11 +40,11 @@ export function ImagenEjercicio({ ejercicio, tamano, cuadro = 'inicio', onFallo 
     };
   }, [ejercicio, tieneFoto]);
 
-  const sufijo = cuadro === 'fin' ? '-fin' : '';
-  const fabrica =
-    ejercicio?.fuenteImagen && !falloFabrica
-      ? `${import.meta.env.BASE_URL}ejercicios/${ejercicio.id}${sufijo}.webp`
-      : null;
+  const archivo = ejercicio?.dibujo
+    ? `${ejercicio.id}.svg`
+    : `${ejercicio?.id}${cuadro === 'fin' ? '-fin' : ''}.webp`;
+  const hayImagen = Boolean(ejercicio && (ejercicio.dibujo || ejercicio.fuenteImagen));
+  const fabrica = hayImagen && !falloFabrica ? `${import.meta.env.BASE_URL}ejercicios/${archivo}` : null;
   const src = urlPropia ?? fabrica;
   const clase =
     tamano === 'mini'
@@ -74,7 +74,7 @@ export function ImagenEjercicio({ ejercicio, tamano, cuadro = 'inicio', onFallo 
         setFalloFabrica(true);
         onFallo?.();
       }}
-      className={`${clase} bg-white object-cover`}
+      className={`${clase} bg-white ${ejercicio?.dibujo ? 'object-contain' : 'object-cover'}`}
     />
   );
 }
@@ -90,7 +90,8 @@ export function FotosEjercicio({ ejercicio }: { ejercicio: EjercicioCatalogo | u
   const [sinFinal, setSinFinal] = useState(false);
   const propia = ejercicio ? conFoto.has(ejercicio.id) : false;
 
-  if (propia || sinFinal || !ejercicio?.fuenteImagen) {
+  // Un dibujo ya muestra el movimiento completo: no hay posicion final aparte.
+  if (propia || sinFinal || ejercicio?.dibujo || !ejercicio?.fuenteImagen) {
     return <ImagenEjercicio ejercicio={ejercicio} tamano="grande" />;
   }
 
