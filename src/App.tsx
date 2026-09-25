@@ -8,7 +8,7 @@ import { fijarSemana, leerDescanso, semanaActual } from './db/repo';
 import { useArquero } from './estado/arquero';
 import { hayCapas } from './components/Capa';
 import { useBotonAtras } from './lib/atras';
-import { usePantallaActiva } from './lib/dispositivo';
+import { usePantallaActiva, useTecladoAbierto } from './lib/dispositivo';
 import { faseDe, inicioMesociclo, limitarSemana, numeroMesociclo, semanaRelativa } from './lib/periodizacion';
 import { PantallaDatos } from './screens/PantallaDatos';
 import { PantallaHoy } from './screens/PantallaHoy';
@@ -34,6 +34,8 @@ export default function App() {
   const cabecera = useRef<HTMLElement>(null);
 
   usePantallaActiva(dia !== null || descanso !== null);
+  // La barra de pestanas se monta sobre el teclado: mientras se escribe, se esconde.
+  const teclado = useTecladoAbierto();
 
   // Atras de Android: cierra la capa abierta, sale del dia de entrenamiento,
   // vuelve a Hoy y, en Hoy, pide un segundo toque antes de minimizar.
@@ -144,18 +146,20 @@ export default function App() {
         )}
       </main>
 
-      {descanso && <BarraDescanso key={descanso.fin} estado={descanso} />}
+      {descanso && <BarraDescanso key={descanso.fin} estado={descanso} pegadaAbajo={teclado} />}
       <Avisos />
 
-      <BarraPestanas
-        activa={pestana}
-        onCambio={(p) => {
-          // Cambiar de pestana no cierra la sesion abierta; tocar Hoy estando en Hoy vuelve a la lista.
-          if (p === 'hoy' && pestana === 'hoy') setDia(null);
-          setPestana(p);
-          window.scrollTo(0, 0);
-        }}
-      />
+      {!teclado && (
+        <BarraPestanas
+          activa={pestana}
+          onCambio={(p) => {
+            // Cambiar de pestana no cierra la sesion abierta; tocar Hoy estando en Hoy vuelve a la lista.
+            if (p === 'hoy' && pestana === 'hoy') setDia(null);
+            setPestana(p);
+            window.scrollTo(0, 0);
+          }}
+        />
+      )}
     </>
   );
 }

@@ -136,7 +136,7 @@ export function PantallaDatos({ semana, todas, sesiones, mediciones }: Props) {
       const datos = validarRespaldo(JSON.parse(await file.text()));
       const total = datos.series.length + datos.mediciones.length;
       const ok = window.confirm(
-        `Vas a reemplazar TODO el historial de este telefono por el del archivo (${datos.series.length} series, ${datos.mediciones.length} mediciones). Esto no se puede deshacer. Continuar?`,
+        `Vas a reemplazar TODO el historial de este teléfono por el del archivo (${datos.series.length} series, ${datos.mediciones.length} mediciones). Esto no se puede deshacer. ¿Continuar?`,
       );
       if (!ok) return;
       // Las fotos se convierten antes: dentro de la transaccion no se puede esperar a fetch.
@@ -197,8 +197,8 @@ export function PantallaDatos({ semana, todas, sesiones, mediciones }: Props) {
           }`}
         >
           {listaSinConexion
-            ? `Lista para usar sin conexion${instalada ? ' · instalada en el telefono' : ''}. Puedes activar el modo avion.`
-            : 'Preparando la copia offline. Deja la app abierta unos segundos con conexion.'}
+            ? `Lista para usar sin conexión${instalada ? ' · instalada en el teléfono' : ''}. Puedes activar el modo avión.`
+            : 'Preparando la copia offline. Deja la app abierta unos segundos con conexión.'}
         </p>
       )}
 
@@ -215,7 +215,7 @@ export function PantallaDatos({ semana, todas, sesiones, mediciones }: Props) {
               void armarRespaldo()
                 .then((json) => guardarEnDocumentos(`registro-arquero-${sello()}.json`, json))
                 .then((ruta) => avisar(`Copia guardada en ${ruta}`))
-                .catch(() => setError('No se pudo guardar la copia en el telefono.'));
+                .catch(() => setError('No se pudo guardar la copia en el teléfono.'));
             }}
           >
             Guardar copia en el teléfono

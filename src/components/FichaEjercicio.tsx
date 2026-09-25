@@ -18,6 +18,7 @@ import { FotosEjercicio } from './ImagenEjercicio';
 type Pestana = 'resumen' | 'historial' | 'tecnica';
 
 const LADO_MAX_FOTO = 900;
+const SUBTITULO = 'mb-2 font-display text-[13px] font-bold tracking-[0.15em] text-ink3 uppercase';
 
 /** Reduce la foto antes de guardarla: una foto de camara pesa varios MB. */
 async function comprimir(archivo: File): Promise<Blob> {
@@ -264,17 +265,33 @@ export function FichaEjercicio({ ejercicioId, onCerrar }: { ejercicioId: string;
 
       {pestana === 'tecnica' && (
         <>
-          {ejercicio.indicaciones.length > 0 && (
-            <ol className="mb-4 grid gap-2">
-              {ejercicio.indicaciones.map((t, i) => (
-                <li key={i} className="flex gap-3 text-[14.5px] leading-snug text-ink">
-                  <span className="font-display text-[16px] font-bold text-accent">{i + 1}</span>
-                  <span>{t}</span>
-                </li>
-              ))}
-            </ol>
+          {ejercicio.pasos && ejercicio.pasos.length > 0 && (
+            <>
+              <p className={SUBTITULO}>Cómo se hace</p>
+              <ol className="mb-4 grid gap-2">
+                {ejercicio.pasos.map((t, i) => (
+                  <li key={i} className="flex gap-3 text-[14.5px] leading-snug text-ink">
+                    <span className="font-display text-[16px] font-bold text-accent">{i + 1}</span>
+                    <span>{t}</span>
+                  </li>
+                ))}
+              </ol>
+            </>
           )}
-          <p className="mb-2 font-display text-[13px] font-bold tracking-[0.15em] text-ink3 uppercase">Tus notas</p>
+          {ejercicio.indicaciones.length > 0 && (
+            <>
+              <p className={SUBTITULO}>Claves</p>
+              <ul className="mb-4 grid gap-2">
+                {ejercicio.indicaciones.map((t, i) => (
+                  <li key={i} className="flex gap-3 text-[14.5px] leading-snug text-ink2">
+                    <span className="text-accent">·</span>
+                    <span>{t}</span>
+                  </li>
+                ))}
+              </ul>
+            </>
+          )}
+          <p className={SUBTITULO}>Tus notas</p>
           <NotaTecnica ejercicioId={ejercicioId} />
         </>
       )}

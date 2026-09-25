@@ -46,7 +46,10 @@ export interface EjercicioCatalogo {
   musculo: Musculo;
   secundarios: Musculo[];
   equipo: Equipo[];
+  /** Claves cortas del ejercicio: lo que hay que cuidar. */
   indicaciones: string[];
+  /** Como se hace, paso a paso. Los ejercicios propios no lo traen. */
+  pasos?: string[];
   /** Id en free-exercise-db (dominio publico). Solo lo usa scripts/imagenes.py. */
   fuenteImagen?: string;
   /** Creado por el usuario en la app. */

@@ -29,12 +29,12 @@ export function AvisoInstalar() {
   return (
     <div className="mb-3.5 rounded-lg border border-line bg-surface px-3.5 py-3">
       <p className="font-display text-[13px] font-bold tracking-[0.13em] text-ink3 uppercase">
-        Instalar en el telefono
+        Instalar en el teléfono
       </p>
       {puedeInstalar ? (
         <>
           <p className="mt-1.5 text-[13.5px] leading-snug text-ink2">
-            Queda como una app mas, con su icono, y despues funciona sin conexion.
+            Queda como una app más, con su ícono, y después funciona sin conexión.
           </p>
           <button
             type="button"
@@ -46,15 +46,15 @@ export function AvisoInstalar() {
         </>
       ) : ios ? (
         <p className="mt-1.5 text-[13.5px] leading-snug text-ink2">
-          En Safari: boton <b className="font-semibold text-ink">Compartir</b> (el cuadrado con la
-          flecha) → <b className="font-semibold text-ink">Anadir a pantalla de inicio</b>. Despues
-          abrela desde el icono, no desde Safari.
+          En Safari: botón <b className="font-semibold text-ink">Compartir</b> (el cuadrado con la
+          flecha) → <b className="font-semibold text-ink">Añadir a pantalla de inicio</b>. Después
+          ábrela desde el ícono, no desde Safari.
         </p>
       ) : (
         <p className="mt-1.5 text-[13.5px] leading-snug text-ink2">
-          En Chrome: menu <b className="font-semibold text-ink">⋮</b> →{' '}
-          <b className="font-semibold text-ink">Instalar aplicacion</b> (o "Anadir a pantalla de
-          inicio").
+          En Chrome: menú <b className="font-semibold text-ink">⋮</b> →{' '}
+          <b className="font-semibold text-ink">Instalar aplicación</b> (o «Añadir a pantalla de
+          inicio»).
         </p>
       )}
       <button
@@ -62,7 +62,7 @@ export function AvisoInstalar() {
         onClick={ocultar}
         className="mt-2 text-[12.5px] text-ink3 underline"
       >
-        Ya la instale, no mostrar mas
+        Ya la instalé, no mostrar más
       </button>
     </div>
   );

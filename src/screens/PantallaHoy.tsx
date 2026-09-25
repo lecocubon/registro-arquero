@@ -27,8 +27,8 @@ function NotaDeSesion({ semana, sesionId, valor }: { semana: number; sesionId: s
     <input
       type="text"
       value={texto}
-      aria-label="Notas de la sesion"
-      placeholder="Notas de la sesion (sueno, energia, molestias)"
+      aria-label="Notas de la sesión"
+      placeholder="Notas de la sesión (sueño, energía, molestias)"
       onChange={(e) => {
         setTexto(e.target.value);
         void guardarNota(semana, sesionId, e.target.value);
@@ -44,7 +44,7 @@ export function PantallaHoy({ semana, dia, onAbrir, todas, sesiones }: Props) {
 
   if (dia) {
     const plan = programa.sesiones.find((s) => s.id === dia);
-    if (!plan) return <p className="py-6 text-ink3">Sesion no encontrada.</p>;
+    if (!plan) return <p className="py-6 text-ink3">Sesión no encontrada.</p>;
 
     const deLaSesion = todas.filter((r) => r.semana === semana && r.sesionId === dia);
     const registros = new Map(deLaSesion.map((r) => [r.id, r]));

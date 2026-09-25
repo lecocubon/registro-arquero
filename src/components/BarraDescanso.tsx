@@ -12,7 +12,7 @@ const PERMANENCIA_AL_TERMINAR_MS = 4000;
 const BOTON =
   'flex h-11 min-w-12 items-center justify-center rounded-[10px] border border-line px-2.5 font-display text-[15px] font-bold tracking-[0.04em] text-ink2';
 
-export function BarraDescanso({ estado }: { estado: EstadoDescanso }) {
+export function BarraDescanso({ estado, pegadaAbajo = false }: { estado: EstadoDescanso; pegadaAbajo?: boolean }) {
   const { catalogo } = useArquero();
   const [ahora, setAhora] = useState(() => Date.now());
   const avisado = useRef<number | null>(null);
@@ -45,7 +45,8 @@ export function BarraDescanso({ estado }: { estado: EstadoDescanso }) {
       role="timer"
       aria-label="Descanso"
       className="fixed inset-x-0 z-40 border-t border-line bg-surface"
-      style={{ bottom: 'calc(var(--spacing-tab) + env(safe-area-inset-bottom, 0px))' }}
+      // Con el teclado abierto no hay barra de pestanas debajo: se pega al borde.
+      style={{ bottom: pegadaAbajo ? 0 : 'calc(var(--spacing-tab) + env(safe-area-inset-bottom, 0px))' }}
     >
       <div className="h-[3px] bg-accent" style={{ width: `${progreso * 100}%` }} />
       <div className="mx-auto flex max-w-[640px] items-center gap-2 px-3.5 py-2">

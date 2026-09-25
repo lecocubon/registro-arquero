@@ -41,7 +41,7 @@ export function CabeceraSesion({ registros, seriesPlanificadas, inicio }: Props)
       style={{ top: 'var(--alto-cabecera, 57px)' }}
     >
       <Dato
-        etiqueta="Duracion"
+        etiqueta="Duración"
         valor={r.duracionMs === null ? '—' : formatoDuracion(r.duracionMs)}
         destacado={r.enCurso}
       />

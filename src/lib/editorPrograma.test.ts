@@ -26,19 +26,19 @@ const cat = (id: string): EjercicioCatalogo => {
 describe('editor de programa', () => {
   it('no modifica el programa original', () => {
     const copia = structuredClone(PROGRAMA_BASE);
-    agregarEjercicio(PROGRAMA_BASE, 'martes', cat('extension-cuadriceps'));
-    moverEjercicio(PROGRAMA_BASE, 'martes', 'sentadilla-barra', -1);
+    agregarEjercicio(PROGRAMA_BASE, 'jueves', cat('extension-cuadriceps'));
+    moverEjercicio(PROGRAMA_BASE, 'jueves', 'sentadilla-barra', -1);
     expect(PROGRAMA_BASE).toEqual(copia);
   });
 
   it('agrega un ejercicio con prescripción por defecto y el siguiente bloque', () => {
-    const p = agregarEjercicio(PROGRAMA_BASE, 'martes', cat('extension-cuadriceps'));
-    const martes = p.sesiones.find((s) => s.id === 'martes');
-    expect(martes?.ejercicios.at(-1)).toMatchObject({ id: 'extension-cuadriceps', bloque: 'E', series: 3, reps: [8, 10], rirObjetivo: 2 });
+    const p = agregarEjercicio(PROGRAMA_BASE, 'jueves', cat('extension-cuadriceps'));
+    const jueves = p.sesiones.find((s) => s.id === 'jueves');
+    expect(jueves?.ejercicios.at(-1)).toMatchObject({ id: 'extension-cuadriceps', bloque: 'E', series: 3, reps: [8, 10], rirObjetivo: 2 });
   });
 
   it('no permite repetir un ejercicio en la misma sesión', () => {
-    expect(() => agregarEjercicio(PROGRAMA_BASE, 'martes', cat('sentadilla-barra'))).toThrow(/ya está/);
+    expect(() => agregarEjercicio(PROGRAMA_BASE, 'jueves', cat('sentadilla-barra'))).toThrow(/ya está/);
   });
 
   it('siguienteBloque salta las letras usadas', () => {
@@ -47,8 +47,8 @@ describe('editor de programa', () => {
   });
 
   it('acota valores sin impedir escribir', () => {
-    const p = actualizarEjercicio(PROGRAMA_BASE, 'lunes', 'press-banca', { series: 99, reps: [12, 1], rirObjetivo: -3, descanso: 9 });
-    const e = p.sesiones.find((s) => s.id === 'lunes')?.ejercicios.find((x) => x.id === 'press-banca');
+    const p = actualizarEjercicio(PROGRAMA_BASE, 'martes', 'press-banca', { series: 99, reps: [12, 1], rirObjetivo: -3, descanso: 9 });
+    const e = p.sesiones.find((s) => s.id === 'martes')?.ejercicios.find((x) => x.id === 'press-banca');
     expect(e?.series).toBe(20);
     expect(e?.reps).toEqual([12, 1]); // mínimo sobre máximo: se avisa, no se corrige al vuelo
     expect(e?.rirObjetivo).toBe(0);
@@ -57,15 +57,15 @@ describe('editor de programa', () => {
   });
 
   it('quita opcionales al vaciarlos', () => {
-    const p = actualizarEjercicio(PROGRAMA_BASE, 'jueves', 'bulgara', { rirFijo: undefined, descanso: undefined });
-    const e = p.sesiones.find((s) => s.id === 'jueves')?.ejercicios.find((x) => x.id === 'bulgara');
+    const p = actualizarEjercicio(PROGRAMA_BASE, 'lunes', 'bulgara', { rirFijo: undefined, descanso: undefined });
+    const e = p.sesiones.find((s) => s.id === 'lunes')?.ejercicios.find((x) => x.id === 'bulgara');
     expect(e && 'rirFijo' in e).toBe(false);
     expect(e && 'descanso' in e).toBe(false);
   });
 
   it('cambiar el ejercicio mantiene la prescripción', () => {
-    const p = cambiarEjercicio(PROGRAMA_BASE, 'martes', 'sentadilla-barra', cat('sentadilla-frontal'));
-    const e = p.sesiones.find((s) => s.id === 'martes')?.ejercicios[1];
+    const p = cambiarEjercicio(PROGRAMA_BASE, 'jueves', 'sentadilla-barra', cat('sentadilla-frontal'));
+    const e = p.sesiones.find((s) => s.id === 'jueves')?.ejercicios[1];
     expect(e).toMatchObject({ id: 'sentadilla-frontal', bloque: 'B', series: 4, reps: [5, 6], principal: true });
   });
 

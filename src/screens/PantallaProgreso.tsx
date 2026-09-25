@@ -78,11 +78,11 @@ export function PantallaProgreso({ semana, todas }: { semana: number; todas: Reg
         <>
           <p className={ETIQUETA}>e1RM estimado por semana</p>
           <p className="py-2 text-[14px] leading-relaxed text-ink3">
-            Todavia no hay datos. Registra tu primera serie con kg y reps y aca vas a ver el e1RM estimado semana a
+            Todavía no hay datos. Registra tu primera serie con kg y reps y acá vas a ver el e1RM estimado semana a
             semana.
             <br />
             <br />
-            e1RM = estimacion de tu maximo a una repeticion, ajustada por RIR. Sirve para comparar semanas aunque
+            e1RM = estimación de tu máximo a una repetición, ajustada por RIR. Sirve para comparar semanas aunque
             cambien las repeticiones.
           </p>
         </>

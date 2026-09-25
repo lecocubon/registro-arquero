@@ -121,9 +121,9 @@ describe('planSemana (semana, ejercicio) => series y RIR', () => {
   });
 
   it('la movilidad no se recorta en la descarga', () => {
-    const gato = ej('gato-camello');
-    expect(planSemana(1, gato).series).toBe(2);
-    expect(planSemana(8, gato).series).toBe(2); // sin factor de descarga
+    const arco = ej('arco-corto');
+    expect(planSemana(1, arco).series).toBe(2);
+    expect(planSemana(8, arco).series).toBe(2); // sin factor de descarga
   });
 
   it('no aplica RIR de fase a tiempo ni a salto', () => {

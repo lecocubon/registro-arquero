@@ -15,10 +15,11 @@ describe('biblioteca', () => {
     }
   });
 
-  it('cada ejercicio tiene músculo, equipo e indicaciones', () => {
+  it('cada ejercicio tiene músculo, equipo, claves y pasos', () => {
     for (const e of BIBLIOTECA) {
       expect(e.equipo.length, e.id).toBeGreaterThan(0);
       expect(e.indicaciones.length, e.id).toBeGreaterThan(0);
+      expect(e.pasos?.length ?? 0, e.id).toBeGreaterThan(0);
       expect(e.secundarios, e.id).not.toContain(e.musculo);
     }
   });
@@ -60,10 +61,12 @@ describe('biblioteca', () => {
 
 describe('programa resuelto', () => {
   it('toma nombre y tipo de la biblioteca', () => {
-    const sentadilla = PROGRAMA.sesiones[1]?.ejercicios.find((e) => e.id === 'sentadilla-barra');
+    const sesion = (id: string) => PROGRAMA.sesiones.find((s) => s.id === id);
+    const sentadilla = sesion('jueves')?.ejercicios.find((e) => e.id === 'sentadilla-barra');
     expect(sentadilla?.nombre).toBe('Sentadilla con barra');
     expect(sentadilla?.tipo).toBe('carga');
-    expect(PROGRAMA.sesiones[0]?.ejercicios.find((e) => e.id === 'plancha-lateral')?.tipo).toBe('tiempo');
+    expect(sesion('martes')?.ejercicios.find((e) => e.id === 'plancha-lateral')?.tipo).toBe('tiempo');
+    expect(sesion('movilidad')?.ejercicios.find((e) => e.id === 'arco-corto')?.tipo).toBe('movilidad');
   });
 
   it('un ejercicio que ya no está en la biblioteca no rompe la sesión', () => {
@@ -75,11 +78,11 @@ describe('programa resuelto', () => {
   });
 
   it('el reemplazo del día hereda la prescripción del original', () => {
-    const martes = PROGRAMA.sesiones.find((s) => s.id === 'martes');
-    if (!martes) throw new Error('falta martes');
-    const dia = ejerciciosDelDia(martes, { 'sentadilla-barra': 'prensa' }, BIBLIOTECA);
+    const jueves = PROGRAMA.sesiones.find((s) => s.id === 'jueves');
+    if (!jueves) throw new Error('falta jueves');
+    const dia = ejerciciosDelDia(jueves, { 'sentadilla-barra': 'sentadilla-hack' }, BIBLIOTECA);
     const fila = dia.find((d) => d.original?.id === 'sentadilla-barra');
-    expect(fila?.ejercicio).toMatchObject({ id: 'prensa', nombre: 'Prensa de piernas', series: 4, reps: [5, 6], principal: true });
+    expect(fila?.ejercicio).toMatchObject({ id: 'sentadilla-hack', nombre: 'Sentadilla hack en máquina', series: 4, reps: [5, 6], principal: true });
     expect(dia.filter((d) => d.original)).toHaveLength(1);
   });
 });

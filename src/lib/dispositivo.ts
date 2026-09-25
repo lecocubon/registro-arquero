@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 
 export function vibrar(patron: number | number[]): void {
   try {
@@ -40,4 +40,26 @@ export function usePantallaActiva(activa: boolean): void {
       void bloqueo?.release();
     };
   }, [activa]);
+}
+
+/** Alto que tapa el teclado para darlo por abierto. */
+const ALTO_TECLADO = 150;
+
+/**
+ * True mientras el teclado del telefono esta abierto. Lo que se mide es
+ * cuanto encogio el viewport visible: no hay evento de teclado en la web.
+ */
+export function useTecladoAbierto(): boolean {
+  const [abierto, setAbierto] = useState(false);
+
+  useEffect(() => {
+    const vv = window.visualViewport;
+    if (!vv) return;
+    const medir = () => setAbierto(window.innerHeight - vv.height > ALTO_TECLADO);
+    medir();
+    vv.addEventListener('resize', medir);
+    return () => vv.removeEventListener('resize', medir);
+  }, []);
+
+  return abierto;
 }
