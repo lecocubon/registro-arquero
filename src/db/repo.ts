@@ -58,9 +58,10 @@ export async function copiarValores(
   ejercicioId: string,
   serie: number,
   valores: ValoresSerie,
+  tipo: TipoSerie = 'normal',
 ): Promise<void> {
   await db.transaction('rw', db.series, db.sesiones, async () => {
-    const actual = await leerSerie(semana, sesionId, ejercicioId, serie, 'normal');
+    const actual = await leerSerie(semana, sesionId, ejercicioId, serie, tipo);
     await db.series.put({ ...actual, ...valores, actualizado: Date.now() });
     await tocarSesion(semana, sesionId);
   });
@@ -76,10 +77,11 @@ export async function marcarSerie(
   ejercicioId: string,
   serie: number,
   anterior?: ValoresSerie,
+  tipo: TipoSerie = 'normal',
 ): Promise<boolean> {
   let marcada = false;
   await db.transaction('rw', db.series, db.sesiones, async () => {
-    const actual = await leerSerie(semana, sesionId, ejercicioId, serie, 'normal');
+    const actual = await leerSerie(semana, sesionId, ejercicioId, serie, tipo);
     marcada = !actual.hecha;
     const copia = marcada && !tieneValores(actual) && anterior ? anterior : {};
     await db.series.put({ ...actual, ...copia, hecha: marcada, actualizado: Date.now() });
@@ -95,9 +97,10 @@ export async function registrarTiempo(
   ejercicioId: string,
   serie: number,
   segundos: number,
+  tipo: TipoSerie = 'normal',
 ): Promise<void> {
   await db.transaction('rw', db.series, db.sesiones, async () => {
-    const actual = await leerSerie(semana, sesionId, ejercicioId, serie, 'normal');
+    const actual = await leerSerie(semana, sesionId, ejercicioId, serie, tipo);
     await db.series.put({ ...actual, segundos, hecha: true, actualizado: Date.now() });
     await tocarSesion(semana, sesionId);
   });
@@ -109,8 +112,9 @@ export async function agregarSerie(
   sesionId: string,
   ejercicioId: string,
   numero: number,
+  tipo: TipoSerie = 'normal',
 ): Promise<void> {
-  const nueva = serieVacia(semana, sesionId, ejercicioId, numero);
+  const nueva = serieVacia(semana, sesionId, ejercicioId, numero, tipo);
   await db.series.put({ ...nueva, actualizado: Date.now() });
 }
 
@@ -119,8 +123,9 @@ export async function quitarSerie(
   sesionId: string,
   ejercicioId: string,
   numero: number,
+  tipo: TipoSerie = 'normal',
 ): Promise<void> {
-  await db.series.delete(idSerie(semana, sesionId, ejercicioId, numero));
+  await db.series.delete(idSerie(semana, sesionId, ejercicioId, numero, tipo));
 }
 
 /**
@@ -356,6 +361,51 @@ export async function reemplazarPorHoy(
       reemplazos,
       actualizado: Date.now(),
     });
+  });
+}
+
+/**
+ * Agrega un ejercicio a la sesion de hoy sin tocar el programa. Como
+ * calentamiento, sus series se guardan como tales: no suman volumen,
+ * e1RM ni records, que es lo que se quiere de un calentamiento aunque se
+ * haga en otra maquina.
+ */
+export async function agregarEjercicioHoy(
+  semana: number,
+  sesionId: string,
+  ejercicioId: string,
+  calentamiento = false,
+): Promise<void> {
+  await db.transaction('rw', db.sesiones, async () => {
+    const id = idSesion(semana, sesionId);
+    const actual = await db.sesiones.get(id);
+    const extras = [...(actual?.extras ?? [])];
+    if (extras.some((e) => e.id === ejercicioId)) return;
+    extras.push(calentamiento ? { id: ejercicioId, calentamiento: true } : { id: ejercicioId });
+    await db.sesiones.put({
+      ...actual,
+      id,
+      semana,
+      sesionId,
+      fecha: actual?.fecha ?? hoy(),
+      nota: actual?.nota ?? '',
+      extras,
+      actualizado: Date.now(),
+    });
+  });
+}
+
+/** Lo saca de la sesion de hoy; las series anotadas quedan en su ficha. */
+export async function quitarEjercicioHoy(
+  semana: number,
+  sesionId: string,
+  ejercicioId: string,
+): Promise<void> {
+  await db.transaction('rw', db.sesiones, async () => {
+    const id = idSesion(semana, sesionId);
+    const actual = await db.sesiones.get(id);
+    if (!actual?.extras) return;
+    await db.sesiones.put({ ...actual, extras: actual.extras.filter((e) => e.id !== ejercicioId), actualizado: Date.now() });
   });
 }
 

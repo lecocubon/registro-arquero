@@ -1,10 +1,11 @@
 import { useState } from 'react';
 import { catalogoPorId, soloSeMarca } from '../data/biblioteca';
 import type { Ejercicio } from '../data/programa';
-import { db, idSerie, type RegistroSerie } from '../db/db';
+import { db, idSerie, type ExtraDelDia, type RegistroSerie, type TipoSerie } from '../db/db';
 import {
   agregarCalentamiento,
   agregarSerie,
+  quitarEjercicioHoy,
   copiarValores,
   guardarCampo,
   iniciarDescanso,
@@ -46,6 +47,8 @@ interface Props {
   original?: Ejercicio;
   /** Ids de la sesion de hoy, para no elegir un reemplazo repetido. */
   idsSesion: Set<string>;
+  /** Si se agrego hoy a la sesion, y con que intencion. */
+  extra?: ExtraDelDia;
 }
 
 const ACCION = '-my-1 h-9 shrink-0 rounded-lg px-2 text-[12.5px] font-medium text-accent';
@@ -105,7 +108,7 @@ function BotonHecha({ hecha, etiqueta, onClick }: { hecha: boolean; etiqueta: st
   );
 }
 
-export function TarjetaEjercicio({ semana, sesionId, ejercicio, registros, todas, original, idsSesion }: Props) {
+export function TarjetaEjercicio({ semana, sesionId, ejercicio, registros, todas, original, idsSesion, extra }: Props) {
   const { programa, catalogo } = useArquero();
   const [capa, setCapa] = useState<null | 'ficha' | 'cambiar' | 'discos'>(null);
   const plan = planSemana(semana, ejercicio, programa);
@@ -120,16 +123,20 @@ export function TarjetaEjercicio({ semana, sesionId, ejercicio, registros, todas
   const conBarra = Boolean(info?.equipo.some((q) => q === 'barra' || q === 'trap-bar'));
   const idOriginal = original?.id ?? ejercicio.id;
 
+  // Un ejercicio agregado como calentamiento guarda todas sus series como tales.
+  const tipoSerie: TipoSerie = extra?.calentamiento ? 'calentamiento' : 'normal';
   const propios = [...registros.values()].filter((r) => r.ejercicioId === ejercicio.id);
-  const calentamientos = propios.filter(esCalentamiento).length
-    ? Math.max(...propios.filter(esCalentamiento).map((r) => r.serie))
-    : 0;
-  const hechas = propios.filter(esSerieEfectiva).length;
+  const calentamientos =
+    tipoSerie === 'calentamiento' || !propios.some(esCalentamiento)
+      ? 0
+      : Math.max(...propios.filter(esCalentamiento).map((r) => r.serie));
+  const hechas =
+    tipoSerie === 'calentamiento' ? propios.filter(tieneDatos).length : propios.filter(esSerieEfectiva).length;
   // Las series extra que se agregaron hoy se dibujan despues de las del plan.
-  const trabajo = propios.filter((r) => !esCalentamiento(r));
+  const trabajo = propios.filter((r) => (tipoSerie === 'calentamiento' ? esCalentamiento(r) : !esCalentamiento(r)));
   const filas = Math.max(plan.series, ...trabajo.map((r) => r.serie), 0);
   const sobraUltima =
-    filas > plan.series && !tieneDatos(registros.get(idSerie(semana, sesionId, ejercicio.id, filas)));
+    filas > plan.series && !tieneDatos(registros.get(idSerie(semana, sesionId, ejercicio.id, filas, tipoSerie)));
 
   const rango =
     ejercicio.reps[0] === ejercicio.reps[1] ? `${ejercicio.reps[0]}` : `${ejercicio.reps[0]}–${ejercicio.reps[1]}`;
@@ -143,10 +150,11 @@ export function TarjetaEjercicio({ semana, sesionId, ejercicio, registros, todas
       ejercicio.id,
       serie,
       valoresParaCopiar(ejercicio, anterior),
+      tipoSerie,
     );
     if (!marcada) return;
     await iniciarDescanso(descanso, ejercicio.id);
-    const guardada = await db.series.get(idSerie(semana, sesionId, ejercicio.id, serie));
+    const guardada = await db.series.get(idSerie(semana, sesionId, ejercicio.id, serie, tipoSerie));
     const nuevos = guardada ? recordsNuevos(todas, guardada) : [];
     if (guardada && nuevos.length) {
       const nombres = nuevos.map((n) => NOMBRE_RECORD[n]).join(' y ');
@@ -156,7 +164,7 @@ export function TarjetaEjercicio({ semana, sesionId, ejercicio, registros, todas
 
   // Primer kg anotado hoy (o la vez anterior), para abrir la calculadora con ese peso.
   const kgHoy =
-    Array.from({ length: plan.series }, (_, i) => registros.get(idSerie(semana, sesionId, ejercicio.id, i + 1))?.kg).find(
+    Array.from({ length: plan.series }, (_, i) => registros.get(idSerie(semana, sesionId, ejercicio.id, i + 1, tipoSerie))?.kg).find(
       (kg) => (kg ?? 0) > 0,
     ) ??
     previo?.series.find((r) => (r.kg ?? 0) > 0)?.kg ??
@@ -196,6 +204,23 @@ export function TarjetaEjercicio({ semana, sesionId, ejercicio, registros, todas
         </span>
       </header>
 
+      {extra && (
+        <p className="mx-3.5 mb-1.5 ml-[47px] flex items-center justify-between gap-2 rounded-lg bg-accent-soft px-2.5 py-1.5 text-[12.5px] text-accent-ink">
+          <span>{extra.calentamiento ? 'Calentamiento agregado hoy' : 'Agregado hoy'}</span>
+          <button
+            type="button"
+            onClick={() => {
+              const conDatos = propios.some(tieneDatos);
+              if (conDatos && !window.confirm('Ya anotaste series aquí. Quedan guardadas en la ficha, pero salen de la sesión de hoy. ¿Quitar igual?')) return;
+              void quitarEjercicioHoy(semana, sesionId, ejercicio.id);
+            }}
+            className="-my-1 h-8 shrink-0 font-semibold underline"
+          >
+            Quitar
+          </button>
+        </p>
+      )}
+
       {original && (
         <p className="mx-3.5 mb-1.5 ml-[47px] flex items-center justify-between gap-2 rounded-lg bg-warn-soft px-2.5 py-1.5 text-[12.5px] text-warn">
           <span>Solo hoy, en lugar de {original.nombre}</span>
@@ -225,7 +250,7 @@ export function TarjetaEjercicio({ semana, sesionId, ejercicio, registros, todas
             Discos
           </button>
         )}
-        {ejercicio.tipo === 'carga' && (
+        {ejercicio.tipo === 'carga' && !extra?.calentamiento && (
           <button
             type="button"
             onClick={() => void agregarCalentamiento(semana, sesionId, ejercicio.id, calentamientos + 1)}
@@ -237,7 +262,7 @@ export function TarjetaEjercicio({ semana, sesionId, ejercicio, registros, todas
         )}
         <button
           type="button"
-          onClick={() => void agregarSerie(semana, sesionId, ejercicio.id, filas + 1)}
+          onClick={() => void agregarSerie(semana, sesionId, ejercicio.id, filas + 1, tipoSerie)}
           aria-label="Agregar una serie mas"
           className={ACCION}
         >
@@ -246,7 +271,7 @@ export function TarjetaEjercicio({ semana, sesionId, ejercicio, registros, todas
         {sobraUltima && (
           <button
             type="button"
-            onClick={() => void quitarSerie(semana, sesionId, ejercicio.id, filas)}
+            onClick={() => void quitarSerie(semana, sesionId, ejercicio.id, filas, tipoSerie)}
             aria-label="Quitar la ultima serie"
             className={ACCION}
           >
@@ -317,7 +342,7 @@ export function TarjetaEjercicio({ semana, sesionId, ejercicio, registros, todas
         })}
 
         {Array.from({ length: filas }, (_, i) => i + 1).map((serie) => {
-          const r = registros.get(idSerie(semana, sesionId, ejercicio.id, serie));
+          const r = registros.get(idSerie(semana, sesionId, ejercicio.id, serie, tipoSerie));
           const hecha = r?.hecha ?? false;
           const anterior = previo ? serieAnterior(previo.series, serie) : undefined;
           const copiable = valoresParaCopiar(ejercicio, anterior);
@@ -352,7 +377,7 @@ export function TarjetaEjercicio({ semana, sesionId, ejercicio, registros, todas
                     tipo={ejercicio.tipo}
                     onCopiar={
                       copiable
-                        ? () => void copiarValores(semana, sesionId, ejercicio.id, serie, copiable)
+                        ? () => void copiarValores(semana, sesionId, ejercicio.id, serie, copiable, tipoSerie)
                         : undefined
                     }
                   />
@@ -364,10 +389,10 @@ export function TarjetaEjercicio({ semana, sesionId, ejercicio, registros, todas
                         valor={r?.segundos ?? null}
                         objetivo={ejercicio.reps}
                         onCambio={(v) =>
-                          void guardarCampo(semana, sesionId, ejercicio.id, serie, 'segundos', v)
+                          void guardarCampo(semana, sesionId, ejercicio.id, serie, 'segundos', v, tipoSerie)
                         }
                         onTerminar={(s) =>
-                          void registrarTiempo(semana, sesionId, ejercicio.id, serie, s).then(() =>
+                          void registrarTiempo(semana, sesionId, ejercicio.id, serie, s, tipoSerie).then(() =>
                             iniciarDescanso(descanso, ejercicio.id),
                           )
                         }
@@ -379,19 +404,19 @@ export function TarjetaEjercicio({ semana, sesionId, ejercicio, registros, todas
                         etiqueta="kg"
                         ariaLabel={`${ejercicio.nombre}, serie ${serie}, kilos`}
                         valor={r?.kg ?? null}
-                        onCambio={(v) => void guardarCampo(semana, sesionId, ejercicio.id, serie, 'kg', v)}
+                        onCambio={(v) => void guardarCampo(semana, sesionId, ejercicio.id, serie, 'kg', v, tipoSerie)}
                       />
                       <CampoNumero
                         etiqueta="Reps"
                         ariaLabel={`${ejercicio.nombre}, serie ${serie}, repeticiones`}
                         valor={r?.reps ?? null}
-                        onCambio={(v) => void guardarCampo(semana, sesionId, ejercicio.id, serie, 'reps', v)}
+                        onCambio={(v) => void guardarCampo(semana, sesionId, ejercicio.id, serie, 'reps', v, tipoSerie)}
                       />
                       <CampoNumero
                         etiqueta="RIR"
                         ariaLabel={`${ejercicio.nombre}, serie ${serie}, RIR`}
                         valor={r?.rir ?? null}
-                        onCambio={(v) => void guardarCampo(semana, sesionId, ejercicio.id, serie, 'rir', v)}
+                        onCambio={(v) => void guardarCampo(semana, sesionId, ejercicio.id, serie, 'rir', v, tipoSerie)}
                       />
                     </>
                   )}

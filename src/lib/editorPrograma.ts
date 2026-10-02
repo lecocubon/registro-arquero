@@ -1,5 +1,7 @@
 import type { EjercicioCatalogo } from '../data/biblioteca';
-import type { EjercicioPlan, Fase, ProgramaDef, SesionDef } from '../data/programa';
+import { planPorDefecto, siguienteBloque, type EjercicioPlan, type Fase, type ProgramaDef, type SesionDef } from '../data/programa';
+
+export { planPorDefecto, siguienteBloque };
 import { normalizarTexto } from '../data/biblioteca';
 import { finMesociclo, numeroMesociclo } from './periodizacion';
 
@@ -129,22 +131,6 @@ export function moverSesion(def: ProgramaDef, sesionId: string, delta: number): 
 }
 
 // ---------- ejercicios ----------
-
-/** Siguiente letra de bloque: A, B, C... segun cuantos bloques distintos hay. */
-export function siguienteBloque(ejercicios: EjercicioPlan[]): string {
-  const letras = new Set(ejercicios.map((e) => e.bloque.charAt(0).toUpperCase()));
-  let codigo = 'A'.charCodeAt(0);
-  while (letras.has(String.fromCharCode(codigo)) && codigo < 'Z'.charCodeAt(0)) codigo += 1;
-  return String.fromCharCode(codigo);
-}
-
-export function planPorDefecto(e: EjercicioCatalogo, bloque: string): EjercicioPlan {
-  if (e.tipo === 'tiempo') return { id: e.id, bloque, series: 3, reps: [20, 40], rirObjetivo: 0, incremento: 0 };
-  if (e.tipo === 'salto') return { id: e.id, bloque, series: 3, reps: [3, 5], rirObjetivo: 0, incremento: 0 };
-  if (e.tipo === 'movilidad') return { id: e.id, bloque, series: 2, reps: [8, 10], rirObjetivo: 0, incremento: 0 };
-  const barra = e.equipo.includes('barra') || e.equipo.includes('trap-bar');
-  return { id: e.id, bloque, series: 3, reps: [8, 10], rirObjetivo: 2, incremento: barra ? 2.5 : 2 };
-}
 
 export function agregarEjercicio(def: ProgramaDef, sesionId: string, e: EjercicioCatalogo): ProgramaDef {
   const nuevo = clonar(def);

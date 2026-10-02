@@ -1,11 +1,14 @@
 import { ejerciciosDelDia } from '../data/programa';
 import { useArquero } from '../estado/arquero';
 import { idSesion, type RegistroSerie, type RegistroSesion } from '../db/db';
-import { guardarNota } from '../db/repo';
+import { agregarEjercicioHoy, guardarNota } from '../db/repo';
 import { faseDe, planSemana } from '../lib/periodizacion';
 import { esSerieEfectiva } from '../lib/series';
 import { fechaCorta } from '../lib/numeros';
 import { AvisoInstalar } from '../components/AvisoInstalar';
+import { avisar } from '../components/Avisos';
+import { Capa } from '../components/Capa';
+import { ListaEjercicios } from '../components/ListaEjercicios';
 import { CabeceraSesion } from '../components/CabeceraSesion';
 import { RecuperacionReloj, RelojSesion } from '../components/Reloj';
 import { TarjetaEjercicio } from '../components/TarjetaEjercicio';
@@ -41,6 +44,7 @@ function NotaDeSesion({ semana, sesionId, valor }: { semana: number; sesionId: s
 export function PantallaHoy({ semana, dia, onAbrir, todas, sesiones }: Props) {
   const { programa, catalogo } = useArquero();
   const fase = faseDe(semana, programa);
+  const [agregando, setAgregando] = useState<null | { calentamiento: boolean }>(null);
 
   if (dia) {
     const plan = programa.sesiones.find((s) => s.id === dia);
@@ -51,7 +55,7 @@ export function PantallaHoy({ semana, dia, onAbrir, todas, sesiones }: Props) {
     const meta = sesiones.find((s) => s.id === idSesion(semana, dia));
     const nota = meta?.nota ?? '';
     const planificadas = plan.ejercicios.reduce((n, ej) => n + planSemana(semana, ej, programa).series, 0);
-    const delDia = ejerciciosDelDia(plan, meta?.reemplazos, catalogo);
+    const delDia = ejerciciosDelDia(plan, meta?.reemplazos, catalogo, meta?.extras);
     const idsSesion = new Set(delDia.map((d) => d.ejercicio.id));
     // Solo cuentan en la cabecera los ejercicios que hoy estan en la sesion.
     const visibles = deLaSesion.filter((r) => idsSesion.has(r.ejercicioId));
@@ -71,13 +75,14 @@ export function PantallaHoy({ semana, dia, onAbrir, todas, sesiones }: Props) {
 
         <CabeceraSesion registros={visibles} seriesPlanificadas={planificadas} inicio={meta?.inicio} />
 
-        {delDia.map(({ ejercicio, original }) => (
+        {delDia.map(({ ejercicio, original, extra }) => (
           <TarjetaEjercicio
             key={original?.id ?? ejercicio.id}
             semana={semana}
             sesionId={dia}
             ejercicio={ejercicio}
             original={original}
+            extra={extra}
             idsSesion={idsSesion}
             registros={registros}
             todas={todas}
@@ -87,6 +92,45 @@ export function PantallaHoy({ semana, dia, onAbrir, todas, sesiones }: Props) {
           <p className="py-4 text-[14px] text-ink3">
             Esta sesión no tiene ejercicios. Agrégalos en la pestaña Programa.
           </p>
+        )}
+
+        <div className="mt-1 mb-3 grid grid-cols-2 gap-2">
+          <button
+            type="button"
+            onClick={() => setAgregando({ calentamiento: false })}
+            className="h-11 rounded-[10px] border border-line bg-surface text-[14px] font-semibold text-ink2"
+          >
+            + Ejercicio hoy
+          </button>
+          <button
+            type="button"
+            onClick={() => setAgregando({ calentamiento: true })}
+            className="h-11 rounded-[10px] border border-line bg-surface text-[14px] font-semibold text-ink2"
+          >
+            + Calentamiento
+          </button>
+        </div>
+
+        {agregando && (
+          <Capa
+            titulo={agregando.calentamiento ? 'Calentamiento de hoy' : 'Agregar a la sesión de hoy'}
+            onCerrar={() => setAgregando(null)}
+          >
+            <p className="mb-3 text-[13.5px] leading-relaxed text-ink2">
+              {agregando.calentamiento
+                ? 'Se anota aparte y no suma volumen, e1RM ni récords, aunque lo hagas en otra máquina.'
+                : 'Queda solo en la sesión de hoy, con series y reps por defecto. El programa no se toca.'}
+            </p>
+            <ListaEjercicios
+              deshabilitados={idsSesion}
+              onElegir={(e) => {
+                void agregarEjercicioHoy(semana, dia, e.id, agregando.calentamiento).then(() => {
+                  setAgregando(null);
+                  avisar(`${e.nombre} agregado a hoy`);
+                });
+              }}
+            />
+          </Capa>
         )}
 
         <NotaDeSesion key={`${semana}|${dia}`} semana={semana} sesionId={dia} valor={nota} />

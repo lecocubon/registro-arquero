@@ -22,6 +22,13 @@ export interface RegistroSerie {
   actualizado: number;
 }
 
+/** Ejercicio agregado a la sesion solo por hoy. */
+export interface ExtraDelDia {
+  id: string;
+  /** Sus series se guardan como calentamiento: no suman volumen ni records. */
+  calentamiento?: boolean;
+}
+
 export interface RegistroSesion {
   /** `${semana}|${sesionId}` */
   id: string;
@@ -33,6 +40,8 @@ export interface RegistroSesion {
   inicio?: number;
   /** Solo ese dia: id del ejercicio del programa -> id del que lo reemplaza. */
   reemplazos?: Record<string, string>;
+  /** Ejercicios que no estan en el programa y se agregaron ese dia. */
+  extras?: ExtraDelDia[];
   /** Epoch ms de la ultima vez que se guardo en Health Connect. */
   guardadaEnSalud?: number;
   actualizado: number;

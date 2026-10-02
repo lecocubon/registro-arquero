@@ -4,6 +4,7 @@
  * Aqui solo va la prescripcion: que es cada ejercicio vive en biblioteca.json.
  */
 import { BIBLIOTECA, catalogoPorId, type EjercicioCatalogo, type TipoEjercicio } from './biblioteca';
+import type { ExtraDelDia } from '../db/db';
 
 export type { TipoEjercicio } from './biblioteca';
 
@@ -204,6 +205,22 @@ export const PROGRAMA_BASE: ProgramaDef = {
   ],
 };
 
+/** Siguiente letra de bloque: A, B, C... segun cuantos bloques distintos hay. */
+export function siguienteBloque(ejercicios: EjercicioPlan[]): string {
+  const letras = new Set(ejercicios.map((e) => e.bloque.charAt(0).toUpperCase()));
+  let codigo = 'A'.charCodeAt(0);
+  while (letras.has(String.fromCharCode(codigo)) && codigo < 'Z'.charCodeAt(0)) codigo += 1;
+  return String.fromCharCode(codigo);
+}
+
+export function planPorDefecto(e: EjercicioCatalogo, bloque: string): EjercicioPlan {
+  if (e.tipo === 'tiempo') return { id: e.id, bloque, series: 3, reps: [20, 40], rirObjetivo: 0, incremento: 0 };
+  if (e.tipo === 'salto') return { id: e.id, bloque, series: 3, reps: [3, 5], rirObjetivo: 0, incremento: 0 };
+  if (e.tipo === 'movilidad') return { id: e.id, bloque, series: 2, reps: [8, 10], rirObjetivo: 0, incremento: 0 };
+  const barra = e.equipo.includes('barra') || e.equipo.includes('trap-bar');
+  return { id: e.id, bloque, series: 3, reps: [8, 10], rirObjetivo: 2, incremento: barra ? 2.5 : 2 };
+}
+
 export function resolverEjercicio(plan: EjercicioPlan, catalogo: EjercicioCatalogo[]): Ejercicio {
   const c = catalogoPorId(plan.id, catalogo);
   // Un ejercicio propio borrado no debe romper la sesion: se muestra por su id.
@@ -238,14 +255,34 @@ export function ejercicioPorId(id: string, programa: Programa = PROGRAMA): Ejerc
  * Ejercicios de la sesion con los reemplazos de ese dia aplicados. El
  * reemplazo hereda la prescripcion (series, reps, RIR) del ejercicio original.
  */
+export interface FilaDelDia {
+  ejercicio: Ejercicio;
+  /** Si hoy se reemplazo, el ejercicio del programa. */
+  original?: Ejercicio;
+  /** Si se agrego hoy, con que intencion. */
+  extra?: ExtraDelDia;
+}
+
 export function ejerciciosDelDia(
   sesion: SesionPlan,
   reemplazos: Record<string, string> | undefined,
   catalogo: EjercicioCatalogo[],
-): { ejercicio: Ejercicio; original?: Ejercicio }[] {
-  return sesion.ejercicios.map((original) => {
+  extras: ExtraDelDia[] = [],
+): FilaDelDia[] {
+  const delPrograma: FilaDelDia[] = sesion.ejercicios.map((original) => {
     const nuevoId = reemplazos?.[original.id];
     if (!nuevoId || nuevoId === original.id) return { ejercicio: original };
     return { ejercicio: resolverEjercicio({ ...original, id: nuevoId }, catalogo), original };
   });
+
+  // Los agregados van al final, con la prescripcion por defecto de su tipo.
+  const planes = delPrograma.map((f) => f.ejercicio);
+  const agregados: FilaDelDia[] = [];
+  for (const extra of extras) {
+    const info = catalogoPorId(extra.id, catalogo);
+    if (!info) continue;
+    const bloque = siguienteBloque([...planes, ...agregados.map((f) => f.ejercicio)]);
+    agregados.push({ ejercicio: resolverEjercicio(planPorDefecto(info, bloque), catalogo), extra });
+  }
+  return [...delPrograma, ...agregados];
 }

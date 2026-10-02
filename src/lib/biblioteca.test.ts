@@ -81,6 +81,29 @@ describe('programa resuelto', () => {
     expect(p.sesiones[0]?.ejercicios[0]).toMatchObject({ nombre: 'borrado', tipo: 'carga' });
   });
 
+  it('un ejercicio agregado hoy va al final, con prescripción por defecto', () => {
+    const jueves = PROGRAMA.sesiones.find((s) => s.id === 'jueves');
+    if (!jueves) throw new Error('falta jueves');
+    const dia = ejerciciosDelDia(jueves, undefined, BIBLIOTECA, [
+      { id: 'extension-cuadriceps' },
+      { id: 'press-banca-smith', calentamiento: true },
+    ]);
+    expect(dia).toHaveLength(jueves.ejercicios.length + 2);
+    const agregado = dia.at(-2);
+    expect(agregado?.ejercicio).toMatchObject({ id: 'extension-cuadriceps', series: 3, reps: [8, 10] });
+    expect(agregado?.extra).toEqual({ id: 'extension-cuadriceps' });
+    expect(dia.at(-1)?.extra?.calentamiento).toBe(true);
+    // Bloques nuevos, sin repetir los que ya usa la sesión.
+    const bloques = dia.map((f) => f.ejercicio.bloque);
+    expect(new Set(bloques).size).toBe(bloques.length);
+  });
+
+  it('ignora un agregado que ya no existe en la biblioteca', () => {
+    const jueves = PROGRAMA.sesiones.find((s) => s.id === 'jueves');
+    if (!jueves) throw new Error('falta jueves');
+    expect(ejerciciosDelDia(jueves, undefined, BIBLIOTECA, [{ id: 'borrado' }])).toHaveLength(jueves.ejercicios.length);
+  });
+
   it('el reemplazo del día hereda la prescripción del original', () => {
     const jueves = PROGRAMA.sesiones.find((s) => s.id === 'jueves');
     if (!jueves) throw new Error('falta jueves');
