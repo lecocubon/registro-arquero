@@ -141,7 +141,8 @@ export const PROGRAMA_BASE: ProgramaDef = {
       lugar: 'Gimnasio · 07:00',
       foco: 'Potencia lateral, unilateral y cadena posterior',
       ejercicios: [
-        { id: 'salto-lateral-una-pierna', bloque: 'A', series: 3, reps: [3, 3], rirObjetivo: 0, incremento: 0, porLado: true },
+        { id: 'salto-lateral-una-pierna', bloque: 'A1', series: 3, reps: [3, 3], rirObjetivo: 0, incremento: 0, porLado: true, descanso: 120 },
+        { id: 'salto-lateral-conos', bloque: 'A2', series: 3, reps: [8, 10], rirObjetivo: 0, incremento: 0, descanso: 90 },
         { id: 'bulgara', bloque: 'B', series: 3, reps: [8, 8], rirObjetivo: 3, incremento: 2, rirFijo: 3, porLado: true, descanso: 120 },
         { id: 'empuje-cadera', bloque: 'C1', series: 3, reps: [8, 10], rirObjetivo: 2, incremento: 5 },
         { id: 'press-inclinado', bloque: 'C2', series: 3, reps: [8, 10], rirObjetivo: 2, incremento: 2 },
@@ -155,7 +156,7 @@ export const PROGRAMA_BASE: ProgramaDef = {
       lugar: 'Gimnasio · 07:00 · fútbol en la noche',
       foco: 'Tren superior y salto vertical, piernas frescas para el fútbol',
       ejercicios: [
-        { id: 'salto-vertical-detenido', bloque: 'A', series: 3, reps: [5, 5], rirObjetivo: 0, incremento: 0 },
+        { id: 'salto-vertical-detenido', bloque: 'A', series: 3, reps: [5, 5], rirObjetivo: 0, incremento: 0, descanso: 120 },
         { id: 'dominadas', bloque: 'B1', series: 4, reps: [3, 5], rirObjetivo: 2, incremento: 2.5, principal: true },
         { id: 'press-banca', bloque: 'B2', series: 4, reps: [5, 6], rirObjetivo: 2, incremento: 2.5, principal: true },
         { id: 'remo-pecho-apoyado', bloque: 'C1', series: 3, reps: [10, 12], rirObjetivo: 2, incremento: 2 },
@@ -170,7 +171,8 @@ export const PROGRAMA_BASE: ProgramaDef = {
       lugar: 'Gimnasio · 07:00',
       foco: 'Fuerza de tren inferior, lejos del fútbol',
       ejercicios: [
-        { id: 'salto-contramovimiento', bloque: 'A', series: 3, reps: [4, 4], rirObjetivo: 0, incremento: 0 },
+        { id: 'salto-contramovimiento', bloque: 'A1', series: 3, reps: [4, 4], rirObjetivo: 0, incremento: 0, descanso: 120 },
+        { id: 'salto-cajon', bloque: 'A2', series: 3, reps: [3, 3], rirObjetivo: 0, incremento: 0, descanso: 120 },
         { id: 'sentadilla-barra', bloque: 'B', series: 4, reps: [5, 6], rirObjetivo: 2, incremento: 5, principal: true },
         { id: 'prensa', bloque: 'C1', series: 3, reps: [8, 10], rirObjetivo: 2, incremento: 10 },
         { id: 'curl-femoral', bloque: 'C2', series: 4, reps: [8, 12], rirObjetivo: 2, incremento: 5 },
@@ -182,7 +184,7 @@ export const PROGRAMA_BASE: ProgramaDef = {
       id: 'movilidad',
       nombre: 'Movilidad',
       lugar: 'Casa · colchoneta · miércoles o viernes',
-      foco: 'Pies, tobillos y rodillas: la base para la cadera',
+      foco: 'Pies, tobillos y rodillas, y rebote de tobillo',
       ejercicios: [
         { id: 'arco-corto', bloque: 'A1', series: 2, reps: [8, 8], rirObjetivo: 0, incremento: 0, porLado: true },
         { id: 'pulgar-pie', bloque: 'A2', series: 2, reps: [10, 10], rirObjetivo: 0, incremento: 0, porLado: true },
@@ -195,6 +197,8 @@ export const PROGRAMA_BASE: ProgramaDef = {
         { id: 'equilibrio-una-pierna', bloque: 'D1', series: 2, reps: [30, 30], rirObjetivo: 0, incremento: 0, porLado: true, descanso: 0 },
         { id: 'circulos-cadera-cuadrupedia', bloque: 'D2', series: 2, reps: [8, 8], rirObjetivo: 0, incremento: 0, porLado: true },
         { id: 'flexor-cadera-rodillas', bloque: 'D3', series: 2, reps: [30, 30], rirObjetivo: 0, incremento: 0, porLado: true, descanso: 0 },
+        { id: 'pogos', bloque: 'E1', series: 3, reps: [15, 20], rirObjetivo: 0, incremento: 0, descanso: 60 },
+        { id: 'saltos-cuerda', bloque: 'E2', series: 3, reps: [45, 60], rirObjetivo: 0, incremento: 0, descanso: 60 },
       ],
     },
   ],

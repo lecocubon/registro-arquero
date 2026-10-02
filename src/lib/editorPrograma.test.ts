@@ -65,7 +65,7 @@ describe('editor de programa', () => {
 
   it('cambiar el ejercicio mantiene la prescripción', () => {
     const p = cambiarEjercicio(PROGRAMA_BASE, 'jueves', 'sentadilla-barra', cat('sentadilla-frontal'));
-    const e = p.sesiones.find((s) => s.id === 'jueves')?.ejercicios[1];
+    const e = p.sesiones.find((s) => s.id === 'jueves')?.ejercicios.find((x) => x.id === 'sentadilla-frontal');
     expect(e).toMatchObject({ id: 'sentadilla-frontal', bloque: 'B', series: 4, reps: [5, 6], principal: true });
   });
 

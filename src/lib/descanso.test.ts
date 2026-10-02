@@ -23,7 +23,8 @@ describe('descansoDe', () => {
   it('los accesorios, tiempo y salto usan el de su tipo', () => {
     expect(descansoDe(ej('face-pull'))).toBe(PROGRAMA.descansos.carga);
     expect(descansoDe(ej('plancha-lateral'))).toBe(PROGRAMA.descansos.tiempo);
-    expect(descansoDe(ej('salto-contramovimiento'))).toBe(PROGRAMA.descansos.salto);
+    // Los saltos del programa traen descanso propio: se quita para ver el de su tipo.
+    expect(descansoDe({ ...ej('salto-contramovimiento'), descanso: undefined })).toBe(PROGRAMA.descansos.salto);
   });
 
   it('el descanso propio del ejercicio manda', () => {

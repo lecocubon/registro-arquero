@@ -1,0 +1,38 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 360 240" width="360" height="240" role="img" aria-label="Pogos: rebote de tobillo con la rodilla casi recta y contacto corto">
+  <style>
+    .suelo { stroke: #c9d2cc; stroke-width: 4; stroke-linecap: round }
+    .cuerpo { stroke: #2a352e; stroke-width: 15; stroke-linecap: round; fill: none }
+    .brazo { stroke: #6f7d75; stroke-width: 10; stroke-linecap: round; fill: none }
+    .cabeza { fill: #2a352e }
+    .pie { stroke: #1E6B48; stroke-width: 12; stroke-linecap: round; fill: none }
+    .flecha { stroke: #1E6B48; stroke-width: 4; fill: none; stroke-linecap: round }
+    .rot { fill: #1E6B48 }
+    .aire { stroke: #9aa7a0; stroke-width: 3; stroke-dasharray: 6 6; fill: none }
+    .izq { font: 600 13.5px system-ui, sans-serif; fill: #1E6B48; text-anchor: start }
+    .der { font: 600 13.5px system-ui, sans-serif; fill: #1E6B48; text-anchor: end }
+    .nota { font: 400 12.5px system-ui, sans-serif; fill: #7d8a83; text-anchor: middle }
+  </style>
+
+  <line class="suelo" x1="20" y1="196" x2="340" y2="196" />
+
+  <!-- contacto: de puntas, rodilla casi recta -->
+  <circle class="cabeza" cx="104" cy="48" r="19" />
+  <path class="cuerpo" d="M104 70 V120" />
+  <path class="brazo" d="M104 86 L74 118" />
+  <path class="cuerpo" d="M104 120 L108 174" />
+  <path class="pie" d="M108 178 L128 190" />
+  <path class="flecha" d="M150 170 V130" />
+  <path class="rot" d="M150 120 l7 14 h-14 z" />
+
+  <!-- en el aire: misma postura, apenas unos centimetros -->
+  <path class="aire" d="M232 196 H316" />
+  <circle class="cabeza" cx="266" cy="36" r="19" />
+  <path class="cuerpo" d="M266 58 V108" />
+  <path class="brazo" d="M266 74 L236 106" />
+  <path class="cuerpo" d="M266 108 L270 162" />
+  <path class="pie" d="M270 166 L292 176" />
+
+  <text class="izq" x="18" y="108">Rodilla casi recta</text>
+  <text class="der" x="342" y="214">Apenas unos centímetros de altura</text>
+  <text class="nota" x="180" y="234">Contacto corto: rebota, no amortigües</text>
+</svg>
