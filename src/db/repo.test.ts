@@ -1,7 +1,7 @@
 import 'fake-indexeddb/auto';
 import { beforeEach, describe, expect, it } from 'vitest';
 import { db, idSerie, serieVacia, type RegistroSerie } from './db';
-import { agregarSerie, moverSeries, quitarSerie } from './repo';
+import { agregarSerie, leerPrograma, moverSeries, prepararPrimerUso, quitarSerie } from './repo';
 
 const SEMANA = 2;
 const SESION = 'martes';
@@ -64,5 +64,25 @@ describe('mover series a otro ejercicio', () => {
   it('no hace nada si es el mismo ejercicio o no hay series', async () => {
     expect(await moverSeries(SEMANA, SESION, 'press-banca', 'press-banca')).toBe(0);
     expect(await moverSeries(SEMANA, SESION, 'press-banca', 'press-banca-smith')).toBe(0);
+  });
+});
+
+describe('primer uso', () => {
+  it('un telefono sin nada arranca sin sesiones', async () => {
+    await prepararPrimerUso();
+    expect((await leerPrograma())?.sesiones).toEqual([]);
+  });
+
+  it('un telefono con historial se queda con el programa de fabrica', async () => {
+    await agregarSerie(SEMANA, SESION, 'press-banca', 1);
+    await prepararPrimerUso();
+    expect(await leerPrograma()).toBeNull();
+  });
+
+  it('no pisa el programa que ya habia', async () => {
+    await prepararPrimerUso();
+    await agregarSerie(SEMANA, SESION, 'press-banca', 1);
+    await prepararPrimerUso();
+    expect((await leerPrograma())?.sesiones).toEqual([]);
   });
 });

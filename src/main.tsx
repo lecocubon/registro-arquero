@@ -11,6 +11,7 @@ import '@fontsource/ibm-plex-sans/latin-600.css';
 import './index.css';
 import App from './App';
 import { ProveedorArquero } from './estado/arquero';
+import { prepararPrimerUso } from './db/repo';
 
 // En la app Android los archivos vienen dentro del APK: el service worker sobra.
 if (!Capacitor.isNativePlatform()) registerSW({ immediate: true });
@@ -18,10 +19,14 @@ if (!Capacitor.isNativePlatform()) registerSW({ immediate: true });
 const contenedor = document.getElementById('root');
 if (!contenedor) throw new Error('Falta #root');
 
-createRoot(contenedor).render(
-  <StrictMode>
-    <ProveedorArquero>
-      <App />
-    </ProveedorArquero>
-  </StrictMode>,
-);
+const pintar = () =>
+  createRoot(contenedor).render(
+    <StrictMode>
+      <ProveedorArquero>
+        <App />
+      </ProveedorArquero>
+    </StrictMode>,
+  );
+
+// Antes de pintar, para que un telefono nuevo no alcance a ver el plan de fabrica.
+void prepararPrimerUso().catch(() => undefined).finally(pintar);

@@ -6,7 +6,7 @@ import {
 } from '../lib/descanso';
 import { tieneDatos, tieneValores, type ValoresSerie } from '../lib/series';
 import type { EjercicioCatalogo } from '../data/biblioteca';
-import type { ProgramaDef } from '../data/programa';
+import { PROGRAMA_VACIO, type ProgramaDef } from '../data/programa';
 import {
   db,
   hoy,
@@ -289,6 +289,22 @@ export async function leerPrograma(): Promise<ProgramaDef | null> {
 
 export async function guardarPrograma(definicion: ProgramaDef): Promise<void> {
   await db.programas.put({ id: ID_PROGRAMA, definicion, actualizado: Date.now() });
+}
+
+/**
+ * Primera vez en un telefono: sin un solo registro, la app arranca sin sesiones
+ * en vez de con el plan de arquero. Si ya hay datos no toca nada, asi que un
+ * telefono en uso sigue recibiendo los cambios del programa de fabrica.
+ */
+export async function prepararPrimerUso(): Promise<void> {
+  if (await db.programas.get(ID_PROGRAMA)) return;
+  const [series, sesiones, mediciones] = await Promise.all([
+    db.series.count(),
+    db.sesiones.count(),
+    db.mediciones.count(),
+  ]);
+  if (series + sesiones + mediciones > 0) return;
+  await guardarPrograma(PROGRAMA_VACIO);
 }
 
 /** Vuelve al programa del archivo. El historial no se toca. */

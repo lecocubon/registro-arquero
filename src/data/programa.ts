@@ -206,6 +206,36 @@ export const PROGRAMA_BASE: ProgramaDef = {
   ],
 };
 
+/**
+ * Con que arranca un telefono que estrena la app: sin sesiones, para que cada
+ * uno arme las suyas. El plan de arquero sigue en PROGRAMA_BASE y se carga
+ * desde Programa con "Restaurar programa de fabrica".
+ */
+export const PROGRAMA_VACIO: ProgramaDef = {
+  nombre: 'Mi entrenamiento',
+  semanas: 8,
+  mesociclo: 1,
+  desde: 1,
+  descansos: { principal: 180, carga: 90, tiempo: 60, salto: 90, movilidad: 0 },
+  fases: [
+    {
+      nombre: 'Carga',
+      semanas: [1, 7],
+      rirPrincipal: 2,
+      nota: 'Sube el peso cuando llegues al tope de repeticiones con el RIR objetivo.',
+    },
+    {
+      nombre: 'Descarga',
+      semanas: [8, 8],
+      rirTodos: 4,
+      factorSeries: 0.6,
+      seriesMinimas: 2,
+      nota: 'Misma carga, menos series, 4 RIR. Semana para llegar fresco al siguiente bloque.',
+    },
+  ],
+  sesiones: [],
+};
+
 /** Siguiente letra de bloque: A, B, C... segun cuantos bloques distintos hay. */
 export function siguienteBloque(ejercicios: EjercicioPlan[]): string {
   const letras = new Set(ejercicios.map((e) => e.bloque.charAt(0).toUpperCase()));

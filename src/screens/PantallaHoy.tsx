@@ -156,9 +156,17 @@ export function PantallaHoy({ semana, dia, onAbrir, todas, sesiones }: Props) {
       <p className="mb-3.5 rounded-lg bg-accent-soft px-3.5 py-2.5 text-[13.5px] leading-snug text-accent-ink">
         {fase.nota}
       </p>
-      <p className="mb-2.5 font-display text-[13px] font-bold tracking-[0.15em] text-ink3 uppercase">
-        Sesiones de la semana
-      </p>
+      {programa.sesiones.length === 0 && (
+        <p className="rounded-xl border border-line bg-surface px-4 py-4 text-[14px] leading-relaxed text-ink2">
+          Todavía no tienes sesiones. Ve a <b className="text-ink">Programa</b> y crea la primera con
+          «+ Nueva sesión», o carga el plan de ejemplo con «Restaurar programa de fábrica».
+        </p>
+      )}
+      {programa.sesiones.length > 0 && (
+        <p className="mb-2.5 font-display text-[13px] font-bold tracking-[0.15em] text-ink3 uppercase">
+          Sesiones de la semana
+        </p>
+      )}
       <div className="grid gap-2.5">
         {programa.sesiones.map((s) => {
           const registradas = todas.filter(
