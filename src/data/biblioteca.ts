@@ -8,6 +8,7 @@ export type Musculo =
   | 'espalda-media'
   | 'lumbares'
   | 'trapecio'
+  | 'cuello'
   | 'hombros'
   | 'biceps'
   | 'triceps'
@@ -68,6 +69,7 @@ export const MUSCULOS: { id: Musculo; nombre: string }[] = [
   { id: 'espalda-media', nombre: 'Espalda media' },
   { id: 'lumbares', nombre: 'Lumbares' },
   { id: 'trapecio', nombre: 'Trapecio' },
+  { id: 'cuello', nombre: 'Cuello' },
   { id: 'hombros', nombre: 'Hombros' },
   { id: 'biceps', nombre: 'Bíceps' },
   { id: 'triceps', nombre: 'Tríceps' },
