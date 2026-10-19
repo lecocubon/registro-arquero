@@ -277,9 +277,15 @@ export function FichaEjercicio({ ejercicioId, onCerrar }: { ejercicioId: string;
 
       {pestana === 'tecnica' && (
         <>
+          {ejercicio.movimiento && (
+            <>
+              <p className={SUBTITULO}>El movimiento</p>
+              <p className="mb-4 text-[14.5px] leading-relaxed text-ink">{ejercicio.movimiento}</p>
+            </>
+          )}
           {ejercicio.pasos && ejercicio.pasos.length > 0 && (
             <>
-              <p className={SUBTITULO}>Cómo se hace</p>
+              <p className={SUBTITULO}>Paso a paso</p>
               <ol className="mb-4 grid gap-2">
                 {ejercicio.pasos.map((t, i) => (
                   <li key={i} className="flex gap-3 text-[14.5px] leading-snug text-ink">
@@ -297,6 +303,19 @@ export function FichaEjercicio({ ejercicioId, onCerrar }: { ejercicioId: string;
                 {ejercicio.indicaciones.map((t, i) => (
                   <li key={i} className="flex gap-3 text-[14.5px] leading-snug text-ink2">
                     <span className="text-accent">·</span>
+                    <span>{t}</span>
+                  </li>
+                ))}
+              </ul>
+            </>
+          )}
+          {ejercicio.errores && ejercicio.errores.length > 0 && (
+            <>
+              <p className={SUBTITULO}>Errores típicos</p>
+              <ul className="mb-4 grid gap-2">
+                {ejercicio.errores.map((t, i) => (
+                  <li key={i} className="flex gap-3 text-[14.5px] leading-snug text-ink2">
+                    <span className="text-warn">✗</span>
                     <span>{t}</span>
                   </li>
                 ))}

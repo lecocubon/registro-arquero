@@ -50,6 +50,10 @@ export interface EjercicioCatalogo {
   indicaciones: string[];
   /** Como se hace, paso a paso. Los ejercicios propios no lo traen. */
   pasos?: string[];
+  /** En prosa: que se mueve, que no, y donde se tiene que sentir. */
+  movimiento?: string;
+  /** Lo que sale mal cuando se hace de memoria. */
+  errores?: string[];
   /** Id en free-exercise-db (dominio publico). Solo lo usa scripts/imagenes.py. */
   fuenteImagen?: string;
   /** La imagen es un dibujo propio en public/ejercicios/<id>.svg, no una foto. */

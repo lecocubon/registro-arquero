@@ -21,7 +21,7 @@ describe('descansoDe', () => {
   });
 
   it('los accesorios, tiempo y salto usan el de su tipo', () => {
-    expect(descansoDe(ej('face-pull'))).toBe(PROGRAMA.descansos.carga);
+    expect(descansoDe(ej('rotacion-externa-polea'))).toBe(PROGRAMA.descansos.carga);
     expect(descansoDe(ej('plancha-lateral'))).toBe(PROGRAMA.descansos.tiempo);
     // Los saltos del programa traen descanso propio: se quita para ver el de su tipo.
     expect(descansoDe({ ...ej('salto-contramovimiento'), descanso: undefined })).toBe(PROGRAMA.descansos.salto);
@@ -37,28 +37,28 @@ describe('temporizador de descanso', () => {
   const t0 = 10_000;
 
   it('calcula lo que queda a partir de la hora de termino', () => {
-    const d = nuevoDescanso(90, 'face-pull', t0);
+    const d = nuevoDescanso(90, 'rotacion-externa-polea', t0);
     expect(restanteMs(d, t0)).toBe(90_000);
     expect(restanteMs(d, t0 + 30_000)).toBe(60_000);
     expect(restanteMs(d, t0 + 200_000)).toBe(0);
   });
 
   it('+15 alarga el termino y la barra de progreso', () => {
-    const d = nuevoDescanso(90, 'face-pull', t0);
+    const d = nuevoDescanso(90, 'rotacion-externa-polea', t0);
     const mas = ajustarDescanso(d, 15, t0);
     expect(mas?.fin).toBe(d.fin + 15_000);
     expect(mas?.total).toBe(105_000);
   });
 
   it('-15 acorta sin tocar el total', () => {
-    const d = nuevoDescanso(90, 'face-pull', t0);
+    const d = nuevoDescanso(90, 'rotacion-externa-polea', t0);
     const menos = ajustarDescanso(d, -15, t0);
     expect(menos?.fin).toBe(d.fin - 15_000);
     expect(menos?.total).toBe(90_000);
   });
 
   it('restar mas de lo que queda termina el descanso', () => {
-    const d = nuevoDescanso(10, 'face-pull', t0);
+    const d = nuevoDescanso(10, 'rotacion-externa-polea', t0);
     expect(ajustarDescanso(d, -15, t0)).toBeNull();
   });
 });

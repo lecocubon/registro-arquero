@@ -1,0 +1,41 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 360 240" width="360" height="240" role="img" aria-label="Sentadilla cosaca: se baja sobre una pierna con la otra estirada al costado y la punta del pie arriba">
+  <style>
+    .suelo { stroke: #c9d2cc; stroke-width: 4; stroke-linecap: round }
+    .pared { stroke: #c9d2cc; stroke-width: 4; stroke-linecap: round }
+    .cuerpo { stroke: #2a352e; stroke-width: 15; stroke-linecap: round; fill: none }
+    .brazo { stroke: #6f7d75; stroke-width: 10; stroke-linecap: round; fill: none }
+    .cabeza { fill: #2a352e }
+    .pie { stroke: #1E6B48; stroke-width: 12; stroke-linecap: round; fill: none }
+    .flecha { stroke: #1E6B48; stroke-width: 4; fill: none; stroke-linecap: round }
+    .rot { fill: #1E6B48 }
+    .guia { stroke: #9aa7a0; stroke-width: 3; stroke-dasharray: 6 6; fill: none }
+    .banda { stroke: #1E6B48; stroke-width: 3.5; fill: none; stroke-dasharray: 2 5; stroke-linecap: round }
+    .izq { font: 600 13.5px system-ui, sans-serif; fill: #1E6B48; text-anchor: start }
+    .der { font: 600 13.5px system-ui, sans-serif; fill: #1E6B48; text-anchor: end }
+    .cen { font: 600 13.5px system-ui, sans-serif; fill: #1E6B48; text-anchor: middle }
+    .nota { font: 400 12.5px system-ui, sans-serif; fill: #7d8a83; text-anchor: middle }
+    .chico { font: 400 11.5px system-ui, sans-serif; fill: #7d8a83; text-anchor: middle }
+  </style>
+
+  <line class="suelo" x1="20" y1="208" x2="340" y2="208" />
+
+  <circle class="cabeza" cx="152" cy="52" r="17" />
+  <path class="cuerpo" d="M152 70 V124" />
+  <path class="brazo" d="M152 86 L196 96" />
+  <path class="brazo" d="M152 86 L112 98" />
+
+  <!-- pierna que baja: muslo abajo, talon pegado -->
+  <path class="cuerpo" d="M152 124 L116 176" />
+  <path class="cuerpo" d="M116 176 L124 204" />
+  <path class="pie" d="M110 206 H146" />
+  <text class="izq" x="16" y="152">Talón pegado</text>
+
+  <!-- pierna estirada: recta al costado con la punta arriba -->
+  <path class="cuerpo" d="M152 124 L286 198" />
+  <path class="pie" d="M286 200 L302 180" />
+  <path class="flecha" d="M312 186 V162" />
+  <path class="rot" d="M312 152 l7 14 h-14 z" />
+  <text class="der" x="350" y="146">Punta arriba</text>
+
+  <text class="nota" x="180" y="232">Una empuja y la otra se estira, en la misma repetición</text>
+</svg>

@@ -74,7 +74,7 @@ describe('mesociclos', () => {
 describe('planSemana (semana, ejercicio) => series y RIR', () => {
   const sentadilla = ej('sentadilla-barra'); // principal, 4 series base
   const rumano = ej('peso-muerto-rumano'); // rirFijo 3, 3 series
-  const facepull = ej('face-pull'); // accesorio, RIR 2
+  const rotacion = ej('rotacion-externa-polea'); // accesorio, RIR 2
   const salto = ej('salto-contramovimiento'); // 3 series base
   const plancha = ej('plancha-lateral');
 
@@ -88,7 +88,7 @@ describe('planSemana (semana, ejercicio) => series y RIR', () => {
   });
 
   it('los accesorios mantienen su propio RIR', () => {
-    for (const s of [1, 3, 6]) expect(planSemana(s, facepull).rirObjetivo).toBe(2);
+    for (const s of [1, 3, 6]) expect(planSemana(s, rotacion).rirObjetivo).toBe(2);
   });
 
   it('el RIR fijo ignora la fase', () => {
@@ -98,7 +98,7 @@ describe('planSemana (semana, ejercicio) => series y RIR', () => {
   it('la descarga manda sobre el RIR fijo y sobre los principales', () => {
     expect(planSemana(8, sentadilla).rirObjetivo).toBe(4);
     expect(planSemana(8, rumano).rirObjetivo).toBe(4);
-    expect(planSemana(8, facepull).rirObjetivo).toBe(4);
+    expect(planSemana(8, rotacion).rirObjetivo).toBe(4);
   });
 
   it('mantiene las series base fuera de la descarga', () => {

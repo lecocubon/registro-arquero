@@ -1,0 +1,47 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 360 240" width="360" height="240" role="img" aria-label="Elevacion en el plano de la escapula: el brazo sube en diagonal, a 30 grados del costado, con el pulgar arriba">
+  <style>
+    .suelo { stroke: #c9d2cc; stroke-width: 4; stroke-linecap: round }
+    .pared { stroke: #c9d2cc; stroke-width: 4; stroke-linecap: round }
+    .cuerpo { stroke: #2a352e; stroke-width: 15; stroke-linecap: round; fill: none }
+    .brazo { stroke: #6f7d75; stroke-width: 10; stroke-linecap: round; fill: none }
+    .cabeza { fill: #2a352e }
+    .pie { stroke: #1E6B48; stroke-width: 12; stroke-linecap: round; fill: none }
+    .flecha { stroke: #1E6B48; stroke-width: 4; fill: none; stroke-linecap: round }
+    .rot { fill: #1E6B48 }
+    .guia { stroke: #9aa7a0; stroke-width: 3; stroke-dasharray: 6 6; fill: none }
+    .banda { stroke: #1E6B48; stroke-width: 3.5; fill: none; stroke-dasharray: 2 5; stroke-linecap: round }
+    .izq { font: 600 13.5px system-ui, sans-serif; fill: #1E6B48; text-anchor: start }
+    .der { font: 600 13.5px system-ui, sans-serif; fill: #1E6B48; text-anchor: end }
+    .cen { font: 600 13.5px system-ui, sans-serif; fill: #1E6B48; text-anchor: middle }
+    .nota { font: 400 12.5px system-ui, sans-serif; fill: #7d8a83; text-anchor: middle }
+    .chico { font: 400 11.5px system-ui, sans-serif; fill: #7d8a83; text-anchor: middle }
+  </style>
+
+  <!-- arriba: donde apunta la paleta, visto desde arriba -->
+  <circle class="cabeza" cx="64" cy="54" r="12" />
+  <path class="cuerpo" d="M44 72 H84" />
+  <path class="guia" d="M84 72 V28" />
+  <text class="chico" x="84" y="20">frente</text>
+  <path class="guia" d="M84 72 H146" />
+  <text class="chico" x="132" y="90">costado</text>
+  <path class="flecha" d="M84 72 L128 48" />
+  <path class="rot" d="M137 44 l-10 12 -4 -13 z" />
+  <text class="izq" x="166" y="48">30°: por la mitad,</text>
+  <text class="izq" x="166" y="68">en la diagonal</text>
+  <text class="izq" x="166" y="88">de la paleta</text>
+  <path class="guia" d="M20 108 H340" />
+
+  <!-- abajo: de frente, hasta la altura del hombro y con el pulgar arriba -->
+  <circle class="cabeza" cx="96" cy="140" r="15" />
+  <path class="cuerpo" d="M96 156 V206" />
+  <path class="cuerpo" d="M96 206 L84 232" />
+  <path class="cuerpo" d="M96 206 L110 232" />
+  <path class="brazo" d="M96 170 L72 206" />
+  <path class="brazo" d="M96 170 L188 164" />
+  <path class="pie" d="M188 164 V148" />
+  <path class="guia" d="M60 170 H208" />
+  <text class="izq" x="214" y="150">Pulgar al techo</text>
+  <text class="izq" x="214" y="178">Sube solo hasta</text>
+  <text class="izq" x="214" y="196">la altura del hombro</text>
+  <text class="chico" x="40" y="150">de frente</text>
+</svg>

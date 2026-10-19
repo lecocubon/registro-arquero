@@ -24,6 +24,16 @@ describe('biblioteca', () => {
     }
   });
 
+  it('los ejercicios del programa explican el movimiento y sus errores', () => {
+    for (const s of PROGRAMA_BASE.sesiones) {
+      for (const e of s.ejercicios) {
+        const c = catalogoPorId(e.id);
+        expect(c?.movimiento?.length ?? 0, e.id).toBeGreaterThan(80);
+        expect(c?.errores?.length ?? 0, e.id).toBeGreaterThan(0);
+      }
+    }
+  });
+
   it('cada ejercicio tiene imagen: dos fotos o un dibujo propio', () => {
     for (const e of BIBLIOTECA) {
       if (e.dibujo) {
