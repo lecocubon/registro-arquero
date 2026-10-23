@@ -1,0 +1,38 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 360 240" width="360" height="240" role="img" aria-label="Paseo con el saco abrazado contra el pecho, codos debajo y pecho arriba">
+  <style>
+    .suelo { stroke: #c9d2cc; stroke-width: 4; stroke-linecap: round }
+    .cuerpo { stroke: #2a352e; stroke-width: 15; stroke-linecap: round; fill: none }
+    .brazo { stroke: #6f7d75; stroke-width: 10; stroke-linecap: round; fill: none }
+    .cabeza { fill: #2a352e }
+    .pie { stroke: #1E6B48; stroke-width: 12; stroke-linecap: round; fill: none }
+    .carga { fill: #1E6B48; opacity: .85 }
+    .flecha { stroke: #1E6B48; stroke-width: 4; fill: none; stroke-linecap: round }
+    .rot { fill: #1E6B48 }
+    .guia { stroke: #9aa7a0; stroke-width: 3; stroke-dasharray: 6 6; fill: none }
+    .izq { font: 600 13.5px system-ui, sans-serif; fill: #1E6B48; text-anchor: start }
+    .der { font: 600 13.5px system-ui, sans-serif; fill: #1E6B48; text-anchor: end }
+    .cen { font: 600 13.5px system-ui, sans-serif; fill: #1E6B48; text-anchor: middle }
+    .nota { font: 400 12.5px system-ui, sans-serif; fill: #7d8a83; text-anchor: middle }
+  </style>
+
+  <line class="suelo" x1="20" y1="212" x2="340" y2="212" />
+  <text class="cen" x="110" y="34">Pecho arriba</text>
+
+  <!-- de perfil, caminando con el saco abrazado -->
+  <circle class="cabeza" cx="150" cy="62" r="17" />
+  <path class="cuerpo" d="M150 80 V146" />
+  <rect class="carga" x="162" y="96" width="60" height="46" rx="14" />
+  <path class="brazo" d="M150 102 L214 98" />
+  <path class="brazo" d="M150 128 L214 138" />
+  <path class="cuerpo" d="M150 146 L124 206" />
+  <path class="cuerpo" d="M150 146 L182 200" />
+  <path class="pie" d="M118 208 H148" />
+  <path class="pie" d="M178 206 H208" />
+  <path class="guia" d="M150 44 V210" />
+  <text class="der" x="344" y="182">Codos debajo del saco</text>
+  <text class="izq" x="16" y="160">El saco tira</text>
+  <text class="izq" x="16" y="178">hacia adelante</text>
+  <path class="flecha" d="M232 120 H268" />
+  <path class="rot" d="M278 120 l-14 7 v-14 z" />
+  <text class="nota" x="180" y="236">Pasos cortos, sin encorvarse y sin aguantar la respiración</text>
+</svg>

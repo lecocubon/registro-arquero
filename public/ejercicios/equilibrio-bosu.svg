@@ -1,0 +1,40 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 360 240" width="360" height="240" role="img" aria-label="Equilibrio sobre una pierna encima de la cupula del bosu">
+  <style>
+    .suelo { stroke: #c9d2cc; stroke-width: 4; stroke-linecap: round }
+    .cuerpo { stroke: #2a352e; stroke-width: 15; stroke-linecap: round; fill: none }
+    .brazo { stroke: #6f7d75; stroke-width: 10; stroke-linecap: round; fill: none }
+    .cabeza { fill: #2a352e }
+    .pie { stroke: #1E6B48; stroke-width: 12; stroke-linecap: round; fill: none }
+    .carga { fill: #1E6B48; opacity: .85 }
+    .flecha { stroke: #1E6B48; stroke-width: 4; fill: none; stroke-linecap: round }
+    .rot { fill: #1E6B48 }
+    .guia { stroke: #9aa7a0; stroke-width: 3; stroke-dasharray: 6 6; fill: none }
+    .izq { font: 600 13.5px system-ui, sans-serif; fill: #1E6B48; text-anchor: start }
+    .der { font: 600 13.5px system-ui, sans-serif; fill: #1E6B48; text-anchor: end }
+    .cen { font: 600 13.5px system-ui, sans-serif; fill: #1E6B48; text-anchor: middle }
+    .nota { font: 400 12.5px system-ui, sans-serif; fill: #7d8a83; text-anchor: middle }
+  </style>
+
+  <line class="suelo" x1="20" y1="208" x2="340" y2="208" />
+
+  <!-- bosu: media pelota con la cupula hacia arriba -->
+  <path class="carga" d="M112 206 a68 48 0 0 1 136 0 z" />
+  <path class="guia" d="M112 206 H248" />
+
+  <!-- de pie sobre una pierna, rodilla algo doblada -->
+  <circle class="cabeza" cx="180" cy="48" r="17" />
+  <path class="cuerpo" d="M180 66 V122" />
+  <path class="brazo" d="M180 82 L136 104" />
+  <path class="brazo" d="M180 82 L224 104" />
+  <path class="cuerpo" d="M180 122 L170 158" />
+  <path class="pie" d="M158 158 H190" />
+  <path class="cuerpo" d="M180 122 L212 146" />
+  <path class="pie" d="M212 148 L226 136" />
+
+  <path class="flecha" d="M258 150 H288" />
+  <path class="rot" d="M296 150 l-13 7 v-14 z" />
+  <path class="flecha" d="M102 150 H72" />
+  <path class="rot" d="M64 150 l13 -7 v14 z" />
+  <text class="cen" x="180" y="34">El tobillo corrige todo el rato</text>
+  <text class="nota" x="180" y="232">Si no te sale en la cúpula, dale vuelta y empieza por el lado plano</text>
+</svg>

@@ -38,6 +38,8 @@ export type Equipo =
   | 'rack'
   | 'cajon'
   | 'balon-medicinal'
+  | 'saco'
+  | 'bosu'
   | 'otro';
 
 export interface EjercicioCatalogo {
@@ -100,6 +102,8 @@ export const EQUIPOS: { id: Equipo; nombre: string }[] = [
   { id: 'rack', nombre: 'Rack' },
   { id: 'cajon', nombre: 'Cajón' },
   { id: 'balon-medicinal', nombre: 'Balón medicinal' },
+  { id: 'saco', nombre: 'Saco de arena' },
+  { id: 'bosu', nombre: 'Bosu' },
   { id: 'otro', nombre: 'Otro' },
 ];
 
