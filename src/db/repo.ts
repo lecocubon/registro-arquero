@@ -4,7 +4,7 @@ import {
   nuevoDescanso,
   type EstadoDescanso,
 } from '../lib/descanso';
-import { tieneDatos, tieneValores, type ValoresSerie } from '../lib/series';
+import { tieneDatos, tieneValores, ventanaSesion, type ValoresSerie } from '../lib/series';
 import type { EjercicioCatalogo } from '../data/biblioteca';
 import { PROGRAMA_VACIO, type ProgramaDef } from '../data/programa';
 import {
@@ -178,6 +178,36 @@ export async function quitarCalentamiento(
   numero: number,
 ): Promise<void> {
   await db.series.delete(idSerie(semana, sesionId, ejercicioId, numero, 'calentamiento'));
+}
+
+/**
+ * Da por terminada la sesion: congela la duracion y el horario que se guarda en
+ * el reloj. Usa el final del bloque de entrenamiento, no el momento del toque,
+ * asi que tambien sirve apretarlo despues de guardar el telefono.
+ */
+export async function terminarSesion(semana: number, sesionId: string, registros: RegistroSerie[]): Promise<void> {
+  const id = idSesion(semana, sesionId);
+  const actual = await db.sesiones.get(id);
+  const ventana = ventanaSesion(registros, actual?.inicio, Date.now());
+  await db.sesiones.put({
+    ...actual,
+    id,
+    semana,
+    sesionId,
+    fecha: actual?.fecha ?? hoy(),
+    nota: actual?.nota ?? '',
+    fin: ventana?.hasta ?? Date.now(),
+    actualizado: Date.now(),
+  });
+}
+
+/** Vuelve a dejarla abierta: la duracion corre otra vez con lo que anotes. */
+export async function reabrirSesion(semana: number, sesionId: string): Promise<void> {
+  const id = idSesion(semana, sesionId);
+  const actual = await db.sesiones.get(id);
+  if (!actual) return;
+  const { fin: _fin, ...resto } = actual;
+  await db.sesiones.put({ ...resto, actualizado: Date.now() });
 }
 
 export async function guardarNota(semana: number, sesionId: string, nota: string): Promise<void> {

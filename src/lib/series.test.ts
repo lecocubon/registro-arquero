@@ -150,6 +150,21 @@ describe('duracion con ediciones posteriores', () => {
     expect(r.duracionMs).toBe(17 * 4 * minuto);
   });
 
+  it('al terminarla a mano, la duracion queda congelada aunque despues se edite', () => {
+    const fin = t0 + 17 * 4 * minuto;
+    const corregida = serie({ semana: 1, serie: 19, kg: 35, reps: 8, actualizado: t0 + 7 * dia });
+    const r = resumenSesion([...entreno, corregida], 21, t0, t0 + 7 * dia + minuto, fin);
+    expect(r.enCurso).toBe(false);
+    expect(r.duracionMs).toBe(17 * 4 * minuto);
+  });
+
+  it('terminada a mano, el horario del reloj tampoco se estira', () => {
+    const fin = t0 + 17 * 4 * minuto;
+    const corregida = serie({ semana: 1, serie: 19, kg: 35, reps: 8, actualizado: t0 + 7 * dia });
+    const v = ventanaSesion([...entreno, corregida], t0, t0 + 7 * dia + minuto, fin);
+    expect(v).toEqual({ desde: t0, hasta: fin, enCurso: false });
+  });
+
   it('mientras se edita una sesion vieja, mide solo el bloque actual', () => {
     const ahora = t0 + 7 * dia;
     const corregida = serie({ semana: 1, serie: 19, kg: 35, reps: 8, actualizado: ahora - 2 * minuto });

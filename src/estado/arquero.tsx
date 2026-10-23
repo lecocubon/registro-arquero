@@ -1,9 +1,9 @@
 import { createContext, useContext, useMemo, type ReactNode } from 'react';
 import { useLiveQuery } from 'dexie-react-hooks';
 import { BIBLIOTECA, type EjercicioCatalogo } from '../data/biblioteca';
-import { PROGRAMA_BASE, resolverPrograma, type Programa, type ProgramaDef } from '../data/programa';
+import { programaDeFabrica, resolverPrograma, type Programa, type ProgramaDef } from '../data/programa';
 import { db } from '../db/db';
-import { leerPrograma } from '../db/repo';
+import { leerPrograma, semanaActual } from '../db/repo';
 
 interface EstadoArquero {
   /** Programa en uso, con nombres y tipos resueltos. */
@@ -22,12 +22,14 @@ const Contexto = createContext<EstadoArquero | null>(null);
 
 export function ProveedorArquero({ children }: { children: ReactNode }) {
   const guardado = useLiveQuery(() => leerPrograma(), [], undefined);
+  // Sin programa propio, el bloque de fabrica lo decide la semana en curso.
+  const semana = useLiveQuery(() => semanaActual(), [], 1);
   const propios = useLiveQuery(() => db.ejerciciosPropios.toArray(), [], []);
   const fotos = useLiveQuery(() => db.fotos.toCollection().primaryKeys(), [], []);
 
   const valor = useMemo<EstadoArquero>(() => {
     const catalogo = [...BIBLIOTECA, ...propios.filter((p) => !BIBLIOTECA.some((b) => b.id === p.id))];
-    const definicion = guardado ?? PROGRAMA_BASE;
+    const definicion = guardado ?? programaDeFabrica(semana);
     return {
       programa: resolverPrograma(definicion, catalogo),
       definicion,
@@ -35,7 +37,7 @@ export function ProveedorArquero({ children }: { children: ReactNode }) {
       catalogo,
       conFoto: new Set(fotos),
     };
-  }, [guardado, propios, fotos]);
+  }, [guardado, semana, propios, fotos]);
 
   return <Contexto.Provider value={valor}>{children}</Contexto.Provider>;
 }

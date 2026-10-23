@@ -1,7 +1,7 @@
 import { existsSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
 import { BIBLIOTECA, catalogoPorId, filtrarBiblioteca, normalizarTexto } from '../data/biblioteca';
-import { PROGRAMA, PROGRAMA_BASE, ejerciciosDelDia, resolverPrograma } from '../data/programa';
+import { PROGRAMA, PROGRAMA_BASE, PROGRAMA_MESO2, ejerciciosDelDia, resolverPrograma } from '../data/programa';
 
 describe('biblioteca', () => {
   it('no repite ids', () => {
@@ -9,9 +9,11 @@ describe('biblioteca', () => {
     expect(new Set(ids).size).toBe(ids.length);
   });
 
-  it('contiene todos los ejercicios del programa de fábrica', () => {
-    for (const s of PROGRAMA_BASE.sesiones) {
-      for (const e of s.ejercicios) expect(catalogoPorId(e.id), e.id).toBeDefined();
+  it('contiene todos los ejercicios de los dos mesociclos de fábrica', () => {
+    for (const p of [PROGRAMA_BASE, PROGRAMA_MESO2]) {
+      for (const s of p.sesiones) {
+        for (const e of s.ejercicios) expect(catalogoPorId(e.id), e.id).toBeDefined();
+      }
     }
   });
 

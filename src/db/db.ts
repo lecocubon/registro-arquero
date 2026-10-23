@@ -42,6 +42,8 @@ export interface RegistroSesion {
   reemplazos?: Record<string, string>;
   /** Ejercicios que no estan en el programa y se agregaron ese dia. */
   extras?: ExtraDelDia[];
+  /** Epoch ms en que se dio por terminada. Congela la duracion y el horario. */
+  fin?: number;
   /** Epoch ms de la ultima vez que se guardo en Health Connect. */
   guardadaEnSalud?: number;
   actualizado: number;

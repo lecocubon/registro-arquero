@@ -7,6 +7,7 @@ interface Props {
   registros: RegistroSerie[];
   seriesPlanificadas: number;
   inicio: number | undefined;
+  fin: number | undefined;
 }
 
 const KG = new Intl.NumberFormat('es-CL', { maximumFractionDigits: 0 });
@@ -25,7 +26,7 @@ function Dato({ etiqueta, valor, destacado }: { etiqueta: string; valor: string;
 }
 
 /** Duracion, volumen de trabajo y series registradas. Fija bajo la barra superior. */
-export function CabeceraSesion({ registros, seriesPlanificadas, inicio }: Props) {
+export function CabeceraSesion({ registros, seriesPlanificadas, inicio, fin }: Props) {
   const [ahora, setAhora] = useState(() => Date.now());
 
   useEffect(() => {
@@ -33,7 +34,7 @@ export function CabeceraSesion({ registros, seriesPlanificadas, inicio }: Props)
     return () => clearInterval(t);
   }, []);
 
-  const r = resumenSesion(registros, seriesPlanificadas, inicio, ahora);
+  const r = resumenSesion(registros, seriesPlanificadas, inicio, ahora, fin);
 
   return (
     <div
@@ -41,7 +42,7 @@ export function CabeceraSesion({ registros, seriesPlanificadas, inicio }: Props)
       style={{ top: 'var(--alto-cabecera, 57px)' }}
     >
       <Dato
-        etiqueta="Duración"
+        etiqueta={fin === undefined ? 'Duración' : 'Duración final'}
         valor={r.duracionMs === null ? '—' : formatoDuracion(r.duracionMs)}
         destacado={r.enCurso}
       />

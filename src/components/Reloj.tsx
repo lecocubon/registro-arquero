@@ -168,7 +168,7 @@ export function RelojSesion({ semana, sesionId, nombreSesion, registros, meta, n
   const [guardando, setGuardando] = useState(false);
 
   // Mismo bloque que la duracion: una edicion dias despues no estira el horario.
-  const ventana = ventanaSesion(registros, meta?.inicio, Date.now());
+  const ventana = ventanaSesion(registros, meta?.inicio, Date.now(), meta?.fin);
   const inicio = ventana?.desde;
   const fin = ventana?.hasta;
   const hayVentana = inicio !== undefined && fin !== undefined && fin > inicio;

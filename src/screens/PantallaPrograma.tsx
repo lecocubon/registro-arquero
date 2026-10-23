@@ -502,6 +502,13 @@ export function PantallaPrograma({ todas }: { todas: RegistroSerie[] }) {
             <button type="button" onClick={empezarMesociclo} className={`${BOTON_SEC} mt-2 w-full`}>
               Empezar mesociclo {numeroMesociclo(programa) + 1}
             </button>
+            {!personalizado && (
+              <p className="mt-2 text-[12.5px] leading-relaxed text-ink3">
+                Si sigues con el programa de fábrica no hace falta: al pasar de semana, el bloque siguiente entra
+                solo. Este botón es para seguir con tu propia copia a partir de aquí, y desde entonces los cambios
+                de fábrica dejan de llegarte.
+              </p>
+            )}
           </section>
 
           {avisos.length > 0 && (

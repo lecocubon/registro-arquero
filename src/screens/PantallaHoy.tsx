@@ -1,9 +1,10 @@
 import { ejerciciosDelDia } from '../data/programa';
 import { useArquero } from '../estado/arquero';
 import { idSesion, type RegistroSerie, type RegistroSesion } from '../db/db';
-import { agregarEjercicioHoy, guardarNota } from '../db/repo';
+import { agregarEjercicioHoy, guardarNota, reabrirSesion, terminarSesion } from '../db/repo';
 import { faseDe, planSemana } from '../lib/periodizacion';
-import { esSerieEfectiva } from '../lib/series';
+import { esSerieEfectiva, resumenSesion } from '../lib/series';
+import { formatoDuracion } from '../lib/descanso';
 import { fechaCorta } from '../lib/numeros';
 import { AvisoInstalar } from '../components/AvisoInstalar';
 import { avisar } from '../components/Avisos';
@@ -59,6 +60,9 @@ export function PantallaHoy({ semana, dia, onAbrir, todas, sesiones }: Props) {
     const idsSesion = new Set(delDia.map((d) => d.ejercicio.id));
     // Solo cuentan en la cabecera los ejercicios que hoy estan en la sesion.
     const visibles = deLaSesion.filter((r) => idsSesion.has(r.ejercicioId));
+    const hayRegistro = visibles.some(esSerieEfectiva);
+    const cerrada = resumenSesion(visibles, planificadas, meta?.inicio, Date.now(), meta?.fin);
+    const duracionFinal = cerrada.duracionMs === null ? '' : formatoDuracion(cerrada.duracionMs);
 
     return (
       <>
@@ -73,7 +77,12 @@ export function PantallaHoy({ semana, dia, onAbrir, todas, sesiones }: Props) {
           {plan.nombre} · {plan.lugar}
         </p>
 
-        <CabeceraSesion registros={visibles} seriesPlanificadas={planificadas} inicio={meta?.inicio} />
+        <CabeceraSesion
+          registros={visibles}
+          seriesPlanificadas={planificadas}
+          inicio={meta?.inicio}
+          fin={meta?.fin}
+        />
 
         {delDia.map(({ ejercicio, original, extra }) => (
           <TarjetaEjercicio
@@ -134,6 +143,35 @@ export function PantallaHoy({ semana, dia, onAbrir, todas, sesiones }: Props) {
         )}
 
         <NotaDeSesion key={`${semana}|${dia}`} semana={semana} sesionId={dia} valor={nota} />
+
+        {meta?.fin === undefined ? (
+          <button
+            type="button"
+            disabled={!hayRegistro}
+            onClick={() => {
+              void terminarSesion(semana, dia, visibles).then(() => avisar('Sesión terminada'));
+            }}
+            className="mt-2 h-12 w-full rounded-[11px] border border-line bg-surface font-display text-[15px] font-bold tracking-[0.1em] text-ink2 uppercase disabled:opacity-40"
+          >
+            Terminar sesión
+          </button>
+        ) : (
+          <div className="mt-2 flex items-center justify-between gap-3 rounded-[11px] border border-accent-soft bg-accent-soft px-4 py-3">
+            <span className="text-[14px] leading-snug text-accent-ink">
+              Sesión terminada
+              {duracionFinal ? ` · ${duracionFinal}` : ''}
+            </span>
+            <button
+              type="button"
+              onClick={() => {
+                void reabrirSesion(semana, dia).then(() => avisar('Sesión reabierta'));
+              }}
+              className="shrink-0 text-[13px] font-semibold text-accent-ink underline"
+            >
+              Reabrir
+            </button>
+          </div>
+        )}
         <RelojSesion
           semana={semana}
           sesionId={dia}

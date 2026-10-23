@@ -111,12 +111,20 @@ export function ventanaSesion(
   registros: RegistroSerie[],
   inicio: number | undefined,
   ahora: number,
+  fin?: number,
 ): VentanaSesion | null {
   const conDatos = registros.filter(tieneDatos);
   if (!conDatos.length) return null;
   const ventana = MINUTOS_SESION_ABIERTA * 60_000;
   const bloques = bloquesDeActividad(conDatos.map((r) => r.actualizado));
   const actual = bloques[bloques.length - 1] as Bloque;
+  // Terminada a mano: manda el bloque que cerro el usuario y no corre mas.
+  if (fin !== undefined) {
+    const cerrado = [...bloques].reverse().find((b) => b.desde <= fin) ?? (bloques[0] as Bloque);
+    const desdeFin =
+      inicio !== undefined && inicio <= cerrado.desde && cerrado.desde - inicio <= ventana ? inicio : cerrado.desde;
+    return { desde: desdeFin, hasta: Math.max(desdeFin, Math.min(fin, cerrado.hasta)), enCurso: false };
+  }
   const enCurso = ahora - actual.hasta < ventana;
   const bloque = enCurso ? actual : bloques.reduce((mejor, b) => (b.registros >= mejor.registros ? b : mejor));
   // `actualizado` cambia al editar, asi que el inicio guardado corrige un
@@ -132,6 +140,7 @@ export function resumenSesion(
   seriesPlanificadas: number,
   inicio: number | undefined,
   ahora: number,
+  fin?: number,
 ): ResumenSesion {
   const conDatos = registros.filter(tieneDatos);
   const trabajo = conDatos.filter((r) => !esCalentamiento(r));
@@ -142,7 +151,7 @@ export function resumenSesion(
     return kg > 0 && reps > 0 ? acc + kg * reps : acc;
   }, 0);
 
-  const v = ventanaSesion(registros, inicio, ahora);
+  const v = ventanaSesion(registros, inicio, ahora, fin);
   if (!v) {
     return { duracionMs: null, enCurso: false, volumenKg, seriesHechas: 0, seriesPlanificadas };
   }

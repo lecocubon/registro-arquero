@@ -10,6 +10,7 @@ import { hayCapas } from './components/Capa';
 import { useBotonAtras } from './lib/atras';
 import { usePantallaActiva, useTecladoAbierto } from './lib/dispositivo';
 import { faseDe, inicioMesociclo, limitarSemana, numeroMesociclo, semanaRelativa } from './lib/periodizacion';
+import { programaDeFabrica } from './data/programa';
 import { PantallaDatos } from './screens/PantallaDatos';
 import { PantallaHoy } from './screens/PantallaHoy';
 import { PantallaMedidas } from './screens/PantallaMedidas';
@@ -20,7 +21,7 @@ import { PantallaProgreso } from './screens/PantallaProgreso';
 const VENTANA_SALIR_MS = 2000;
 
 export default function App() {
-  const { programa } = useArquero();
+  const { programa, personalizado } = useArquero();
   const [pestana, setPestana] = useState<Pestana>('hoy');
   const [dia, setDia] = useState<string | null>(null);
 
@@ -82,7 +83,10 @@ export default function App() {
       : `Mesociclo ${numeroMesociclo(programa)} · semana ${semanaRelativa(semana, programa)} de ${programa.semanas} · ${fase.nombre}`;
 
   const cambiarSemana = (delta: number) => {
-    const nueva = limitarSemana(semana + delta, programa);
+    // Con el programa de fabrica se puede cruzar al mesociclo siguiente, que
+    // tiene su propio rango de semanas; con uno propio manda el que esta en uso.
+    const cruda = Math.max(1, Math.trunc(semana + delta));
+    const nueva = limitarSemana(cruda, personalizado ? programa : programaDeFabrica(cruda));
     if (nueva !== semana) void fijarSemana(nueva);
   };
 

@@ -207,6 +207,125 @@ export const PROGRAMA_BASE: ProgramaDef = {
 };
 
 /**
+ * Mesociclo 2, semanas 9 a 16. Sigue al primero sin que haya que tocar nada:
+ * `programaDeFabrica` lo entrega cuando la semana en curso entra en su rango.
+ * Cambia respecto del primero: la prensa pasa a ser el trabajo principal de
+ * pantorrilla, entra un segundo salto reactivo el lunes y un lanzamiento de
+ * balon el jueves, y las principales bajan de rango de repeticiones.
+ */
+export const PROGRAMA_MESO2: ProgramaDef = {
+  nombre: 'Bajo los Tres Palos',
+  semanas: 8,
+  mesociclo: 2,
+  desde: 9,
+  descansos: { principal: 180, carga: 90, tiempo: 60, salto: 120, movilidad: 0 },
+  fases: [
+    {
+      nombre: 'Carga',
+      semanas: [1, 3],
+      rirPrincipal: 2,
+      nota: 'Principales a 2 RIR. Vienes de ocho semanas: empieza donde quedaste, no desde cero.',
+    },
+    {
+      nombre: 'Intensidad',
+      semanas: [4, 6],
+      rirPrincipal: 1,
+      seriesExtra: { salto: 1 },
+      nota: 'Principales a 1 RIR y una serie extra de salto. Los saltos van frescos, antes de las pesas.',
+    },
+    {
+      nombre: 'Pico',
+      semanas: [7, 7],
+      rirPrincipal: 1,
+      nota: 'La semana más pesada del bloque. Si una serie se pone fea, cierra ahí.',
+    },
+    {
+      nombre: 'Descarga y retest',
+      semanas: [8, 8],
+      rirTodos: 4,
+      factorSeries: 0.6,
+      seriesMinimas: 2,
+      nota: 'Misma carga, menos series, 4 RIR. Al final: batería de medición y saltos.',
+    },
+  ],
+  sesiones: [
+    {
+      id: 'lunes',
+      nombre: 'Lunes',
+      lugar: 'Gimnasio · 07:00',
+      foco: 'Potencia lateral, unilateral y pantorrilla cargada',
+      ejercicios: [
+        { id: 'salto-lateral-una-pierna', bloque: 'A1', series: 3, reps: [3, 3], rirObjetivo: 0, incremento: 0, porLado: true, descanso: 120 },
+        { id: 'rebote-lateral', bloque: 'A2', series: 3, reps: [6, 6], rirObjetivo: 0, incremento: 0, porLado: true, descanso: 90 },
+        { id: 'bulgara', bloque: 'B', series: 3, reps: [6, 8], rirObjetivo: 3, incremento: 2, rirFijo: 3, porLado: true, descanso: 120 },
+        { id: 'empuje-cadera', bloque: 'C1', series: 4, reps: [6, 8], rirObjetivo: 2, incremento: 5 },
+        { id: 'press-inclinado', bloque: 'C2', series: 3, reps: [8, 10], rirObjetivo: 2, incremento: 2 },
+        { id: 'talones-prensa', bloque: 'D1', series: 4, reps: [10, 12], rirObjetivo: 2, incremento: 4.5 },
+        { id: 'core-antiextension', bloque: 'D2', series: 3, reps: [8, 10], rirObjetivo: 2, incremento: 0 },
+      ],
+    },
+    {
+      id: 'martes',
+      nombre: 'Martes',
+      lugar: 'Gimnasio · 07:00 · fútbol en la noche',
+      foco: 'Tren superior, manguito rotador y salto vertical, piernas frescas para el fútbol',
+      ejercicios: [
+        { id: 'salto-vertical-detenido', bloque: 'A', series: 3, reps: [5, 5], rirObjetivo: 0, incremento: 0, descanso: 120 },
+        { id: 'dominadas', bloque: 'B1', series: 4, reps: [4, 6], rirObjetivo: 2, incremento: 2.5, principal: true },
+        { id: 'press-banca', bloque: 'B2', series: 4, reps: [4, 6], rirObjetivo: 2, incremento: 2.5, principal: true },
+        { id: 'remo-pecho-apoyado', bloque: 'C1', series: 3, reps: [8, 10], rirObjetivo: 2, incremento: 2 },
+        { id: 'press-hombro-maquina', bloque: 'C2', series: 3, reps: [8, 10], rirObjetivo: 2, incremento: 2.5 },
+        { id: 'rotacion-externa-polea', bloque: 'D1', series: 3, reps: [12, 15], rirObjetivo: 2, incremento: 1, porLado: true },
+        { id: 'plano-escapular-banda', bloque: 'D2', series: 2, reps: [10, 12], rirObjetivo: 2, incremento: 1, porLado: true },
+        { id: 'plancha-lateral', bloque: 'D3', series: 3, reps: [30, 45], rirObjetivo: 0, incremento: 0, porLado: true },
+      ],
+    },
+    {
+      id: 'jueves',
+      nombre: 'Jueves',
+      lugar: 'Gimnasio · 07:00',
+      foco: 'Fuerza de tren inferior y triple extensión, lejos del fútbol',
+      ejercicios: [
+        { id: 'salto-contramovimiento', bloque: 'A1', series: 3, reps: [4, 4], rirObjetivo: 0, incremento: 0, descanso: 120 },
+        { id: 'lanzamiento-cuchara', bloque: 'A2', series: 3, reps: [3, 3], rirObjetivo: 0, incremento: 0, descanso: 90 },
+        { id: 'sentadilla-barra', bloque: 'B', series: 4, reps: [4, 6], rirObjetivo: 2, incremento: 5, principal: true },
+        { id: 'sentadilla-hack', bloque: 'C1', series: 3, reps: [8, 10], rirObjetivo: 2, incremento: 5 },
+        { id: 'curl-femoral-sentado', bloque: 'C2', series: 3, reps: [8, 12], rirObjetivo: 2, incremento: 5 },
+        { id: 'peso-muerto-rumano', bloque: 'D1', series: 3, reps: [6, 8], rirObjetivo: 3, incremento: 5, rirFijo: 3 },
+        { id: 'abductor-maquina', bloque: 'D2', series: 3, reps: [12, 15], rirObjetivo: 2, incremento: 5 },
+      ],
+    },
+    {
+      id: 'movilidad',
+      nombre: 'Movilidad',
+      lugar: 'Casa o gimnasio · colchoneta · miércoles o viernes',
+      foco: 'Pies, tobillos, rodillas y apertura de cadera',
+      ejercicios: [
+        { id: 'arco-corto', bloque: 'A1', series: 2, reps: [8, 8], rirObjetivo: 0, incremento: 0, porLado: true },
+        { id: 'pulgar-pie', bloque: 'A2', series: 2, reps: [10, 10], rirObjetivo: 0, incremento: 0, porLado: true },
+        { id: 'sentarse-sobre-dedos', bloque: 'A3', series: 2, reps: [30, 30], rirObjetivo: 0, incremento: 0, descanso: 0 },
+        { id: 'rodilla-pared', bloque: 'B1', series: 2, reps: [10, 10], rirObjetivo: 0, incremento: 0, porLado: true },
+        { id: 'tibial-pared', bloque: 'B2', series: 2, reps: [15, 20], rirObjetivo: 1, incremento: 0, descanso: 45 },
+        { id: 'talones-una-pierna', bloque: 'B3', series: 2, reps: [12, 15], rirObjetivo: 1, incremento: 2, porLado: true, descanso: 45 },
+        { id: 'aductor-rana', bloque: 'C1', series: 2, reps: [10, 10], rirObjetivo: 0, incremento: 0, descanso: 0 },
+        { id: 'sentadilla-cosaca', bloque: 'C2', series: 2, reps: [6, 8], rirObjetivo: 2, incremento: 0, porLado: true, descanso: 45 },
+        { id: 'copenhagen-rodilla', bloque: 'C3', series: 2, reps: [20, 25], rirObjetivo: 2, incremento: 0, porLado: true, descanso: 45 },
+        { id: 'zancada-atg', bloque: 'D1', series: 2, reps: [8, 10], rirObjetivo: 2, incremento: 0, porLado: true, descanso: 45 },
+        { id: 'equilibrio-bosu', bloque: 'D2', series: 2, reps: [30, 30], rirObjetivo: 0, incremento: 0, porLado: true, descanso: 0 },
+        { id: 'serrato-pared', bloque: 'E1', series: 2, reps: [10, 10], rirObjetivo: 0, incremento: 0, descanso: 0 },
+        { id: 'pogos', bloque: 'F1', series: 3, reps: [20, 25], rirObjetivo: 0, incremento: 0, descanso: 60 },
+      ],
+    },
+  ],
+};
+
+/** El bloque de fabrica que le toca a esa semana absoluta. */
+export function programaDeFabrica(semana: number): ProgramaDef {
+  const desde = PROGRAMA_MESO2.desde ?? 9;
+  return Number.isFinite(semana) && semana >= desde ? PROGRAMA_MESO2 : PROGRAMA_BASE;
+}
+
+/**
  * Con que arranca un telefono que estrena la app: sin sesiones, para que cada
  * uno arme las suyas. El plan de arquero sigue en PROGRAMA_BASE y se carga
  * desde Programa con "Restaurar programa de fabrica".

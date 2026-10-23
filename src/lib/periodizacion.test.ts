@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { PROGRAMA, ejercicioPorId, type Ejercicio } from '../data/programa';
+import { PROGRAMA, PROGRAMA_BASE, PROGRAMA_MESO2, ejercicioPorId, programaDeFabrica, type Ejercicio } from '../data/programa';
 import {
   faseDe,
   finMesociclo,
@@ -146,5 +146,19 @@ describe('planSemana (semana, ejercicio) => series y RIR', () => {
         }
       }
     }
+  });
+});
+
+describe('programaDeFabrica', () => {
+  it('hasta la semana 8 entrega el primer mesociclo y desde la 9 el segundo', () => {
+    expect(programaDeFabrica(1)).toBe(PROGRAMA_BASE);
+    expect(programaDeFabrica(8)).toBe(PROGRAMA_BASE);
+    expect(programaDeFabrica(9)).toBe(PROGRAMA_MESO2);
+    expect(programaDeFabrica(16)).toBe(PROGRAMA_MESO2);
+  });
+
+  it('los dos bloques encajan sin dejar huecos en el historial', () => {
+    expect(PROGRAMA_MESO2.desde).toBe((PROGRAMA_BASE.desde ?? 1) + PROGRAMA_BASE.semanas);
+    expect(PROGRAMA_MESO2.mesociclo).toBe((PROGRAMA_BASE.mesociclo ?? 1) + 1);
   });
 });
