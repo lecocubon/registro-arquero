@@ -188,7 +188,9 @@ export async function quitarCalentamiento(
 export async function terminarSesion(semana: number, sesionId: string, registros: RegistroSerie[]): Promise<void> {
   const id = idSesion(semana, sesionId);
   const actual = await db.sesiones.get(id);
-  const ventana = ventanaSesion(registros, actual?.inicio, Date.now());
+  // Con `ahora` en el futuro, la ventana deja de considerarla en curso y toma
+  // el bloque con mas series: el entrenamiento de verdad, no una correccion.
+  const ventana = ventanaSesion(registros, actual?.inicio, Number.MAX_SAFE_INTEGER);
   await db.sesiones.put({
     ...actual,
     id,
