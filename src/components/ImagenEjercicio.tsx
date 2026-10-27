@@ -10,12 +10,14 @@ interface Props {
   ejercicio: EjercicioCatalogo | undefined;
   tamano: 'mini' | 'grande';
   cuadro?: Cuadro;
+  /** Cuadro del dibujo cuando son varios: 1 es <id>.svg, 2 es <id>-2.svg... */
+  indice?: number;
   /** Se llama si la foto de la biblioteca no carga. */
   onFallo?: () => void;
 }
 
 /** Foto propia si existe; si no, la de la biblioteca; si no, un marcador con el musculo. */
-export function ImagenEjercicio({ ejercicio, tamano, cuadro = 'inicio', onFallo }: Props) {
+export function ImagenEjercicio({ ejercicio, tamano, cuadro = 'inicio', indice = 1, onFallo }: Props) {
   const { conFoto } = useArquero();
   const [urlPropia, setUrlPropia] = useState<string | null>(null);
   const [falloFabrica, setFalloFabrica] = useState(false);
@@ -41,7 +43,7 @@ export function ImagenEjercicio({ ejercicio, tamano, cuadro = 'inicio', onFallo 
   }, [ejercicio, tieneFoto]);
 
   const archivo = ejercicio?.dibujo
-    ? `${ejercicio.id}.svg`
+    ? `${ejercicio.id}${indice > 1 ? `-${indice}` : ''}.svg`
     : `${ejercicio?.id}${cuadro === 'fin' ? '-fin' : ''}.webp`;
   const hayImagen = Boolean(ejercicio && (ejercicio.dibujo || ejercicio.fuenteImagen));
   const fabrica = hayImagen && !falloFabrica ? `${import.meta.env.BASE_URL}ejercicios/${archivo}` : null;
@@ -90,7 +92,24 @@ export function FotosEjercicio({ ejercicio }: { ejercicio: EjercicioCatalogo | u
   const [sinFinal, setSinFinal] = useState(false);
   const propia = ejercicio ? conFoto.has(ejercicio.id) : false;
 
-  // Un dibujo ya muestra el movimiento completo: no hay posicion final aparte.
+  // Dibujo en varios cuadros: la secuencia del movimiento, uno debajo del otro.
+  const cuadros = ejercicio?.dibujo ? (ejercicio.dibujos ?? 1) : 1;
+  if (!propia && ejercicio?.dibujo && cuadros > 1) {
+    return (
+      <div className="grid gap-3">
+        {Array.from({ length: cuadros }, (_, i) => (
+          <div key={i}>
+            <ImagenEjercicio ejercicio={ejercicio} tamano="grande" indice={i + 1} />
+            <p className={PIE}>
+              {i + 1} de {cuadros}
+            </p>
+          </div>
+        ))}
+      </div>
+    );
+  }
+
+  // Un dibujo de un solo cuadro ya muestra el movimiento completo.
   if (propia || sinFinal || ejercicio?.dibujo || !ejercicio?.fuenteImagen) {
     return <ImagenEjercicio ejercicio={ejercicio} tamano="grande" />;
   }

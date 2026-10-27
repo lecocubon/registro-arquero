@@ -1,0 +1,34 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 360 240" width="360" height="240" role="img" aria-label="Error tipico: subir por el costado con el pulgar hacia abajo">
+  <style>
+    .suelo { stroke: #c9d2cc; stroke-width: 4; stroke-linecap: round }
+    .pared { stroke: #c9d2cc; stroke-width: 5; stroke-linecap: round }
+    .cuerpo { stroke: #2a352e; stroke-width: 15; stroke-linecap: round; fill: none }
+    .brazo { stroke: #6f7d75; stroke-width: 11; stroke-linecap: round; fill: none }
+    .cabeza { fill: #2a352e }
+    .activo { stroke: #1E6B48; stroke-width: 12; stroke-linecap: round; fill: none }
+    .antes { stroke: #b9c3bd; stroke-width: 11; stroke-linecap: round; fill: none }
+    .banda { stroke: #1E6B48; stroke-width: 3.5; fill: none; stroke-dasharray: 2 6; stroke-linecap: round }
+    .flecha { stroke: #1E6B48; stroke-width: 4.5; fill: none; stroke-linecap: round }
+    .rot { fill: #1E6B48 }
+    .mal { stroke: #c4634f; stroke-width: 5; stroke-linecap: round; fill: none }
+    .malrot { fill: #c4634f }
+    .guia { stroke: #9aa7a0; stroke-width: 3; stroke-dasharray: 6 6; fill: none }
+    .izq { font: 600 14px system-ui, sans-serif; fill: #1E6B48; text-anchor: start }
+    .der { font: 600 14px system-ui, sans-serif; fill: #1E6B48; text-anchor: end }
+    .cen { font: 600 14px system-ui, sans-serif; fill: #1E6B48; text-anchor: middle }
+    .malt { font: 600 14px system-ui, sans-serif; fill: #c4634f; text-anchor: middle }
+    .nota { font: 400 13px system-ui, sans-serif; fill: #7d8a83; text-anchor: middle }
+  </style>
+
+  <line class="suelo" x1="20" y1="216" x2="340" y2="216" />
+  <circle class="cabeza" cx="132" cy="74" r="18" />
+  <path class="cuerpo" d="M132 92 V158" />
+  <path class="cuerpo" d="M132 158 L118 212" />
+  <path class="cuerpo" d="M132 158 L150 212" />
+  <path class="brazo" d="M132 110 L246 110" />
+  <path class="mal" d="M246 110 V140" />
+  <path class="mal" d="M212 56 l28 28 M240 56 l-28 28" />
+  <text class="malt" x="226" y="42">Pulgar abajo</text>
+  <text class="nota" x="180" y="226">Con el pulgar hacia abajo el tendón queda pellizcado, y subir</text>
+  <text class="nota" x="180" y="240">por el costado puro es la elevación lateral, no este ejercicio</text>
+</svg>

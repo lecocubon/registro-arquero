@@ -61,6 +61,8 @@ export interface EjercicioCatalogo {
   fuenteImagen?: string;
   /** La imagen es un dibujo propio en public/ejercicios/<id>.svg, no una foto. */
   dibujo?: boolean;
+  /** Cuadros del dibujo, en secuencia: <id>.svg, <id>-2.svg... Ausente = uno solo. */
+  dibujos?: number;
   /** Creado por el usuario en la app. */
   propio?: boolean;
 }

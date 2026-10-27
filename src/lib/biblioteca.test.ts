@@ -36,7 +36,11 @@ describe('biblioteca', () => {
   it('cada ejercicio tiene imagen: dos fotos o un dibujo propio', () => {
     for (const e of BIBLIOTECA) {
       if (e.dibujo) {
-        expect(existsSync(`public/ejercicios/${e.id}.svg`), e.id).toBe(true);
+        // Un dibujo en secuencia necesita todos sus cuadros: <id>.svg, <id>-2.svg...
+        for (let n = 1; n <= (e.dibujos ?? 1); n += 1) {
+          const archivo = `${e.id}${n > 1 ? `-${n}` : ''}.svg`;
+          expect(existsSync(`public/ejercicios/${archivo}`), archivo).toBe(true);
+        }
         continue;
       }
       expect(Boolean(e.fuenteImagen), `${e.id} sin imagen`).toBe(true);

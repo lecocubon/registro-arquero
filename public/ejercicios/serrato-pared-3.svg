@@ -1,0 +1,36 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 360 240" width="360" height="240" role="img" aria-label="Arriba del todo, empuja la pared para alejarla">
+  <style>
+    .suelo { stroke: #c9d2cc; stroke-width: 4; stroke-linecap: round }
+    .pared { stroke: #c9d2cc; stroke-width: 5; stroke-linecap: round }
+    .cuerpo { stroke: #2a352e; stroke-width: 15; stroke-linecap: round; fill: none }
+    .brazo { stroke: #6f7d75; stroke-width: 11; stroke-linecap: round; fill: none }
+    .cabeza { fill: #2a352e }
+    .activo { stroke: #1E6B48; stroke-width: 12; stroke-linecap: round; fill: none }
+    .antes { stroke: #b9c3bd; stroke-width: 11; stroke-linecap: round; fill: none }
+    .banda { stroke: #1E6B48; stroke-width: 3.5; fill: none; stroke-dasharray: 2 6; stroke-linecap: round }
+    .flecha { stroke: #1E6B48; stroke-width: 4.5; fill: none; stroke-linecap: round }
+    .rot { fill: #1E6B48 }
+    .mal { stroke: #c4634f; stroke-width: 5; stroke-linecap: round; fill: none }
+    .malrot { fill: #c4634f }
+    .guia { stroke: #9aa7a0; stroke-width: 3; stroke-dasharray: 6 6; fill: none }
+    .izq { font: 600 14px system-ui, sans-serif; fill: #1E6B48; text-anchor: start }
+    .der { font: 600 14px system-ui, sans-serif; fill: #1E6B48; text-anchor: end }
+    .cen { font: 600 14px system-ui, sans-serif; fill: #1E6B48; text-anchor: middle }
+    .malt { font: 600 14px system-ui, sans-serif; fill: #c4634f; text-anchor: middle }
+    .nota { font: 400 13px system-ui, sans-serif; fill: #7d8a83; text-anchor: middle }
+  </style>
+
+  <path class="pared" d="M300 16 V216" />
+  <line class="suelo" x1="20" y1="216" x2="340" y2="216" />
+  <circle class="cabeza" cx="186" cy="82" r="18" />
+  <path class="cuerpo" d="M186 100 V160" />
+  <path class="cuerpo" d="M186 160 L172 214" />
+  <path class="cuerpo" d="M186 160 L204 214" />
+  <path class="brazo" d="M186 112 L288 92" />
+  <path class="activo" d="M288 92 V44" />
+  <path class="flecha" d="M212 148 H278" />
+  <path class="rot" d="M290 148 l-15 8 v-16 z" />
+  <text class="izq" x="16" y="44">Aquí entra el serrato</text>
+  <text class="der" x="346" y="198">Empuja la pared</text>
+  <text class="nota" x="180" y="236">Dos centímetros más, aguanta dos segundos y baja despacio</text>
+</svg>
