@@ -29,5 +29,5 @@
   <path class="flecha" d="M178 128 L256 84" />
   <path class="rot" d="M268 78 l-17 20 -7 -22 z" />
   <text class="cen" x="180" y="196">30°: por la mitad de los dos</text>
-  <text class="nota" x="180" y="226">Visto desde arriba. Esa diagonal es la línea de tu paleta</text>
+  <text class="nota" x="180" y="226">Visto desde arriba: esa diagonal es tu paleta</text>
 </svg>

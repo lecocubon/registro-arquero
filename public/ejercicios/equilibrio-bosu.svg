@@ -36,5 +36,5 @@
   <path class="flecha" d="M102 150 H72" />
   <path class="rot" d="M64 150 l13 -7 v14 z" />
   <text class="cen" x="180" y="34">El tobillo corrige todo el rato</text>
-  <text class="nota" x="180" y="232">Si no te sale en la cúpula, dale vuelta y empieza por el lado plano</text>
+  <text class="nota" x="180" y="232">Si no te sale, dale vuelta y usa el lado plano</text>
 </svg>

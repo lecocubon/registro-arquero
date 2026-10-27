@@ -34,5 +34,5 @@
   <text class="izq" x="16" y="178">hacia adelante</text>
   <path class="flecha" d="M232 120 H268" />
   <path class="rot" d="M278 120 l-14 7 v-14 z" />
-  <text class="nota" x="180" y="236">Pasos cortos, sin encorvarse y sin aguantar la respiración</text>
+  <text class="nota" x="180" y="236">Pasos cortos, sin encorvarse ni aguantar el aire</text>
 </svg>

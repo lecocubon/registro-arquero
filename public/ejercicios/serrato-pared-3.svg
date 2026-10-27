@@ -32,5 +32,5 @@
   <path class="rot" d="M290 148 l-15 8 v-16 z" />
   <text class="izq" x="16" y="44">Aquí entra el serrato</text>
   <text class="der" x="346" y="198">Empuja la pared</text>
-  <text class="nota" x="180" y="236">Dos centímetros más, aguanta dos segundos y baja despacio</text>
+  <text class="nota" x="180" y="236">Dos centímetros más y aguanta dos segundos</text>
 </svg>
