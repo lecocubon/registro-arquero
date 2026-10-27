@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 360 240" width="360" height="240" role="img" aria-label="La cola va hacia los talones y la cadera se abre">
+  <style>
+    .izq { font: 700 14.5px system-ui, sans-serif; fill: #1E6B48; text-anchor: start }
+    .der { font: 700 14.5px system-ui, sans-serif; fill: #1E6B48; text-anchor: end }
+    .cen { font: 700 14.5px system-ui, sans-serif; fill: #1E6B48; text-anchor: middle }
+    .mal { font: 700 14.5px system-ui, sans-serif; fill: #c4634f; text-anchor: middle }
+    .pie { font: 400 13px system-ui, sans-serif; fill: #7d8a83; text-anchor: middle }
+  </style>
+  <rect x="30" y="200" width="300" height="10" rx="5" fill="#c9d2cc" />
+  <circle cx="108" cy="134" r="18" fill="#1f2a24" />
+  <path d="M136 136 L218 144" stroke="#1f2a24" stroke-width="32" stroke-linecap="round" stroke-linejoin="round" fill="none" />
+  <path d="M138 132 L122 186" stroke="#1f2a24" stroke-width="14" stroke-linecap="round" stroke-linejoin="round" fill="none" />
+  <path d="M218 148 L230 176" stroke="#1E6B48" stroke-width="15" stroke-linecap="round" stroke-linejoin="round" fill="none" />
+  <path d="M230 176 L268 186" stroke="#1E6B48" stroke-width="15" stroke-linecap="round" stroke-linejoin="round" fill="none" />
+  <path d="M172 94 L242 94" stroke="#1E6B48" stroke-width="5" fill="none" stroke-linecap="round" /><path d="M248 94 l-9 17 h18 z" fill="#1E6B48" transform="rotate(90 248 94)" />
+  <text class="izq" x="16" y="72">La cola busca los talones</text>
+  <text class="pie" x="180" y="234">Vuelve adelante y repite ganando rango</text>
+</svg>

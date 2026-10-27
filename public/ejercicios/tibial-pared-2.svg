@@ -1,0 +1,21 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 360 240" width="360" height="240" role="img" aria-label="Las puntas suben hacia las espinillas y bajan despacio">
+  <style>
+    .izq { font: 700 14.5px system-ui, sans-serif; fill: #1E6B48; text-anchor: start }
+    .der { font: 700 14.5px system-ui, sans-serif; fill: #1E6B48; text-anchor: end }
+    .cen { font: 700 14.5px system-ui, sans-serif; fill: #1E6B48; text-anchor: middle }
+    .mal { font: 700 14.5px system-ui, sans-serif; fill: #c4634f; text-anchor: middle }
+    .pie { font: 400 13px system-ui, sans-serif; fill: #7d8a83; text-anchor: middle }
+  </style>
+  <line x1="16" y1="214" x2="344" y2="214" stroke="#c9d2cc" stroke-width="5" stroke-linecap="round" />
+  <line x1="96" y1="14" x2="96" y2="214" stroke="#c9d2cc" stroke-width="7" stroke-linecap="round" />
+  <circle cx="124" cy="62" r="18" fill="#1f2a24" />
+  <path d="M118 90 L126 152" stroke="#1f2a24" stroke-width="32" stroke-linecap="round" stroke-linejoin="round" fill="none" />
+  <path d="M126 152 L196 182" stroke="#1f2a24" stroke-width="15" stroke-linecap="round" stroke-linejoin="round" fill="none" />
+  <path d="M196 182 L204 202" stroke="#1f2a24" stroke-width="15" stroke-linecap="round" stroke-linejoin="round" fill="none" />
+  <path d="M196 206 L238 186" stroke="#1E6B48" stroke-width="16" stroke-linecap="round" fill="none" />
+  <path d="M124 104 L150 160" stroke="#1f2a24" stroke-width="14" stroke-linecap="round" stroke-linejoin="round" fill="none" />
+  <path d="M262 196 L262 160" stroke="#1E6B48" stroke-width="5" fill="none" stroke-linecap="round" /><path d="M262 156 l-9 17 h18 z" fill="#1E6B48" transform="rotate(0 262 156)" />
+  <text class="der" x="344" y="76">Sube la punta</text>
+  <text class="der" x="344" y="96">hacia la espinilla</text>
+  <text class="pie" x="180" y="234">Arde la espinilla, no el gemelo</text>
+</svg>

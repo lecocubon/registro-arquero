@@ -1,36 +1,19 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 360 240" width="360" height="240" role="img" aria-label="Sentarse sobre los dedos: de rodillas, dedos flexionados y peso sobre los talones">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 360 240" width="360" height="240" role="img" aria-label="De rodillas con los dedos doblados, sentado sobre los talones">
   <style>
-    .mat { fill: #d7ded9 }
-    .cuerpo { stroke: #2a352e; stroke-width: 15; stroke-linecap: round; fill: none }
-    .brazo { stroke: #6f7d75; stroke-width: 10; stroke-linecap: round; fill: none }
-    .cabeza { fill: #2a352e }
-    .pie { stroke: #1E6B48; stroke-width: 12; stroke-linecap: round; fill: none }
-    .guia { stroke: #1E6B48; stroke-width: 2.5; stroke-dasharray: 5 5; fill: none }
-    .izq { font: 600 13.5px system-ui, sans-serif; fill: #1E6B48; text-anchor: start }
-    .der { font: 600 13.5px system-ui, sans-serif; fill: #1E6B48; text-anchor: end }
-    .nota { font: 400 12.5px system-ui, sans-serif; fill: #7d8a83; text-anchor: middle }
+    .izq { font: 700 14.5px system-ui, sans-serif; fill: #1E6B48; text-anchor: start }
+    .der { font: 700 14.5px system-ui, sans-serif; fill: #1E6B48; text-anchor: end }
+    .cen { font: 700 14.5px system-ui, sans-serif; fill: #1E6B48; text-anchor: middle }
+    .mal { font: 700 14.5px system-ui, sans-serif; fill: #c4634f; text-anchor: middle }
+    .pie { font: 400 13px system-ui, sans-serif; fill: #7d8a83; text-anchor: middle }
   </style>
-
-  <rect class="mat" x="18" y="176" width="324" height="12" rx="6" />
-
-  <!-- tronco y cabeza -->
-  <circle class="cabeza" cx="160" cy="46" r="19" />
-  <path class="cuerpo" d="M166 68 L158 136" />
-  <path class="brazo" d="M164 88 L214 134" />
-  <!-- muslo hasta la rodilla, apoyada en la colchoneta -->
-  <path class="cuerpo" d="M158 136 L240 170" />
-  <!-- pierna de la rodilla al tobillo, sobre la colchoneta -->
-  <path class="cuerpo" d="M240 170 L158 170" />
-  <!-- pie: talon arriba (donde se sienta) y dedos doblados al suelo -->
-  <path class="pie" d="M158 170 L148 146" />
-  <path class="pie" d="M158 172 L166 178" />
-
-  <path class="guia" d="M120 148 L140 146" />
-  <text class="izq" x="18" y="132">Te sientas</text>
-  <text class="izq" x="18" y="148">en los talones</text>
-
-  <path class="guia" d="M238 204 L172 182" />
-  <text class="der" x="342" y="212">Dedos doblados bajo el pie</text>
-
-  <text class="nota" x="180" y="234">Las manos adelante regulan el peso</text>
+  <rect x="30" y="202" width="300" height="10" rx="5" fill="#c9d2cc" />
+  <circle cx="150" cy="60" r="18" fill="#1f2a24" />
+  <path d="M150 88 L150 150" stroke="#1f2a24" stroke-width="32" stroke-linecap="round" stroke-linejoin="round" fill="none" />
+  <path d="M150 150 L196 176" stroke="#1f2a24" stroke-width="15" stroke-linecap="round" stroke-linejoin="round" fill="none" />
+  <path d="M196 176 L238 186" stroke="#1f2a24" stroke-width="15" stroke-linecap="round" stroke-linejoin="round" fill="none" />
+  <path d="M238 186 L256 198" stroke="#1E6B48" stroke-width="15" stroke-linecap="round" fill="none" />
+  <path d="M136 100 L120 162" stroke="#1f2a24" stroke-width="14" stroke-linecap="round" stroke-linejoin="round" fill="none" />
+  <text class="izq" x="16" y="34">Peso sobre los talones</text>
+  <text class="der" x="344" y="210">Dedos doblados</text>
+  <text class="pie" x="180" y="234">Arde en la planta: respira y suelta de a poco</text>
 </svg>

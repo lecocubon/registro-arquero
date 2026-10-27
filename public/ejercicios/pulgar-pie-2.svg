@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 360 240" width="360" height="240" role="img" aria-label="El pulgar aprieta el suelo y los otros cuatro dedos se levantan">
+  <style>
+    .izq { font: 700 14.5px system-ui, sans-serif; fill: #1E6B48; text-anchor: start }
+    .der { font: 700 14.5px system-ui, sans-serif; fill: #1E6B48; text-anchor: end }
+    .cen { font: 700 14.5px system-ui, sans-serif; fill: #1E6B48; text-anchor: middle }
+    .mal { font: 700 14.5px system-ui, sans-serif; fill: #c4634f; text-anchor: middle }
+    .pie { font: 400 13px system-ui, sans-serif; fill: #7d8a83; text-anchor: middle }
+  </style>
+  <path d="M120 206 Q114 134.0 130 86 L186 96 Q200 146.0 180 206 Z" fill="#1f2a24" /><circle cx="130" cy="76" r="13" fill="#1E6B48" /><circle cx="152" cy="80" r="9" fill="#1f2a24" /><circle cx="168" cy="85" r="8" fill="#1f2a24" /><circle cx="182" cy="91" r="7" fill="#1f2a24" /><circle cx="194" cy="98" r="6" fill="#1f2a24" />
+  <circle cx="152" cy="190" r="9" fill="#8d9a93" />
+  <circle cx="168" cy="195" r="8" fill="#8d9a93" />
+  <circle cx="182" cy="201" r="7" fill="#8d9a93" />
+  <circle cx="194" cy="208" r="6" fill="#8d9a93" />
+  <path d="M130 58 L130 36" stroke="#1E6B48" stroke-width="5" fill="none" stroke-linecap="round" /><path d="M130 32 l-9 17 h18 z" fill="#1E6B48" transform="rotate(180 130 32)" />
+  <text class="izq" x="232" y="70">El pulgar aprieta</text>
+  <text class="izq" x="232" y="120">Los otros cuatro</text>
+  <text class="izq" x="232" y="140">se levantan</text>
+  <text class="pie" x="180" y="234">Después al revés: pulgar arriba, cuatro abajo</text>
+</svg>

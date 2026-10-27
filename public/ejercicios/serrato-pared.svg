@@ -1,36 +1,22 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 360 240" width="360" height="240" role="img" aria-label="Inicio: antebrazos apoyados en la pared con los codos a la altura del pecho">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 360 240" width="360" height="240" role="img" aria-label="Inicio: antebrazos en la pared con los codos a la altura del pecho">
   <style>
-    .suelo { stroke: #c9d2cc; stroke-width: 4; stroke-linecap: round }
-    .pared { stroke: #c9d2cc; stroke-width: 5; stroke-linecap: round }
-    .cuerpo { stroke: #2a352e; stroke-width: 15; stroke-linecap: round; fill: none }
-    .brazo { stroke: #6f7d75; stroke-width: 11; stroke-linecap: round; fill: none }
-    .cabeza { fill: #2a352e }
-    .activo { stroke: #1E6B48; stroke-width: 12; stroke-linecap: round; fill: none }
-    .antes { stroke: #b9c3bd; stroke-width: 11; stroke-linecap: round; fill: none }
-    .banda { stroke: #1E6B48; stroke-width: 3.5; fill: none; stroke-dasharray: 2 6; stroke-linecap: round }
-    .flecha { stroke: #1E6B48; stroke-width: 4.5; fill: none; stroke-linecap: round }
-    .rot { fill: #1E6B48 }
-    .mal { stroke: #c4634f; stroke-width: 5; stroke-linecap: round; fill: none }
-    .malrot { fill: #c4634f }
-    .guia { stroke: #9aa7a0; stroke-width: 3; stroke-dasharray: 6 6; fill: none }
-    .izq { font: 600 14px system-ui, sans-serif; fill: #1E6B48; text-anchor: start }
-    .der { font: 600 14px system-ui, sans-serif; fill: #1E6B48; text-anchor: end }
-    .cen { font: 600 14px system-ui, sans-serif; fill: #1E6B48; text-anchor: middle }
-    .malt { font: 600 14px system-ui, sans-serif; fill: #c4634f; text-anchor: middle }
-    .nota { font: 400 13px system-ui, sans-serif; fill: #7d8a83; text-anchor: middle }
+    .izq { font: 700 14.5px system-ui, sans-serif; fill: #1E6B48; text-anchor: start }
+    .der { font: 700 14.5px system-ui, sans-serif; fill: #1E6B48; text-anchor: end }
+    .cen { font: 700 14.5px system-ui, sans-serif; fill: #1E6B48; text-anchor: middle }
+    .mal { font: 700 14.5px system-ui, sans-serif; fill: #c4634f; text-anchor: middle }
+    .pie { font: 400 13px system-ui, sans-serif; fill: #7d8a83; text-anchor: middle }
   </style>
-
-  <path class="pared" d="M300 16 V216" />
-  <line class="suelo" x1="20" y1="216" x2="340" y2="216" />
-  <circle class="cabeza" cx="196" cy="78" r="18" />
-  <path class="cuerpo" d="M196 96 V158" />
-  <path class="cuerpo" d="M196 158 L182 214" />
-  <path class="cuerpo" d="M196 158 L214 214" />
-  <path class="brazo" d="M196 112 L288 132" />
-  <path class="activo" d="M288 132 V84" />
-  <text class="izq" x="16" y="44">Codos a la altura</text>
-  <text class="izq" x="16" y="62">del pecho</text>
-  <text class="izq" x="16" y="188">Costillas abajo,</text>
-  <text class="izq" x="16" y="206">sin arquear</text>
-  <text class="nota" x="180" y="236">Antebrazos en la pared, como los hombros</text>
+  <line x1="16" y1="214" x2="344" y2="214" stroke="#c9d2cc" stroke-width="5" stroke-linecap="round" />
+  <line x1="258" y1="14" x2="258" y2="214" stroke="#c9d2cc" stroke-width="7" stroke-linecap="round" />
+  <circle cx="150" cy="56" r="18" fill="#1f2a24" />
+  <path d="M150 84 L150 150" stroke="#1f2a24" stroke-width="32" stroke-linecap="round" stroke-linejoin="round" fill="none" />
+  <path d="M150 150 L140 206" stroke="#1f2a24" stroke-width="15" stroke-linecap="round" stroke-linejoin="round" fill="none" />
+  <path d="M150 150 L164 206" stroke="#1f2a24" stroke-width="15" stroke-linecap="round" stroke-linejoin="round" fill="none" />
+  <path d="M162 100 L246 124" stroke="#1f2a24" stroke-width="14" stroke-linecap="round" stroke-linejoin="round" fill="none" />
+  <path d="M246 124 L246 78" stroke="#1E6B48" stroke-width="14" stroke-linecap="round" stroke-linejoin="round" fill="none" />
+  <text class="izq" x="16" y="40">Codos a la altura</text>
+  <text class="izq" x="16" y="60">del pecho</text>
+  <text class="izq" x="16" y="190">Costillas abajo,</text>
+  <text class="izq" x="16" y="210">sin arquear</text>
+  <text class="pie" x="180" y="234">Antebrazos en la pared, como los hombros</text>
 </svg>

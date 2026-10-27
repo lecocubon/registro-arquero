@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 360 240" width="360" height="240" role="img" aria-label="Error: levantar el talon para que la rodilla llegue">
+  <style>
+    .izq { font: 700 14.5px system-ui, sans-serif; fill: #1E6B48; text-anchor: start }
+    .der { font: 700 14.5px system-ui, sans-serif; fill: #1E6B48; text-anchor: end }
+    .cen { font: 700 14.5px system-ui, sans-serif; fill: #1E6B48; text-anchor: middle }
+    .mal { font: 700 14.5px system-ui, sans-serif; fill: #c4634f; text-anchor: middle }
+    .pie { font: 400 13px system-ui, sans-serif; fill: #7d8a83; text-anchor: middle }
+  </style>
+  <line x1="16" y1="214" x2="344" y2="214" stroke="#c9d2cc" stroke-width="5" stroke-linecap="round" />
+  <line x1="300" y1="14" x2="300" y2="214" stroke="#c9d2cc" stroke-width="7" stroke-linecap="round" />
+  <circle cx="130" cy="58" r="18" fill="#1f2a24" />
+  <path d="M130 86 L140 146" stroke="#1f2a24" stroke-width="32" stroke-linecap="round" stroke-linejoin="round" fill="none" />
+  <path d="M140 146 L210 172" stroke="#1f2a24" stroke-width="15" stroke-linecap="round" stroke-linejoin="round" fill="none" />
+  <path d="M210 172 L206 196" stroke="#1f2a24" stroke-width="15" stroke-linecap="round" stroke-linejoin="round" fill="none" />
+  <path d="M196 196 L252 206" stroke="#c4634f" stroke-width="16" stroke-linecap="round" fill="none" />
+  <path d="M103 163 L137 197 M137 163 L103 197" stroke="#c4634f" stroke-width="7" stroke-linecap="round" />
+  <text class="mal" x="180" y="40">El talón se despegó</text>
+  <text class="pie" x="180" y="234">Si el talón sube, la repetición no cuenta</text>
+</svg>

@@ -1,40 +1,24 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 360 240" width="360" height="240" role="img" aria-label="Posicion de partida: codo a la altura del hombro y antebrazo hacia abajo">
   <style>
-    .suelo { stroke: #c9d2cc; stroke-width: 4; stroke-linecap: round }
-    .pared { stroke: #c9d2cc; stroke-width: 5; stroke-linecap: round }
-    .cuerpo { stroke: #2a352e; stroke-width: 15; stroke-linecap: round; fill: none }
-    .brazo { stroke: #6f7d75; stroke-width: 11; stroke-linecap: round; fill: none }
-    .cabeza { fill: #2a352e }
-    .activo { stroke: #1E6B48; stroke-width: 12; stroke-linecap: round; fill: none }
-    .antes { stroke: #b9c3bd; stroke-width: 11; stroke-linecap: round; fill: none }
-    .banda { stroke: #1E6B48; stroke-width: 3.5; fill: none; stroke-dasharray: 2 6; stroke-linecap: round }
-    .flecha { stroke: #1E6B48; stroke-width: 4.5; fill: none; stroke-linecap: round }
-    .rot { fill: #1E6B48 }
-    .mal { stroke: #c4634f; stroke-width: 5; stroke-linecap: round; fill: none }
-    .malrot { fill: #c4634f }
-    .guia { stroke: #9aa7a0; stroke-width: 3; stroke-dasharray: 6 6; fill: none }
-    .izq { font: 600 14px system-ui, sans-serif; fill: #1E6B48; text-anchor: start }
-    .der { font: 600 14px system-ui, sans-serif; fill: #1E6B48; text-anchor: end }
-    .cen { font: 600 14px system-ui, sans-serif; fill: #1E6B48; text-anchor: middle }
-    .malt { font: 600 14px system-ui, sans-serif; fill: #c4634f; text-anchor: middle }
-    .nota { font: 400 13px system-ui, sans-serif; fill: #7d8a83; text-anchor: middle }
+    .izq { font: 700 14.5px system-ui, sans-serif; fill: #1E6B48; text-anchor: start }
+    .der { font: 700 14.5px system-ui, sans-serif; fill: #1E6B48; text-anchor: end }
+    .cen { font: 700 14.5px system-ui, sans-serif; fill: #1E6B48; text-anchor: middle }
+    .mal { font: 700 14.5px system-ui, sans-serif; fill: #c4634f; text-anchor: middle }
+    .pie { font: 400 13px system-ui, sans-serif; fill: #7d8a83; text-anchor: middle }
   </style>
-
-  <line class="suelo" x1="20" y1="216" x2="340" y2="216" />
-  <circle class="cabeza" cx="140" cy="72" r="18" />
-  <path class="cuerpo" d="M140 90 V158" />
-  <path class="cuerpo" d="M140 158 L124 212" />
-  <path class="cuerpo" d="M140 158 L160 212" />
-  <path class="brazo" d="M140 108 L96 150" />
-  <path class="brazo" d="M140 108 H236" />
-  <circle class="rot" cx="236" cy="108" r="8" />
-  <path class="activo" d="M236 108 V172" />
-  <path class="guia" d="M110 108 H262" />
-  <path class="banda" d="M236 176 Q180 206 86 200" />
-  <rect class="rot" x="62" y="192" width="18" height="16" rx="4" />
-  <text class="cen" x="180" y="36">Codo a la altura del hombro</text>
-  <text class="der" x="346" y="150">Antebrazo abajo</text>
-  <text class="izq" x="16" y="62">La banda tira</text>
-  <text class="izq" x="16" y="80">desde abajo</text>
-  <text class="nota" x="180" y="236">Brazo abierto y codo en ángulo recto</text>
+  <line x1="16" y1="214" x2="344" y2="214" stroke="#c9d2cc" stroke-width="5" stroke-linecap="round" />
+  <path d="M96 94 L268 94" stroke="#c9d2cc" stroke-width="4" stroke-dasharray="9 9" stroke-linecap="round" fill="none" />
+  <circle cx="146" cy="54" r="18" fill="#1f2a24" />
+  <path d="M146 82 L146 150" stroke="#1f2a24" stroke-width="32" stroke-linecap="round" stroke-linejoin="round" fill="none" />
+  <path d="M146 150 L124 206" stroke="#1f2a24" stroke-width="15" stroke-linecap="round" stroke-linejoin="round" fill="none" />
+  <path d="M146 150 L168 206" stroke="#1f2a24" stroke-width="15" stroke-linecap="round" stroke-linejoin="round" fill="none" />
+  <path d="M132 94 L112 148" stroke="#1f2a24" stroke-width="14" stroke-linecap="round" stroke-linejoin="round" fill="none" />
+  <path d="M160 94 L226 94" stroke="#1f2a24" stroke-width="14" stroke-linecap="round" stroke-linejoin="round" fill="none" />
+  <path d="M226 94 L226 152" stroke="#1E6B48" stroke-width="14" stroke-linecap="round" stroke-linejoin="round" fill="none" />
+  <path d="M226 158 Q170 196 76 192" stroke="#1E6B48" stroke-width="4" fill="none" stroke-dasharray="3 7" stroke-linecap="round" />
+  <rect x="53" y="184" width="18" height="16" rx="4" fill="#1E6B48" />
+  <text class="cen" x="180" y="34">Codo a la altura del hombro</text>
+  <text class="der" x="344" y="140">Antebrazo abajo</text>
+  <text class="izq" x="16" y="186">Banda abajo</text>
+  <text class="pie" x="180" y="234">Brazo abierto y codo en ángulo recto</text>
 </svg>

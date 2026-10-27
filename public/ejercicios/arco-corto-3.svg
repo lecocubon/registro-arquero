@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 360 240" width="360" height="240" role="img" aria-label="Error: doblar los dedos en garra">
+  <style>
+    .izq { font: 700 14.5px system-ui, sans-serif; fill: #1E6B48; text-anchor: start }
+    .der { font: 700 14.5px system-ui, sans-serif; fill: #1E6B48; text-anchor: end }
+    .cen { font: 700 14.5px system-ui, sans-serif; fill: #1E6B48; text-anchor: middle }
+    .mal { font: 700 14.5px system-ui, sans-serif; fill: #c4634f; text-anchor: middle }
+    .pie { font: 400 13px system-ui, sans-serif; fill: #7d8a83; text-anchor: middle }
+  </style>
+  <line x1="16" y1="214" x2="344" y2="214" stroke="#c9d2cc" stroke-width="5" stroke-linecap="round" />
+  <path d="M120 176 L120 106" stroke="#1f2a24" stroke-width="30" stroke-linecap="round" fill="none" />
+  <path d="M104 206 L104 172 L140 172 Q188 180 212 193 L212 206 Q150 206 140 206 Z" fill="#1f2a24" />
+  <path d="M212 200 L236 180" stroke="#c4634f" stroke-width="16" stroke-linecap="round" fill="none" />
+  <path d="M275 133 L309 167 M309 133 L275 167" stroke="#c4634f" stroke-width="7" stroke-linecap="round" />
+  <text class="mal" x="180" y="48">Dedos en garra</text>
+  <text class="pie" x="180" y="234">Si los dedos se doblan, trabaja otro músculo</text>
+</svg>

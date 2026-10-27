@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 360 240" width="360" height="240" role="img" aria-label="El arco se levanta y el pie se acorta sin doblar los dedos">
+  <style>
+    .izq { font: 700 14.5px system-ui, sans-serif; fill: #1E6B48; text-anchor: start }
+    .der { font: 700 14.5px system-ui, sans-serif; fill: #1E6B48; text-anchor: end }
+    .cen { font: 700 14.5px system-ui, sans-serif; fill: #1E6B48; text-anchor: middle }
+    .mal { font: 700 14.5px system-ui, sans-serif; fill: #c4634f; text-anchor: middle }
+    .pie { font: 400 13px system-ui, sans-serif; fill: #7d8a83; text-anchor: middle }
+  </style>
+  <line x1="16" y1="214" x2="344" y2="214" stroke="#c9d2cc" stroke-width="5" stroke-linecap="round" />
+  <path d="M120 176 L120 106" stroke="#1f2a24" stroke-width="30" stroke-linecap="round" fill="none" />
+  <path d="M104 206 L104 172 L140 172 Q183.2 180 236 193 L236 206 Q172.64 186 140 206 Z" fill="#1f2a24" />
+  <path d="M172 164 L172 128" stroke="#1E6B48" stroke-width="5" fill="none" stroke-linecap="round" /><path d="M172 124 l-9 17 h18 z" fill="#1E6B48" transform="rotate(0 172 124)" />
+  <text class="izq" x="16" y="52">El arco sube</text>
+  <text class="der" x="344" y="76">Talón y dedos quietos</text>
+  <text class="pie" x="180" y="234">Como si arrugaras una alfombra bajo el pie</text>
+</svg>

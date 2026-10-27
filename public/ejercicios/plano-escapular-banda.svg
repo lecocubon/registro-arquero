@@ -1,33 +1,18 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 360 240" width="360" height="240" role="img" aria-label="Vista desde arriba: el brazo sube en la diagonal de la paleta, a 30 grados">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 360 240" width="360" height="240" role="img" aria-label="Visto desde arriba: el brazo sube por la diagonal de la paleta">
   <style>
-    .suelo { stroke: #c9d2cc; stroke-width: 4; stroke-linecap: round }
-    .pared { stroke: #c9d2cc; stroke-width: 5; stroke-linecap: round }
-    .cuerpo { stroke: #2a352e; stroke-width: 15; stroke-linecap: round; fill: none }
-    .brazo { stroke: #6f7d75; stroke-width: 11; stroke-linecap: round; fill: none }
-    .cabeza { fill: #2a352e }
-    .activo { stroke: #1E6B48; stroke-width: 12; stroke-linecap: round; fill: none }
-    .antes { stroke: #b9c3bd; stroke-width: 11; stroke-linecap: round; fill: none }
-    .banda { stroke: #1E6B48; stroke-width: 3.5; fill: none; stroke-dasharray: 2 6; stroke-linecap: round }
-    .flecha { stroke: #1E6B48; stroke-width: 4.5; fill: none; stroke-linecap: round }
-    .rot { fill: #1E6B48 }
-    .mal { stroke: #c4634f; stroke-width: 5; stroke-linecap: round; fill: none }
-    .malrot { fill: #c4634f }
-    .guia { stroke: #9aa7a0; stroke-width: 3; stroke-dasharray: 6 6; fill: none }
-    .izq { font: 600 14px system-ui, sans-serif; fill: #1E6B48; text-anchor: start }
-    .der { font: 600 14px system-ui, sans-serif; fill: #1E6B48; text-anchor: end }
-    .cen { font: 600 14px system-ui, sans-serif; fill: #1E6B48; text-anchor: middle }
-    .malt { font: 600 14px system-ui, sans-serif; fill: #c4634f; text-anchor: middle }
-    .nota { font: 400 13px system-ui, sans-serif; fill: #7d8a83; text-anchor: middle }
+    .izq { font: 700 14.5px system-ui, sans-serif; fill: #1E6B48; text-anchor: start }
+    .der { font: 700 14.5px system-ui, sans-serif; fill: #1E6B48; text-anchor: end }
+    .cen { font: 700 14.5px system-ui, sans-serif; fill: #1E6B48; text-anchor: middle }
+    .mal { font: 700 14.5px system-ui, sans-serif; fill: #c4634f; text-anchor: middle }
+    .pie { font: 400 13px system-ui, sans-serif; fill: #7d8a83; text-anchor: middle }
   </style>
-
-  <circle class="cabeza" cx="150" cy="104" r="16" />
-  <path class="cuerpo" d="M122 128 H178" />
-  <path class="guia" d="M178 128 V56" />
-  <text class="nota" x="178" y="44">frente</text>
-  <path class="guia" d="M178 128 H286" />
-  <text class="nota" x="276" y="152">costado</text>
-  <path class="flecha" d="M178 128 L256 84" />
-  <path class="rot" d="M268 78 l-17 20 -7 -22 z" />
-  <text class="cen" x="180" y="196">30°: por la mitad de los dos</text>
-  <text class="nota" x="180" y="226">Visto desde arriba: esa diagonal es tu paleta</text>
+  <circle cx="176" cy="92" r="20" fill="#1f2a24" />
+  <path d="M146 124 L206 124" stroke="#1f2a24" stroke-width="32" stroke-linecap="round" stroke-linejoin="round" fill="none" />
+  <path d="M206 124 L206 52" stroke="#c9d2cc" stroke-width="4" stroke-dasharray="9 9" stroke-linecap="round" fill="none" />
+  <text class="cen" x="206" y="42">FRENTE</text>
+  <path d="M206 124 L300 124" stroke="#c9d2cc" stroke-width="4" stroke-dasharray="9 9" stroke-linecap="round" fill="none" />
+  <text class="der" x="290" y="150">COSTADO</text>
+  <path d="M206 124 L262 92" stroke="#1E6B48" stroke-width="5" fill="none" stroke-linecap="round" /><path d="M268 88 l-9 17 h18 z" fill="#1E6B48" transform="rotate(60 268 88)" />
+  <text class="cen" x="180" y="196">30°: justo por la mitad</text>
+  <text class="pie" x="180" y="234">Visto desde arriba: esa diagonal es tu paleta</text>
 </svg>

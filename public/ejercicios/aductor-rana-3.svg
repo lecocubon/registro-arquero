@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 360 240" width="360" height="240" role="img" aria-label="Visto desde arriba: tobillos en linea con las rodillas">
+  <style>
+    .izq { font: 700 14.5px system-ui, sans-serif; fill: #1E6B48; text-anchor: start }
+    .der { font: 700 14.5px system-ui, sans-serif; fill: #1E6B48; text-anchor: end }
+    .cen { font: 700 14.5px system-ui, sans-serif; fill: #1E6B48; text-anchor: middle }
+    .mal { font: 700 14.5px system-ui, sans-serif; fill: #c4634f; text-anchor: middle }
+    .pie { font: 400 13px system-ui, sans-serif; fill: #7d8a83; text-anchor: middle }
+  </style>
+  <circle cx="180" cy="54" r="18" fill="#1f2a24" />
+  <path d="M180 80 L180 120" stroke="#1f2a24" stroke-width="32" stroke-linecap="round" stroke-linejoin="round" fill="none" />
+  <path d="M180 120 L116 150" stroke="#1f2a24" stroke-width="15" stroke-linecap="round" stroke-linejoin="round" fill="none" />
+  <path d="M180 120 L244 150" stroke="#1f2a24" stroke-width="15" stroke-linecap="round" stroke-linejoin="round" fill="none" />
+  <path d="M116 150 L112 196" stroke="#1E6B48" stroke-width="15" stroke-linecap="round" stroke-linejoin="round" fill="none" />
+  <path d="M244 150 L248 196" stroke="#1E6B48" stroke-width="15" stroke-linecap="round" stroke-linejoin="round" fill="none" />
+  <path d="M96 196 L264 196" stroke="#c9d2cc" stroke-width="4" stroke-dasharray="9 9" stroke-linecap="round" fill="none" />
+  <text class="cen" x="180" y="224">Tobillos en línea con las rodillas</text>
+</svg>

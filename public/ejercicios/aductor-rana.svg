@@ -1,44 +1,19 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 360 240" width="360" height="240" role="img" aria-label="Mecedora de rana: en cuatro apoyos con las rodillas abiertas, la cola va hacia los talones">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 360 240" width="360" height="240" role="img" aria-label="Cuatro apoyos con las rodillas abiertas y la espalda plana">
   <style>
-    .suelo { stroke: #c9d2cc; stroke-width: 4; stroke-linecap: round }
-    .pared { stroke: #c9d2cc; stroke-width: 4; stroke-linecap: round }
-    .cuerpo { stroke: #2a352e; stroke-width: 15; stroke-linecap: round; fill: none }
-    .brazo { stroke: #6f7d75; stroke-width: 10; stroke-linecap: round; fill: none }
-    .cabeza { fill: #2a352e }
-    .pie { stroke: #1E6B48; stroke-width: 12; stroke-linecap: round; fill: none }
-    .flecha { stroke: #1E6B48; stroke-width: 4; fill: none; stroke-linecap: round }
-    .rot { fill: #1E6B48 }
-    .guia { stroke: #9aa7a0; stroke-width: 3; stroke-dasharray: 6 6; fill: none }
-    .banda { stroke: #1E6B48; stroke-width: 3.5; fill: none; stroke-dasharray: 2 5; stroke-linecap: round }
-    .izq { font: 600 13.5px system-ui, sans-serif; fill: #1E6B48; text-anchor: start }
-    .der { font: 600 13.5px system-ui, sans-serif; fill: #1E6B48; text-anchor: end }
-    .cen { font: 600 13.5px system-ui, sans-serif; fill: #1E6B48; text-anchor: middle }
-    .nota { font: 400 12.5px system-ui, sans-serif; fill: #7d8a83; text-anchor: middle }
-    .chico { font: 400 11.5px system-ui, sans-serif; fill: #7d8a83; text-anchor: middle }
+    .izq { font: 700 14.5px system-ui, sans-serif; fill: #1E6B48; text-anchor: start }
+    .der { font: 700 14.5px system-ui, sans-serif; fill: #1E6B48; text-anchor: end }
+    .cen { font: 700 14.5px system-ui, sans-serif; fill: #1E6B48; text-anchor: middle }
+    .mal { font: 700 14.5px system-ui, sans-serif; fill: #c4634f; text-anchor: middle }
+    .pie { font: 400 13px system-ui, sans-serif; fill: #7d8a83; text-anchor: middle }
   </style>
-
-  <line class="suelo" x1="18" y1="196" x2="236" y2="196" />
-
-  <!-- perfil: cuatro apoyos y el vaiven hacia atras -->
-  <circle class="cabeza" cx="56" cy="104" r="15" />
-  <path class="cuerpo" d="M70 110 H150" />
-  <path class="brazo" d="M74 112 V192" />
-  <path class="cuerpo" d="M150 110 L150 152" />
-  <path class="pie" d="M150 152 L196 190" />
-  <path class="flecha" d="M172 92 H216" />
-  <path class="rot" d="M226 92 l-14 7 v-14 z" />
-  <text class="izq" x="16" y="78">Espalda plana</text>
-  <text class="cen" x="128" y="228">La cola busca los talones</text>
-
-  <!-- de arriba: rodillas abiertas, tobillos en linea -->
-  <path class="guia" d="M262 48 V196" />
-  <circle class="cabeza" cx="300" cy="62" r="11" />
-  <path class="cuerpo" d="M300 74 V116" />
-  <path class="cuerpo" d="M300 116 L266 150" />
-  <path class="cuerpo" d="M300 116 L334 150" />
-  <path class="pie" d="M266 150 V186" />
-  <path class="pie" d="M334 150 V186" />
-  <path class="guia" d="M252 186 H348" />
-  <text class="nota" x="300" y="208">Tobillos en línea</text>
-  <text class="nota" x="300" y="226">con las rodillas</text>
+  <rect x="30" y="200" width="300" height="10" rx="5" fill="#c9d2cc" />
+  <circle cx="96" cy="104" r="18" fill="#1f2a24" />
+  <path d="M124 112 L206 112" stroke="#1f2a24" stroke-width="32" stroke-linecap="round" stroke-linejoin="round" fill="none" />
+  <path d="M126 118 L122 186" stroke="#1f2a24" stroke-width="14" stroke-linecap="round" stroke-linejoin="round" fill="none" />
+  <path d="M206 118 L214 166" stroke="#1f2a24" stroke-width="15" stroke-linecap="round" stroke-linejoin="round" fill="none" />
+  <path d="M214 166 L256 184" stroke="#1f2a24" stroke-width="15" stroke-linecap="round" stroke-linejoin="round" fill="none" />
+  <path d="M110 86 L230 86" stroke="#c9d2cc" stroke-width="4" stroke-dasharray="9 9" stroke-linecap="round" fill="none" />
+  <text class="izq" x="16" y="72">Espalda plana</text>
+  <text class="der" x="344" y="76">Rodillas abiertas</text>
+  <text class="pie" x="180" y="234">Manos bajo los hombros, rodillas bajo la cadera</text>
 </svg>

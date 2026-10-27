@@ -1,37 +1,22 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 360 240" width="360" height="240" role="img" aria-label="Error tipico: dejar caer el codo por debajo del hombro">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 360 240" width="360" height="240" role="img" aria-label="Error: el codo se cae por debajo de la linea del hombro">
   <style>
-    .suelo { stroke: #c9d2cc; stroke-width: 4; stroke-linecap: round }
-    .pared { stroke: #c9d2cc; stroke-width: 5; stroke-linecap: round }
-    .cuerpo { stroke: #2a352e; stroke-width: 15; stroke-linecap: round; fill: none }
-    .brazo { stroke: #6f7d75; stroke-width: 11; stroke-linecap: round; fill: none }
-    .cabeza { fill: #2a352e }
-    .activo { stroke: #1E6B48; stroke-width: 12; stroke-linecap: round; fill: none }
-    .antes { stroke: #b9c3bd; stroke-width: 11; stroke-linecap: round; fill: none }
-    .banda { stroke: #1E6B48; stroke-width: 3.5; fill: none; stroke-dasharray: 2 6; stroke-linecap: round }
-    .flecha { stroke: #1E6B48; stroke-width: 4.5; fill: none; stroke-linecap: round }
-    .rot { fill: #1E6B48 }
-    .mal { stroke: #c4634f; stroke-width: 5; stroke-linecap: round; fill: none }
-    .malrot { fill: #c4634f }
-    .guia { stroke: #9aa7a0; stroke-width: 3; stroke-dasharray: 6 6; fill: none }
-    .izq { font: 600 14px system-ui, sans-serif; fill: #1E6B48; text-anchor: start }
-    .der { font: 600 14px system-ui, sans-serif; fill: #1E6B48; text-anchor: end }
-    .cen { font: 600 14px system-ui, sans-serif; fill: #1E6B48; text-anchor: middle }
-    .malt { font: 600 14px system-ui, sans-serif; fill: #c4634f; text-anchor: middle }
-    .nota { font: 400 13px system-ui, sans-serif; fill: #7d8a83; text-anchor: middle }
+    .izq { font: 700 14.5px system-ui, sans-serif; fill: #1E6B48; text-anchor: start }
+    .der { font: 700 14.5px system-ui, sans-serif; fill: #1E6B48; text-anchor: end }
+    .cen { font: 700 14.5px system-ui, sans-serif; fill: #1E6B48; text-anchor: middle }
+    .mal { font: 700 14.5px system-ui, sans-serif; fill: #c4634f; text-anchor: middle }
+    .pie { font: 400 13px system-ui, sans-serif; fill: #7d8a83; text-anchor: middle }
   </style>
-
-  <line class="suelo" x1="20" y1="216" x2="340" y2="216" />
-  <circle class="cabeza" cx="140" cy="72" r="18" />
-  <path class="cuerpo" d="M140 90 V158" />
-  <path class="cuerpo" d="M140 158 L124 212" />
-  <path class="cuerpo" d="M140 158 L160 212" />
-  <path class="brazo" d="M140 108 L96 150" />
-  <path class="brazo" d="M140 112 L226 152" />
-  <circle class="malrot" cx="226" cy="152" r="8" />
-  <path class="mal" d="M226 152 V96" />
-  <path class="guia" d="M110 108 H300" />
-  <path class="mal" d="M258 128 l28 28 M286 128 l-28 28" />
-  <text class="malt" x="180" y="36">El codo se cayó</text>
-  <text class="der" x="346" y="104">Línea del hombro</text>
-  <text class="nota" x="180" y="236">Si el codo baja, el manguito deja de trabajar</text>
+  <line x1="16" y1="214" x2="344" y2="214" stroke="#c9d2cc" stroke-width="5" stroke-linecap="round" />
+  <path d="M96 94 L300 94" stroke="#c9d2cc" stroke-width="4" stroke-dasharray="9 9" stroke-linecap="round" fill="none" />
+  <circle cx="146" cy="54" r="18" fill="#1f2a24" />
+  <path d="M146 82 L146 150" stroke="#1f2a24" stroke-width="32" stroke-linecap="round" stroke-linejoin="round" fill="none" />
+  <path d="M146 150 L124 206" stroke="#1f2a24" stroke-width="15" stroke-linecap="round" stroke-linejoin="round" fill="none" />
+  <path d="M146 150 L168 206" stroke="#1f2a24" stroke-width="15" stroke-linecap="round" stroke-linejoin="round" fill="none" />
+  <path d="M132 94 L112 148" stroke="#1f2a24" stroke-width="14" stroke-linecap="round" stroke-linejoin="round" fill="none" />
+  <path d="M160 98 L218 142" stroke="#1f2a24" stroke-width="14" stroke-linecap="round" stroke-linejoin="round" fill="none" />
+  <path d="M218 142 L218 92" stroke="#c4634f" stroke-width="14" stroke-linecap="round" stroke-linejoin="round" fill="none" />
+  <path d="M255 111 L289 145 M289 111 L255 145" stroke="#c4634f" stroke-width="7" stroke-linecap="round" />
+  <text class="mal" x="180" y="34">El codo se cayó</text>
+  <text class="der" x="344" y="82">Línea del hombro</text>
+  <text class="pie" x="180" y="234">Si el codo baja, el manguito deja de trabajar</text>
 </svg>

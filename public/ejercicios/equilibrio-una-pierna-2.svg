@@ -1,0 +1,20 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 360 240" width="360" height="240" role="img" aria-label="Cuando sea facil: con los ojos cerrados">
+  <style>
+    .izq { font: 700 14.5px system-ui, sans-serif; fill: #1E6B48; text-anchor: start }
+    .der { font: 700 14.5px system-ui, sans-serif; fill: #1E6B48; text-anchor: end }
+    .cen { font: 700 14.5px system-ui, sans-serif; fill: #1E6B48; text-anchor: middle }
+    .mal { font: 700 14.5px system-ui, sans-serif; fill: #c4634f; text-anchor: middle }
+    .pie { font: 400 13px system-ui, sans-serif; fill: #7d8a83; text-anchor: middle }
+  </style>
+  <line x1="16" y1="214" x2="344" y2="214" stroke="#c9d2cc" stroke-width="5" stroke-linecap="round" />
+  <circle cx="160" cy="54" r="18" fill="#1f2a24" />
+  <path d="M150 52 L170 52" stroke="#1E6B48" stroke-width="4" stroke-linecap="round" fill="none" />
+  <path d="M160 82 L160 150" stroke="#1f2a24" stroke-width="32" stroke-linecap="round" stroke-linejoin="round" fill="none" />
+  <path d="M160 150 L156 206" stroke="#1f2a24" stroke-width="15" stroke-linecap="round" stroke-linejoin="round" fill="none" />
+  <path d="M160 150 L206 176" stroke="#1E6B48" stroke-width="15" stroke-linecap="round" stroke-linejoin="round" fill="none" />
+  <path d="M146 94 L112 128" stroke="#1f2a24" stroke-width="14" stroke-linecap="round" stroke-linejoin="round" fill="none" />
+  <path d="M174 94 L208 128" stroke="#1f2a24" stroke-width="14" stroke-linecap="round" stroke-linejoin="round" fill="none" />
+  <path d="M136 210 L186 210" stroke="#1f2a24" stroke-width="14" stroke-linecap="round" fill="none" />
+  <text class="cen" x="180" y="36">Ojos cerrados</text>
+  <text class="pie" x="180" y="234">Sin la vista, el tobillo resuelve solo</text>
+</svg>
