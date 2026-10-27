@@ -1,0 +1,49 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 360 240" width="360" height="240" role="img" aria-label="Maquina de empuje de cadera: espalda alta en el respaldo, pad sobre la cadera y pies en la plataforma">
+  <style>
+    .suelo { stroke: #c9d2cc; stroke-width: 4; stroke-linecap: round }
+    .maquina { stroke: #9aa7a0; stroke-width: 9; stroke-linecap: round; fill: none }
+    .cuerpo { stroke: #2a352e; stroke-width: 15; stroke-linecap: round; fill: none }
+    .brazo { stroke: #6f7d75; stroke-width: 10; stroke-linecap: round; fill: none }
+    .cabeza { fill: #2a352e }
+    .pie { stroke: #1E6B48; stroke-width: 12; stroke-linecap: round; fill: none }
+    .carga { fill: #1E6B48; opacity: .85 }
+    .flecha { stroke: #1E6B48; stroke-width: 4; fill: none; stroke-linecap: round }
+    .rot { fill: #1E6B48 }
+    .guia { stroke: #9aa7a0; stroke-width: 3; stroke-dasharray: 6 6; fill: none }
+    .izq { font: 600 13.5px system-ui, sans-serif; fill: #1E6B48; text-anchor: start }
+    .der { font: 600 13.5px system-ui, sans-serif; fill: #1E6B48; text-anchor: end }
+    .nota { font: 400 12.5px system-ui, sans-serif; fill: #7d8a83; text-anchor: middle }
+  </style>
+
+  <line class="suelo" x1="20" y1="214" x2="340" y2="214" />
+
+  <!-- plataforma de los pies y respaldo -->
+  <path class="maquina" d="M46 196 H126" />
+  <path class="maquina" d="M86 196 V212" />
+  <path class="maquina" d="M258 128 L286 206" />
+  <path class="maquina" d="M268 206 H306" />
+
+  <!-- palanca con el disco -->
+  <path class="maquina" d="M160 128 L74 104" />
+  <circle class="carga" cx="58" cy="100" r="20" />
+
+  <!-- arriba del todo: rodillas, cadera y hombros en linea -->
+  <circle class="cabeza" cx="266" cy="118" r="16" />
+  <path class="cuerpo" d="M250 130 L168 146" />
+  <path class="cuerpo" d="M168 146 L108 150" />
+  <path class="cuerpo" d="M108 150 L92 192" />
+  <path class="pie" d="M78 196 H112" />
+  <path class="brazo" d="M222 136 L196 120" />
+
+  <!-- el pad cruza la cadera -->
+  <rect class="carga" x="146" y="128" width="46" height="20" rx="9" />
+
+  <path class="guia" d="M108 150 L250 130" />
+  <path class="flecha" d="M176 186 V160" />
+  <path class="rot" d="M176 150 l7 14 h-14 z" />
+
+  <text class="der" x="348" y="104">Espalda alta en el respaldo</text>
+  <text class="izq" x="14" y="150">Pad sobre la cadera</text>
+  <text class="izq" x="14" y="172">Talones, no puntas</text>
+  <text class="nota" x="180" y="234">Arriba: rodillas, cadera y hombros en línea, y aprieta un segundo</text>
+</svg>

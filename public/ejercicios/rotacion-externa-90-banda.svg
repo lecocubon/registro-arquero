@@ -1,0 +1,43 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 360 240" width="360" height="240" role="img" aria-label="Rotacion externa a 90 grados: codo a la altura del hombro y el antebrazo gira hacia arriba">
+  <style>
+    .suelo { stroke: #c9d2cc; stroke-width: 4; stroke-linecap: round }
+    .cuerpo { stroke: #2a352e; stroke-width: 15; stroke-linecap: round; fill: none }
+    .brazo { stroke: #6f7d75; stroke-width: 11; stroke-linecap: round; fill: none }
+    .cabeza { fill: #2a352e }
+    .giro { stroke: #1E6B48; stroke-width: 12; stroke-linecap: round; fill: none }
+    .banda { stroke: #1E6B48; stroke-width: 3.5; fill: none; stroke-dasharray: 2 6; stroke-linecap: round }
+    .flecha { stroke: #1E6B48; stroke-width: 4; fill: none; stroke-linecap: round }
+    .rot { fill: #1E6B48 }
+    .guia { stroke: #9aa7a0; stroke-width: 3; stroke-dasharray: 6 6; fill: none }
+    .izq { font: 600 13.5px system-ui, sans-serif; fill: #1E6B48; text-anchor: start }
+    .der { font: 600 13.5px system-ui, sans-serif; fill: #1E6B48; text-anchor: end }
+    .nota { font: 400 12.5px system-ui, sans-serif; fill: #7d8a83; text-anchor: middle }
+  </style>
+
+  <line class="suelo" x1="20" y1="214" x2="340" y2="214" />
+  <text class="izq" x="14" y="36">Codo a la altura del hombro</text>
+
+  <circle class="cabeza" cx="150" cy="78" r="17" />
+  <path class="cuerpo" d="M150 96 V160" />
+  <path class="cuerpo" d="M150 160 L134 212" />
+  <path class="cuerpo" d="M150 160 L170 212" />
+
+  <!-- brazo abierto a 90 grados: el codo no se mueve -->
+  <path class="brazo" d="M150 110 H238" />
+  <circle class="rot" cx="238" cy="110" r="7" />
+
+  <!-- posicion de partida: antebrazo hacia abajo -->
+  <path class="brazo" d="M238 110 V168" />
+  <!-- final: antebrazo vertical hacia arriba -->
+  <path class="giro" d="M238 110 V52" />
+
+  <path class="guia" d="M120 110 H262" />
+  <path class="flecha" d="M276 160 A 46 46 0 0 1 276 68" />
+  <path class="rot" d="M276 58 l7 14 h-14 z" />
+  <text class="der" x="346" y="120">El antebrazo</text>
+  <text class="der" x="346" y="138">gira hacia arriba</text>
+
+  <path class="banda" d="M238 168 Q160 196 70 190" />
+  <text class="izq" x="14" y="56">La banda tira desde abajo</text>
+  <text class="nota" x="180" y="234">Es la posición del lanzamiento: ahí es donde hay que ser fuerte</text>
+</svg>
