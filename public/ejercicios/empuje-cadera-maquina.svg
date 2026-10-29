@@ -1,49 +1,30 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 360 240" width="360" height="240" role="img" aria-label="Maquina de empuje de cadera: espalda alta en el respaldo, pad sobre la cadera y pies en la plataforma">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 360 240" width="360" height="240" role="img" aria-label="Abajo: espalda alta en el respaldo, pies en la plataforma y el pad sobre la cadera">
   <style>
-    .suelo { stroke: #c9d2cc; stroke-width: 4; stroke-linecap: round }
-    .maquina { stroke: #9aa7a0; stroke-width: 9; stroke-linecap: round; fill: none }
-    .cuerpo { stroke: #2a352e; stroke-width: 15; stroke-linecap: round; fill: none }
-    .brazo { stroke: #6f7d75; stroke-width: 10; stroke-linecap: round; fill: none }
-    .cabeza { fill: #2a352e }
-    .pie { stroke: #1E6B48; stroke-width: 12; stroke-linecap: round; fill: none }
-    .carga { fill: #1E6B48; opacity: .85 }
-    .flecha { stroke: #1E6B48; stroke-width: 4; fill: none; stroke-linecap: round }
-    .rot { fill: #1E6B48 }
-    .guia { stroke: #9aa7a0; stroke-width: 3; stroke-dasharray: 6 6; fill: none }
-    .izq { font: 600 13.5px system-ui, sans-serif; fill: #1E6B48; text-anchor: start }
-    .der { font: 600 13.5px system-ui, sans-serif; fill: #1E6B48; text-anchor: end }
-    .nota { font: 400 12.5px system-ui, sans-serif; fill: #7d8a83; text-anchor: middle }
+    .izq { font: 700 14px system-ui, sans-serif; fill: #1E6B48; text-anchor: start }
+    .der { font: 700 14px system-ui, sans-serif; fill: #1E6B48; text-anchor: end }
+    .cen { font: 700 14px system-ui, sans-serif; fill: #1E6B48; text-anchor: middle }
+    .mal { font: 700 14px system-ui, sans-serif; fill: #c4634f; text-anchor: middle }
+    .pie { font: 400 13px system-ui, sans-serif; fill: #6f7c75; text-anchor: middle }
   </style>
-
-  <line class="suelo" x1="20" y1="214" x2="340" y2="214" />
-
-  <!-- plataforma de los pies y respaldo -->
-  <path class="maquina" d="M46 196 H126" />
-  <path class="maquina" d="M86 196 V212" />
-  <path class="maquina" d="M258 128 L286 206" />
-  <path class="maquina" d="M268 206 H306" />
-
-  <!-- palanca con el disco -->
-  <path class="maquina" d="M160 128 L74 104" />
-  <circle class="carga" cx="58" cy="100" r="20" />
-
-  <!-- arriba del todo: rodillas, cadera y hombros en linea -->
-  <circle class="cabeza" cx="266" cy="118" r="16" />
-  <path class="cuerpo" d="M250 130 L168 146" />
-  <path class="cuerpo" d="M168 146 L108 150" />
-  <path class="cuerpo" d="M108 150 L92 192" />
-  <path class="pie" d="M78 196 H112" />
-  <path class="brazo" d="M222 136 L196 120" />
-
-  <!-- el pad cruza la cadera -->
-  <rect class="carga" x="146" y="128" width="46" height="20" rx="9" />
-
-  <path class="guia" d="M108 150 L250 130" />
-  <path class="flecha" d="M176 186 V160" />
-  <path class="rot" d="M176 150 l7 14 h-14 z" />
-
-  <text class="der" x="348" y="104">Espalda alta en el respaldo</text>
-  <text class="izq" x="14" y="150">Pad sobre la cadera</text>
-  <text class="izq" x="14" y="172">Talones, no puntas</text>
-  <text class="nota" x="180" y="234">Arriba: rodillas, cadera y hombros en línea</text>
+  <line x1="16" y1="212" x2="344" y2="212" stroke="#c9d2cc" stroke-width="5" stroke-linecap="round" />
+  <rect x="54" y="146" width="60" height="14" rx="4" fill="#9aa59f" /><rect x="64" y="160" width="10" height="46" rx="4" fill="#6f7b75" /><rect x="96" y="160" width="10" height="46" rx="4" fill="#6f7b75" /><rect x="188" y="200" width="76" height="8" rx="4" fill="#9aa59f" />
+  <path d="M154.0 174.6 L230.0 140.6" stroke="#6f7b75" stroke-width="7" stroke-linecap="round" fill="none" />
+  <circle cx="238" cy="137" r="20" fill="#9aa59f" />
+  <path d="M191.2 173.4 L192.6 172.2 L193.7 170.7 L194.1 168.9 L194.1 167.0 L193.4 165.3 L192.2 163.8 L190.7 162.8 L188.9 162.3 L187.0 162.4 L185.3 163.1 L145.9 182.7 L143.8 184.4 L142.4 186.6 L141.7 189.1 L141.8 191.7 L142.7 194.1 L144.4 196.2 L146.6 197.6 L149.1 198.3 L151.7 198.2 L154.1 197.3 Z" fill="#ffffff" stroke="#ffffff" stroke-width="2.9" stroke-linejoin="round" /><path d="M191.2 173.4 L192.6 172.2 L193.7 170.7 L194.1 168.9 L194.1 167.0 L193.4 165.3 L192.2 163.8 L190.7 162.8 L188.9 162.3 L187.0 162.4 L185.3 163.1 L145.9 182.7 L143.8 184.4 L142.4 186.6 L141.7 189.1 L141.8 191.7 L142.7 194.1 L144.4 196.2 L146.6 197.6 L149.1 198.3 L151.7 198.2 L154.1 197.3 Z" fill="#7c8a83" />
+  <path d="M213.3 200.6 L214.2 201.3 L215.3 201.7 L216.5 201.7 L217.6 201.4 L218.6 200.7 L219.3 199.8 L219.7 198.7 L219.7 197.5 L219.4 196.4 L218.7 195.4 L192.6 164.2 L191.1 163.0 L189.4 162.4 L187.5 162.3 L185.7 162.9 L184.2 163.9 L183.0 165.4 L182.4 167.1 L182.3 169.0 L182.9 170.7 L183.9 172.3 Z" fill="#ffffff" stroke="#ffffff" stroke-width="2.9" stroke-linejoin="round" /><path d="M213.3 200.6 L214.2 201.3 L215.3 201.7 L216.5 201.7 L217.6 201.4 L218.6 200.7 L219.3 199.8 L219.7 198.7 L219.7 197.5 L219.4 196.4 L218.7 195.4 L192.6 164.2 L191.1 163.0 L189.4 162.4 L187.5 162.3 L185.7 162.9 L184.2 163.9 L183.0 165.4 L182.4 167.1 L182.3 169.0 L182.9 170.7 L183.9 172.3 Z" fill="#7c8a83" />
+  <path d="M213.8 194.5 L222.2 196.7 L229.6 198.9 L236.2 200.2 L237.6 202.4 L235.8 203.9 L218.2 203.9 L211.6 203.5 L209.4 201.5 L209.8 198.4 Z" fill="#ffffff" stroke="#ffffff" stroke-width="2.4" stroke-linejoin="round" /><path d="M213.8 194.5 L222.2 196.7 L229.6 198.9 L236.2 200.2 L237.6 202.4 L235.8 203.9 L218.2 203.9 L211.6 203.5 L209.4 201.5 L209.8 198.4 Z" fill="#7c8a83" />
+  <path d="M138.7 188.9 L154.2 201.3 L161.5 193.7 L148.4 178.8 Z" fill="#ffffff" stroke="#ffffff" stroke-width="9.9" stroke-linejoin="round" /><path d="M138.7 188.9 L154.2 201.3 L161.5 193.7 L148.4 178.8 Z" fill="#1f2a24" stroke="#1f2a24" stroke-width="7.0" stroke-linejoin="round" />
+  <path d="M110.8 164.7 L135.5 186.5 L145.9 175.7 L122.9 151.9 Z" fill="#ffffff" stroke="#ffffff" stroke-width="9.9" stroke-linejoin="round" /><path d="M110.8 164.7 L135.5 186.5 L145.9 175.7 L122.9 151.9 Z" fill="#1f2a24" stroke="#1f2a24" stroke-width="7.0" stroke-linejoin="round" />
+  <path d="M109.1 148.8 L107.9 148.3 L106.5 148.2 L105.2 148.6 L104.0 149.3 L103.1 150.4 L102.6 151.7 L102.6 153.0 L102.9 154.4 L103.7 155.5 L104.7 156.4 L116.6 163.2 L117.8 163.7 L119.2 163.8 L120.5 163.4 L121.7 162.7 L122.6 161.6 L123.1 160.3 L123.1 158.9 L122.8 157.6 L122.0 156.4 L121.0 155.6 Z" fill="#ffffff" stroke="#ffffff" stroke-width="2.4" stroke-linejoin="round" /><path d="M109.1 148.8 L107.9 148.3 L106.5 148.2 L105.2 148.6 L104.0 149.3 L103.1 150.4 L102.6 151.7 L102.6 153.0 L102.9 154.4 L103.7 155.5 L104.7 156.4 L116.6 163.2 L117.8 163.7 L119.2 163.8 L120.5 163.4 L121.7 162.7 L122.6 161.6 L123.1 160.3 L123.1 158.9 L122.8 157.6 L122.0 156.4 L121.0 155.6 Z" fill="#1f2a24" />
+  <ellipse cx="101.2" cy="149.3" rx="10.3" ry="12.5" fill="#ffffff" transform="rotate(-60.0 101.2 149.3)" /><ellipse cx="101.2" cy="149.3" rx="8.8" ry="11.0" fill="#1f2a24" transform="rotate(-60.0 101.2 149.3)" />
+  <path d="M192.7 177.9 L194.3 176.9 L195.5 175.4 L196.1 173.7 L196.3 171.9 L195.8 170.1 L194.8 168.5 L193.3 167.3 L191.6 166.6 L189.8 166.5 L188.0 167.0 L146.7 182.3 L144.5 183.7 L142.8 185.8 L141.8 188.2 L141.7 190.8 L142.3 193.3 L143.7 195.5 L145.8 197.2 L148.2 198.2 L150.8 198.3 L153.3 197.7 Z" fill="#ffffff" stroke="#ffffff" stroke-width="2.9" stroke-linejoin="round" /><path d="M192.7 177.9 L194.3 176.9 L195.5 175.4 L196.1 173.7 L196.3 171.9 L195.8 170.1 L194.8 168.5 L193.3 167.3 L191.6 166.6 L189.8 166.5 L188.0 167.0 L146.7 182.3 L144.5 183.7 L142.8 185.8 L141.8 188.2 L141.7 190.8 L142.3 193.3 L143.7 195.5 L145.8 197.2 L148.2 198.2 L150.8 198.3 L153.3 197.7 Z" fill="#1E6B48" />
+  <path d="M219.6 200.9 L220.7 201.5 L221.8 201.7 L223.0 201.6 L224.0 201.1 L224.9 200.4 L225.5 199.3 L225.7 198.2 L225.6 197.0 L225.1 196.0 L224.4 195.1 L194.1 167.8 L192.5 166.9 L190.6 166.5 L188.8 166.7 L187.1 167.4 L185.7 168.7 L184.8 170.3 L184.4 172.1 L184.6 174.0 L185.4 175.7 L186.6 177.0 Z" fill="#ffffff" stroke="#ffffff" stroke-width="2.9" stroke-linejoin="round" /><path d="M219.6 200.9 L220.7 201.5 L221.8 201.7 L223.0 201.6 L224.0 201.1 L224.9 200.4 L225.5 199.3 L225.7 198.2 L225.6 197.0 L225.1 196.0 L224.4 195.1 L194.1 167.8 L192.5 166.9 L190.6 166.5 L188.8 166.7 L187.1 167.4 L185.7 168.7 L184.8 170.3 L184.4 172.1 L184.6 174.0 L185.4 175.7 L186.6 177.0 Z" fill="#1f2a24" />
+  <path d="M219.8 194.5 L228.2 196.7 L235.6 198.9 L242.2 200.2 L243.6 202.4 L241.8 203.9 L224.2 203.9 L217.6 203.5 L215.4 201.5 L215.8 198.4 Z" fill="#ffffff" stroke="#ffffff" stroke-width="2.4" stroke-linejoin="round" /><path d="M219.8 194.5 L228.2 196.7 L235.6 198.9 L242.2 200.2 L243.6 202.4 L241.8 203.9 L224.2 203.9 L217.6 203.5 L215.4 201.5 L215.8 198.4 Z" fill="#1f2a24" />
+  <path d="M112.8 191.8 L113.0 193.1 L113.5 194.4 L114.5 195.4 L115.6 196.1 L117.0 196.4 L118.4 196.2 L119.6 195.7 L120.6 194.7 L121.3 193.5 L121.6 192.2 L124.7 160.4 L124.5 158.6 L123.7 156.9 L122.5 155.5 L120.9 154.6 L119.0 154.2 L117.2 154.4 L115.5 155.1 L114.1 156.4 L113.2 158.0 L112.8 159.8 Z" fill="#ffffff" stroke="#ffffff" stroke-width="2.9" stroke-linejoin="round" /><path d="M112.8 191.8 L113.0 193.1 L113.5 194.4 L114.5 195.4 L115.6 196.1 L117.0 196.4 L118.4 196.2 L119.6 195.7 L120.6 194.7 L121.3 193.5 L121.6 192.2 L124.7 160.4 L124.5 158.6 L123.7 156.9 L122.5 155.5 L120.9 154.6 L119.0 154.2 L117.2 154.4 L115.5 155.1 L114.1 156.4 L113.2 158.0 L112.8 159.8 Z" fill="#1f2a24" />
+  <path d="M140.8 177.5 L141.5 176.7 L141.9 175.8 L142.0 174.7 L141.8 173.7 L141.3 172.8 L140.6 172.1 L139.6 171.7 L138.6 171.6 L137.6 171.8 L136.7 172.3 L114.5 188.5 L113.5 189.6 L113.0 190.8 L112.8 192.2 L113.1 193.5 L113.8 194.7 L114.8 195.6 L116.0 196.2 L117.4 196.4 L118.7 196.1 L119.9 195.4 Z" fill="#ffffff" stroke="#ffffff" stroke-width="2.9" stroke-linejoin="round" /><path d="M140.8 177.5 L141.5 176.7 L141.9 175.8 L142.0 174.7 L141.8 173.7 L141.3 172.8 L140.6 172.1 L139.6 171.7 L138.6 171.6 L137.6 171.8 L136.7 172.3 L114.5 188.5 L113.5 189.6 L113.0 190.8 L112.8 192.2 L113.1 193.5 L113.8 194.7 L114.8 195.6 L116.0 196.2 L117.4 196.4 L118.7 196.1 L119.9 195.4 Z" fill="#1f2a24" />
+  <path d="M148.7 172.5 L149.7 171.5 L150.2 170.3 L150.4 168.9 L150.1 167.6 L149.4 166.4 L148.4 165.4 L147.2 164.9 L145.8 164.7 L144.5 165.0 L143.3 165.7 L136.4 171.9 L135.6 172.8 L135.1 173.9 L135.0 175.0 L135.2 176.2 L135.8 177.2 L136.7 178.0 L137.7 178.5 L138.9 178.6 L140.0 178.4 L141.1 177.8 Z" fill="#ffffff" stroke="#ffffff" stroke-width="2.9" stroke-linejoin="round" /><path d="M148.7 172.5 L149.7 171.5 L150.2 170.3 L150.4 168.9 L150.1 167.6 L149.4 166.4 L148.4 165.4 L147.2 164.9 L145.8 164.7 L144.5 165.0 L143.3 165.7 L136.4 171.9 L135.6 172.8 L135.1 173.9 L135.0 175.0 L135.2 176.2 L135.8 177.2 L136.7 178.0 L137.7 178.5 L138.9 178.6 L140.0 178.4 L141.1 177.8 Z" fill="#1f2a24" />
+  <rect x="133" y="166" width="42" height="18" rx="9" fill="#6f7b75" stroke="#fff" stroke-width="3" />
+  <text class="izq" x="16" y="40">Espalda alta apoyada</text>
+  <text class="der" x="344" y="196">Pies planos</text>
+  <text class="pie" x="180" y="234">Pad sobre la cadera, pies bajo las rodillas</text>
 </svg>

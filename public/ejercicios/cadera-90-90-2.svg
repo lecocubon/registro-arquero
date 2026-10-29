@@ -1,0 +1,21 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 360 240" width="360" height="240" role="img" aria-label="Cambias de lado girando las dos rodillas por el suelo">
+  <style>
+    .izq { font: 700 14px system-ui, sans-serif; fill: #1E6B48; text-anchor: start }
+    .der { font: 700 14px system-ui, sans-serif; fill: #1E6B48; text-anchor: end }
+    .cen { font: 700 14px system-ui, sans-serif; fill: #1E6B48; text-anchor: middle }
+    .mal { font: 700 14px system-ui, sans-serif; fill: #c4634f; text-anchor: middle }
+    .pie { font: 400 13px system-ui, sans-serif; fill: #6f7c75; text-anchor: middle }
+  </style>
+  <path d="M171.9 94.0 L171.6 92.2 L170.8 90.5 L169.5 89.2 L167.8 88.4 L166.0 88.1 L164.2 88.4 L162.5 89.2 L161.2 90.5 L160.4 92.2 L160.1 94.0 L157.6 140.0 L158.0 142.6 L159.2 144.9 L161.1 146.8 L163.4 148.0 L166.0 148.4 L168.6 148.0 L170.9 146.8 L172.8 144.9 L174.0 142.6 L174.4 140.0 Z" fill="#fff" stroke="#fff" stroke-width="3.5" stroke-linejoin="round" /><path d="M171.9 94.0 L171.6 92.2 L170.8 90.5 L169.5 89.2 L167.8 88.4 L166.0 88.1 L164.2 88.4 L162.5 89.2 L161.2 90.5 L160.4 92.2 L160.1 94.0 L157.6 140.0 L158.0 142.6 L159.2 144.9 L161.1 146.8 L163.4 148.0 L166.0 148.4 L168.6 148.0 L170.9 146.8 L172.8 144.9 L174.0 142.6 L174.4 140.0 Z" fill="#1E6B48" />
+  <path d="M214.0 98.0 L215.2 97.8 L216.3 97.2 L217.2 96.3 L217.8 95.2 L218.0 94.0 L217.8 92.8 L217.2 91.7 L216.3 90.8 L215.2 90.2 L214.0 90.0 L166.0 88.1 L164.2 88.4 L162.5 89.2 L161.2 90.5 L160.4 92.2 L160.1 94.0 L160.4 95.8 L161.2 97.5 L162.5 98.8 L164.2 99.6 L166.0 99.9 Z" fill="#fff" stroke="#fff" stroke-width="3.5" stroke-linejoin="round" /><path d="M214.0 98.0 L215.2 97.8 L216.3 97.2 L217.2 96.3 L217.8 95.2 L218.0 94.0 L217.8 92.8 L217.2 91.7 L216.3 90.8 L215.2 90.2 L214.0 90.0 L166.0 88.1 L164.2 88.4 L162.5 89.2 L161.2 90.5 L160.4 92.2 L160.1 94.0 L160.4 95.8 L161.2 97.5 L162.5 98.8 L164.2 99.6 L166.0 99.9 Z" fill="#1f2a24" />
+  <path d="M240.0 147.9 L241.8 147.6 L243.5 146.8 L244.8 145.5 L245.6 143.8 L245.9 142.0 L245.6 140.2 L244.8 138.5 L243.5 137.2 L241.8 136.4 L240.0 136.1 L194.0 133.6 L191.4 134.0 L189.1 135.2 L187.2 137.1 L186.0 139.4 L185.6 142.0 L186.0 144.6 L187.2 146.9 L189.1 148.8 L191.4 150.0 L194.0 150.4 Z" fill="#fff" stroke="#fff" stroke-width="3.5" stroke-linejoin="round" /><path d="M240.0 147.9 L241.8 147.6 L243.5 146.8 L244.8 145.5 L245.6 143.8 L245.9 142.0 L245.6 140.2 L244.8 138.5 L243.5 137.2 L241.8 136.4 L240.0 136.1 L194.0 133.6 L191.4 134.0 L189.1 135.2 L187.2 137.1 L186.0 139.4 L185.6 142.0 L186.0 144.6 L187.2 146.9 L189.1 148.8 L191.4 150.0 L194.0 150.4 Z" fill="#1E6B48" />
+  <path d="M236.0 188.0 L236.2 189.2 L236.8 190.3 L237.7 191.2 L238.8 191.8 L240.0 192.0 L241.2 191.8 L242.3 191.2 L243.2 190.3 L243.8 189.2 L244.0 188.0 L245.9 142.0 L245.6 140.2 L244.8 138.5 L243.5 137.2 L241.8 136.4 L240.0 136.1 L238.2 136.4 L236.5 137.2 L235.2 138.5 L234.4 140.2 L234.1 142.0 Z" fill="#fff" stroke="#fff" stroke-width="3.5" stroke-linejoin="round" /><path d="M236.0 188.0 L236.2 189.2 L236.8 190.3 L237.7 191.2 L238.8 191.8 L240.0 192.0 L241.2 191.8 L242.3 191.2 L243.2 190.3 L243.8 189.2 L244.0 188.0 L245.9 142.0 L245.6 140.2 L244.8 138.5 L243.5 137.2 L241.8 136.4 L240.0 136.1 L238.2 136.4 L236.5 137.2 L235.2 138.5 L234.4 140.2 L234.1 142.0 Z" fill="#1f2a24" />
+  <ellipse cx="180" cy="146" rx="22" ry="9" fill="#1f2a24" stroke="#fff" stroke-width="3.5" />
+  <ellipse cx="180" cy="146" rx="9" ry="10" fill="#1f2a24" stroke="#fff" stroke-width="3" />
+  <path d="M150 94 V108 H166" stroke="#c9d2cc" stroke-width="2.5" fill="none" />
+  <path d="M224 142 V156 H240" stroke="#c9d2cc" stroke-width="2.5" fill="none" />
+  <path d="M150 208 Q180 222 210 208" stroke="#1E6B48" stroke-width="4.5" fill="none" stroke-linecap="round" /><path d="M214.0 206.0 l-8 15 h16 z" fill="#1E6B48" transform="rotate(60 214.0 206.0)" />
+  <text class="izq" x="16" y="30">Al otro lado</text>
+  <text class="izq" x="16" y="60">sin manos, si puedes</text>
+  <text class="pie" x="180" y="234">Pecho arriba y gira hacia la pierna de adelante</text>
+</svg>

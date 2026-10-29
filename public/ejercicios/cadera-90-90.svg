@@ -1,39 +1,21 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 360 240" width="360" height="240" role="img" aria-label="Cadera 90/90 sentado: una pierna adelante y otra al costado, las dos dobladas en angulo recto">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 360 240" width="360" height="240" role="img" aria-label="Sentado visto desde arriba: una pierna adelante y otra al costado, las dos en angulo recto">
   <style>
-    .suelo { stroke: #c9d2cc; stroke-width: 4; stroke-linecap: round }
-    .pared { stroke: #c9d2cc; stroke-width: 4; stroke-linecap: round }
-    .cuerpo { stroke: #2a352e; stroke-width: 15; stroke-linecap: round; fill: none }
-    .brazo { stroke: #6f7d75; stroke-width: 10; stroke-linecap: round; fill: none }
-    .cabeza { fill: #2a352e }
-    .pie { stroke: #1E6B48; stroke-width: 12; stroke-linecap: round; fill: none }
-    .flecha { stroke: #1E6B48; stroke-width: 4; fill: none; stroke-linecap: round }
-    .rot { fill: #1E6B48 }
-    .guia { stroke: #9aa7a0; stroke-width: 3; stroke-dasharray: 6 6; fill: none }
-    .banda { stroke: #1E6B48; stroke-width: 3.5; fill: none; stroke-dasharray: 2 5; stroke-linecap: round }
-    .izq { font: 600 13.5px system-ui, sans-serif; fill: #1E6B48; text-anchor: start }
-    .der { font: 600 13.5px system-ui, sans-serif; fill: #1E6B48; text-anchor: end }
-    .cen { font: 600 13.5px system-ui, sans-serif; fill: #1E6B48; text-anchor: middle }
-    .nota { font: 400 12.5px system-ui, sans-serif; fill: #7d8a83; text-anchor: middle }
-    .chico { font: 400 11.5px system-ui, sans-serif; fill: #7d8a83; text-anchor: middle }
+    .izq { font: 700 14px system-ui, sans-serif; fill: #1E6B48; text-anchor: start }
+    .der { font: 700 14px system-ui, sans-serif; fill: #1E6B48; text-anchor: end }
+    .cen { font: 700 14px system-ui, sans-serif; fill: #1E6B48; text-anchor: middle }
+    .mal { font: 700 14px system-ui, sans-serif; fill: #c4634f; text-anchor: middle }
+    .pie { font: 400 13px system-ui, sans-serif; fill: #6f7c75; text-anchor: middle }
   </style>
-
-  <!-- visto desde arriba, que es donde se entienden los dos angulos rectos -->
-  <circle class="cabeza" cx="150" cy="78" r="18" />
-  <path class="cuerpo" d="M150 96 V128" />
-
-  <!-- pierna de adelante: muslo al frente, pantorrilla cruzando -->
-  <path class="cuerpo" d="M150 128 L150 188" />
-  <path class="pie" d="M150 188 H232" />
-  <path class="guia" d="M150 188 h26 v-26" />
-  <text class="chico" x="196" y="178">90°</text>
-
-  <!-- pierna de atras: muslo al costado, pantorrilla hacia atras -->
-  <path class="cuerpo" d="M150 128 L68 128" />
-  <path class="pie" d="M68 128 V200" />
-  <path class="guia" d="M68 128 v26 h26" />
-  <text class="chico" x="104" y="150">90°</text>
-
-  <text class="cen" x="180" y="222">Rodilla de atrás pegada al suelo</text>
-  <text class="nota" x="180" y="46">Sentado en el suelo, visto desde arriba</text>
-  <text class="nota" x="180" y="238">Pecho arriba y gira hacia la pierna de adelante</text>
+  <path d="M199.9 94.0 L199.6 92.2 L198.8 90.5 L197.5 89.2 L195.8 88.4 L194.0 88.1 L192.2 88.4 L190.5 89.2 L189.2 90.5 L188.4 92.2 L188.1 94.0 L185.6 140.0 L186.0 142.6 L187.2 144.9 L189.1 146.8 L191.4 148.0 L194.0 148.4 L196.6 148.0 L198.9 146.8 L200.8 144.9 L202.0 142.6 L202.4 140.0 Z" fill="#fff" stroke="#fff" stroke-width="3.5" stroke-linejoin="round" /><path d="M199.9 94.0 L199.6 92.2 L198.8 90.5 L197.5 89.2 L195.8 88.4 L194.0 88.1 L192.2 88.4 L190.5 89.2 L189.2 90.5 L188.4 92.2 L188.1 94.0 L185.6 140.0 L186.0 142.6 L187.2 144.9 L189.1 146.8 L191.4 148.0 L194.0 148.4 L196.6 148.0 L198.9 146.8 L200.8 144.9 L202.0 142.6 L202.4 140.0 Z" fill="#1E6B48" />
+  <path d="M146.0 90.0 L144.8 90.2 L143.7 90.8 L142.8 91.7 L142.2 92.8 L142.0 94.0 L142.2 95.2 L142.8 96.3 L143.7 97.2 L144.8 97.8 L146.0 98.0 L194.0 99.9 L195.8 99.6 L197.5 98.8 L198.8 97.5 L199.6 95.8 L199.9 94.0 L199.6 92.2 L198.8 90.5 L197.5 89.2 L195.8 88.4 L194.0 88.1 Z" fill="#fff" stroke="#fff" stroke-width="3.5" stroke-linejoin="round" /><path d="M146.0 90.0 L144.8 90.2 L143.7 90.8 L142.8 91.7 L142.2 92.8 L142.0 94.0 L142.2 95.2 L142.8 96.3 L143.7 97.2 L144.8 97.8 L146.0 98.0 L194.0 99.9 L195.8 99.6 L197.5 98.8 L198.8 97.5 L199.6 95.8 L199.9 94.0 L199.6 92.2 L198.8 90.5 L197.5 89.2 L195.8 88.4 L194.0 88.1 Z" fill="#1f2a24" />
+  <path d="M120.0 136.1 L118.2 136.4 L116.5 137.2 L115.2 138.5 L114.4 140.2 L114.1 142.0 L114.4 143.8 L115.2 145.5 L116.5 146.8 L118.2 147.6 L120.0 147.9 L166.0 150.4 L168.6 150.0 L170.9 148.8 L172.8 146.9 L174.0 144.6 L174.4 142.0 L174.0 139.4 L172.8 137.1 L170.9 135.2 L168.6 134.0 L166.0 133.6 Z" fill="#fff" stroke="#fff" stroke-width="3.5" stroke-linejoin="round" /><path d="M120.0 136.1 L118.2 136.4 L116.5 137.2 L115.2 138.5 L114.4 140.2 L114.1 142.0 L114.4 143.8 L115.2 145.5 L116.5 146.8 L118.2 147.6 L120.0 147.9 L166.0 150.4 L168.6 150.0 L170.9 148.8 L172.8 146.9 L174.0 144.6 L174.4 142.0 L174.0 139.4 L172.8 137.1 L170.9 135.2 L168.6 134.0 L166.0 133.6 Z" fill="#1E6B48" />
+  <path d="M116.0 188.0 L116.2 189.2 L116.8 190.3 L117.7 191.2 L118.8 191.8 L120.0 192.0 L121.2 191.8 L122.3 191.2 L123.2 190.3 L123.8 189.2 L124.0 188.0 L125.9 142.0 L125.6 140.2 L124.8 138.5 L123.5 137.2 L121.8 136.4 L120.0 136.1 L118.2 136.4 L116.5 137.2 L115.2 138.5 L114.4 140.2 L114.1 142.0 Z" fill="#fff" stroke="#fff" stroke-width="3.5" stroke-linejoin="round" /><path d="M116.0 188.0 L116.2 189.2 L116.8 190.3 L117.7 191.2 L118.8 191.8 L120.0 192.0 L121.2 191.8 L122.3 191.2 L123.2 190.3 L123.8 189.2 L124.0 188.0 L125.9 142.0 L125.6 140.2 L124.8 138.5 L123.5 137.2 L121.8 136.4 L120.0 136.1 L118.2 136.4 L116.5 137.2 L115.2 138.5 L114.4 140.2 L114.1 142.0 Z" fill="#1f2a24" />
+  <ellipse cx="180" cy="146" rx="22" ry="9" fill="#1f2a24" stroke="#fff" stroke-width="3.5" />
+  <ellipse cx="180" cy="146" rx="9" ry="10" fill="#1f2a24" stroke="#fff" stroke-width="3" />
+  <path d="M210 94 V108 H194" stroke="#c9d2cc" stroke-width="2.5" fill="none" />
+  <path d="M136 142 V156 H120" stroke="#c9d2cc" stroke-width="2.5" fill="none" />
+  <text class="izq" x="16" y="30">Visto desde arriba</text>
+  <text class="der" x="344" y="80">Pierna adelante</text>
+  <text class="izq" x="16" y="206">Pierna al costado</text>
+  <text class="pie" x="180" y="234">Rodilla de atrás pegada al suelo</text>
 </svg>

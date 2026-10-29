@@ -1,18 +1,18 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 360 240" width="360" height="240" role="img" aria-label="Visto desde arriba: el brazo sube por la diagonal de la paleta">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 360 240" width="360" height="240" role="img" aria-label="Visto desde arriba: el brazo sube por la diagonal de la paleta, a 30 grados">
   <style>
-    .izq { font: 700 14.5px system-ui, sans-serif; fill: #1E6B48; text-anchor: start }
-    .der { font: 700 14.5px system-ui, sans-serif; fill: #1E6B48; text-anchor: end }
-    .cen { font: 700 14.5px system-ui, sans-serif; fill: #1E6B48; text-anchor: middle }
-    .mal { font: 700 14.5px system-ui, sans-serif; fill: #c4634f; text-anchor: middle }
-    .pie { font: 400 13px system-ui, sans-serif; fill: #7d8a83; text-anchor: middle }
+    .izq { font: 700 14px system-ui, sans-serif; fill: #1E6B48; text-anchor: start }
+    .der { font: 700 14px system-ui, sans-serif; fill: #1E6B48; text-anchor: end }
+    .cen { font: 700 14px system-ui, sans-serif; fill: #1E6B48; text-anchor: middle }
+    .mal { font: 700 14px system-ui, sans-serif; fill: #c4634f; text-anchor: middle }
+    .pie { font: 400 13px system-ui, sans-serif; fill: #6f7c75; text-anchor: middle }
   </style>
-  <circle cx="176" cy="92" r="20" fill="#1f2a24" />
-  <path d="M146 124 L206 124" stroke="#1f2a24" stroke-width="32" stroke-linecap="round" stroke-linejoin="round" fill="none" />
-  <path d="M206 124 L206 52" stroke="#c9d2cc" stroke-width="4" stroke-dasharray="9 9" stroke-linecap="round" fill="none" />
-  <text class="cen" x="206" y="42">FRENTE</text>
-  <path d="M206 124 L300 124" stroke="#c9d2cc" stroke-width="4" stroke-dasharray="9 9" stroke-linecap="round" fill="none" />
-  <text class="der" x="290" y="150">COSTADO</text>
-  <path d="M206 124 L262 92" stroke="#1E6B48" stroke-width="5" fill="none" stroke-linecap="round" /><path d="M268 88 l-9 17 h18 z" fill="#1E6B48" transform="rotate(60 268 88)" />
-  <text class="cen" x="180" y="196">30°: justo por la mitad</text>
+  <ellipse cx="176" cy="104" rx="9" ry="11" fill="#1f2a24" />
+  <path d="M218.0 141.9 L220.4 141.5 L222.7 140.4 L224.4 138.7 L225.5 136.4 L225.9 134.0 L225.5 131.6 L224.4 129.3 L222.7 127.6 L220.4 126.5 L218.0 126.1 L134.0 126.1 L131.6 126.5 L129.3 127.6 L127.6 129.3 L126.5 131.6 L126.1 134.0 L126.5 136.4 L127.6 138.7 L129.3 140.4 L131.6 141.5 L134.0 141.9 Z" fill="#1f2a24" />
+  <path d="M218.0 134.0 L218.0 56.0" stroke="#c9d2cc" stroke-width="3" stroke-dasharray="7 7" stroke-linecap="round" fill="none" />
+  <text class="cen" x="218" y="46">FRENTE</text>
+  <path d="M218.0 134.0 L318.0 134.0" stroke="#c9d2cc" stroke-width="3" stroke-dasharray="7 7" stroke-linecap="round" fill="none" />
+  <text class="der" x="310" y="160">COSTADO</text>
+  <path d="M284.2 101.8 L285.2 101.0 L286.0 99.8 L286.4 98.5 L286.3 97.1 L285.8 95.8 L285.0 94.8 L283.8 94.0 L282.5 93.6 L281.1 93.7 L279.8 94.2 L215.1 128.8 L213.6 130.0 L212.6 131.5 L212.1 133.3 L212.2 135.2 L212.8 136.9 L214.0 138.4 L215.5 139.4 L217.3 139.9 L219.2 139.8 L220.9 139.2 Z" fill="#1E6B48" />
+  <text class="cen" x="180" y="200">30°: justo por la mitad</text>
   <text class="pie" x="180" y="234">Visto desde arriba: esa diagonal es tu paleta</text>
 </svg>
