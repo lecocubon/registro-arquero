@@ -7,6 +7,7 @@ import {
 import { tieneDatos, tieneValores, ventanaSesion, type ValoresSerie } from '../lib/series';
 import type { EjercicioCatalogo } from '../data/biblioteca';
 import { PROGRAMA_VACIO, type ProgramaDef } from '../data/programa';
+import type { Respuestas } from '../lib/planificador';
 import {
   db,
   hoy,
@@ -337,6 +338,29 @@ export async function prepararPrimerUso(): Promise<void> {
   ]);
   if (series + sesiones + mediciones > 0) return;
   await guardarPrograma(PROGRAMA_VACIO);
+}
+
+const CLAVE_PLANIFICADOR = 'planificador';
+
+/** 'hecho': armo una rutina con el; 'omitido': prefirio armarla a mano. */
+export interface EstadoPlanificador {
+  estado: 'hecho' | 'omitido';
+  respuestas?: Respuestas;
+}
+
+/** null si nunca se abrio: es lo que decide mostrarlo solo al primer inicio. */
+export async function leerPlanificador(): Promise<EstadoPlanificador | null> {
+  const a = await db.ajustes.get(CLAVE_PLANIFICADOR);
+  if (typeof a?.valor !== 'string') return null;
+  try {
+    return JSON.parse(a.valor) as EstadoPlanificador;
+  } catch {
+    return null;
+  }
+}
+
+export async function guardarPlanificador(e: EstadoPlanificador): Promise<void> {
+  await db.ajustes.put({ clave: CLAVE_PLANIFICADOR, valor: JSON.stringify(e) });
 }
 
 /** Vuelve al programa del archivo. El historial no se toca. */

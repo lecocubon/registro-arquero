@@ -3,8 +3,9 @@ import { useLiveQuery } from 'dexie-react-hooks';
 import { Avisos, avisar } from './components/Avisos';
 import { BarraDescanso } from './components/BarraDescanso';
 import { BarraPestanas, type Pestana } from './components/BarraPestanas';
+import { Planificador, escucharPlanificador } from './components/Planificador';
 import { db } from './db/db';
-import { fijarSemana, leerDescanso, semanaActual } from './db/repo';
+import { fijarSemana, leerDescanso, leerPlanificador, semanaActual } from './db/repo';
 import { useArquero } from './estado/arquero';
 import { hayCapas } from './components/Capa';
 import { useBotonAtras } from './lib/atras';
@@ -32,7 +33,19 @@ export default function App() {
   const sesiones = useLiveQuery(() => db.sesiones.toArray(), [], []);
   const mediciones = useLiveQuery(() => db.mediciones.toArray(), [], []);
   const descanso = useLiveQuery(() => leerDescanso(), [], null);
+  const planificador = useLiveQuery(() => leerPlanificador(), [], undefined);
+  const [planificando, setPlanificando] = useState(false);
   const cabecera = useRef<HTMLElement>(null);
+
+  // Primer inicio: programa propio y vacio, y el cuestionario nunca abierto.
+  const sinRutina = personalizado && programa.sesiones.length === 0;
+  const yaOfrecido = useRef(false);
+  useEffect(() => {
+    if (yaOfrecido.current || planificador !== null || !sinRutina) return;
+    yaOfrecido.current = true;
+    setPlanificando(true);
+  }, [planificador, sinRutina]);
+  useEffect(() => escucharPlanificador(() => setPlanificando(true)), []);
 
   usePantallaActiva(dia !== null || descanso !== null);
   // La barra de pestanas se monta sobre el teclado: mientras se escribe, se esconde.
@@ -150,6 +163,16 @@ export default function App() {
         )}
       </main>
 
+      {planificando && (
+        <Planificador
+          previas={planificador?.respuestas}
+          onCerrar={() => {
+            setPlanificando(false);
+            setPestana('hoy');
+            setDia(null);
+          }}
+        />
+      )}
       {descanso && <BarraDescanso key={descanso.fin} estado={descanso} pegadaAbajo={teclado} />}
       <Avisos />
 

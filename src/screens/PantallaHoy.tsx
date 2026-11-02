@@ -1,3 +1,4 @@
+import { abrirPlanificador } from '../components/Planificador';
 import { ejerciciosDelDia } from '../data/programa';
 import { useArquero } from '../estado/arquero';
 import { idSesion, type RegistroSerie, type RegistroSesion } from '../db/db';
@@ -195,10 +196,19 @@ export function PantallaHoy({ semana, dia, onAbrir, todas, sesiones }: Props) {
         {fase.nota}
       </p>
       {programa.sesiones.length === 0 && (
-        <p className="rounded-xl border border-line bg-surface px-4 py-4 text-[14px] leading-relaxed text-ink2">
-          Todavía no tienes sesiones. Ve a <b className="text-ink">Programa</b> y crea la primera con
-          «+ Nueva sesión», o carga el plan de ejemplo con «Restaurar programa de fábrica».
-        </p>
+        <section className="rounded-xl border border-line bg-surface px-4 py-4">
+          <p className="mb-3 text-[14px] leading-relaxed text-ink2">
+            Todavía no tienes sesiones. Responde unas preguntas y te armo una rutina, o créala tú en{' '}
+            <b className="text-ink">Programa</b> con «+ Nueva sesión».
+          </p>
+          <button
+            type="button"
+            onClick={abrirPlanificador}
+            className="h-12 w-full rounded-[11px] bg-accent font-display text-[16px] font-bold tracking-[0.1em] text-on-accent uppercase"
+          >
+            Armar mi rutina
+          </button>
+        </section>
       )}
       {programa.sesiones.length > 0 && (
         <p className="mb-2.5 font-display text-[13px] font-bold tracking-[0.15em] text-ink3 uppercase">

@@ -6,6 +6,7 @@ import { fijarSemana, guardarPrograma, restaurarPrograma } from '../db/repo';
 import { useArquero } from '../estado/arquero';
 import { avisar } from '../components/Avisos';
 import { Capa } from '../components/Capa';
+import { abrirPlanificador } from '../components/Planificador';
 import { CampoNumero } from '../components/CampoNumero';
 import { FichaEjercicio } from '../components/FichaEjercicio';
 import { FormEjercicioPropio } from '../components/FormEjercicioPropio';
@@ -554,6 +555,9 @@ export function PantallaPrograma({ todas }: { todas: RegistroSerie[] }) {
             className="h-12 w-full rounded-[11px] bg-accent font-display text-[16px] font-bold tracking-[0.1em] text-on-accent uppercase"
           >
             + Nueva sesión
+          </button>
+          <button type="button" onClick={abrirPlanificador} className={`${BOTON_SEC} mt-2 w-full`}>
+            Armar rutina con preguntas
           </button>
 
           <p className="mt-5 text-[12.5px] leading-relaxed text-ink3">
