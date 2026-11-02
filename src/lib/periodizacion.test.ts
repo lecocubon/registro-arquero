@@ -152,9 +152,16 @@ describe('planSemana (semana, ejercicio) => series y RIR', () => {
 describe('programaDeFabrica', () => {
   it('hasta la semana 8 entrega el primer mesociclo y desde la 9 el segundo', () => {
     expect(programaDeFabrica(1)).toBe(PROGRAMA_BASE);
-    expect(programaDeFabrica(8)).toBe(PROGRAMA_BASE);
+    expect(programaDeFabrica(7)).toBe(PROGRAMA_BASE);
     expect(programaDeFabrica(9)).toBe(PROGRAMA_MESO2);
     expect(programaDeFabrica(16)).toBe(PROGRAMA_MESO2);
+  });
+
+  it('la descarga del primer bloque ya trae las sesiones del segundo', () => {
+    const semana8 = programaDeFabrica(8);
+    expect(semana8.sesiones).toBe(PROGRAMA_MESO2.sesiones);
+    expect(semana8.fases).toBe(PROGRAMA_BASE.fases);
+    expect(semana8.desde).toBe(PROGRAMA_BASE.desde);
   });
 
   it('los dos bloques encajan sin dejar huecos en el historial', () => {

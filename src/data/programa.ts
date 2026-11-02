@@ -212,9 +212,11 @@ export const PROGRAMA_BASE: ProgramaDef = {
 /**
  * Mesociclo 2, semanas 9 a 16. Sigue al primero sin que haya que tocar nada:
  * `programaDeFabrica` lo entrega cuando la semana en curso entra en su rango.
- * Cambia respecto del primero: la prensa pasa a ser el trabajo principal de
- * pantorrilla, entra un segundo salto reactivo el lunes y un lanzamiento de
- * balon el jueves, y las principales bajan de rango de repeticiones.
+ * Cambia respecto del primero: el tren superior se parte en tiron (martes) y
+ * empuje (viernes, que deja de ser dia de movilidad); pies, tobillos y
+ * aductores pasan a calentamiento de lunes y jueves. La prensa pasa a ser el
+ * trabajo principal de pantorrilla, entra un segundo salto reactivo el lunes y
+ * un lanzamiento de balon el jueves, y las principales bajan de repeticiones.
  */
 export const PROGRAMA_MESO2: ProgramaDef = {
   nombre: 'Bajo los Tres Palos',
@@ -258,29 +260,35 @@ export const PROGRAMA_MESO2: ProgramaDef = {
       lugar: 'Gimnasio · 07:00',
       foco: 'Potencia lateral, unilateral y pantorrilla cargada',
       ejercicios: [
-        { id: 'salto-lateral-una-pierna', bloque: 'A1', series: 3, reps: [3, 3], rirObjetivo: 0, incremento: 0, porLado: true, descanso: 120 },
-        { id: 'rebote-lateral', bloque: 'A2', series: 3, reps: [6, 6], rirObjetivo: 0, incremento: 0, porLado: true, descanso: 90 },
-        { id: 'bulgara', bloque: 'B', series: 3, reps: [6, 8], rirObjetivo: 3, incremento: 2, rirFijo: 3, porLado: true, descanso: 120 },
-        { id: 'empuje-cadera-maquina', bloque: 'C1', series: 4, reps: [6, 8], rirObjetivo: 2, incremento: 5 },
-        { id: 'press-inclinado', bloque: 'C2', series: 3, reps: [8, 10], rirObjetivo: 2, incremento: 2 },
-        { id: 'talones-prensa', bloque: 'D1', series: 4, reps: [10, 12], rirObjetivo: 2, incremento: 4.5 },
-        { id: 'core-antiextension', bloque: 'D2', series: 3, reps: [8, 10], rirObjetivo: 2, incremento: 0 },
+        { id: 'rodilla-pared', bloque: 'A1', series: 2, reps: [10, 10], rirObjetivo: 0, incremento: 0, porLado: true },
+        { id: 'aductor-rana', bloque: 'A2', series: 2, reps: [10, 10], rirObjetivo: 0, incremento: 0, descanso: 0 },
+        { id: 'sentadilla-cosaca', bloque: 'A3', series: 2, reps: [6, 8], rirObjetivo: 2, incremento: 0, porLado: true, descanso: 45 },
+        { id: 'salto-lateral-una-pierna', bloque: 'B1', series: 3, reps: [3, 3], rirObjetivo: 0, incremento: 0, porLado: true, descanso: 120 },
+        { id: 'rebote-lateral', bloque: 'B2', series: 3, reps: [6, 6], rirObjetivo: 0, incremento: 0, porLado: true, descanso: 90 },
+        { id: 'bulgara', bloque: 'C', series: 3, reps: [6, 8], rirObjetivo: 3, incremento: 2, rirFijo: 3, porLado: true, descanso: 120 },
+        { id: 'empuje-cadera-maquina', bloque: 'D1', series: 4, reps: [6, 8], rirObjetivo: 2, incremento: 5 },
+        { id: 'press-inclinado', bloque: 'D2', series: 3, reps: [8, 10], rirObjetivo: 2, incremento: 2 },
+        { id: 'talones-prensa', bloque: 'E1', series: 4, reps: [10, 12], rirObjetivo: 2, incremento: 4.5 },
+        { id: 'core-antiextension', bloque: 'E2', series: 3, reps: [8, 10], rirObjetivo: 2, incremento: 0 },
+        { id: 'copenhagen-rodilla', bloque: 'E3', series: 2, reps: [20, 25], rirObjetivo: 2, incremento: 0, porLado: true, descanso: 45 },
       ],
     },
     {
       id: 'martes',
       nombre: 'Martes',
       lugar: 'Gimnasio · 07:00 · fútbol en la noche',
-      foco: 'Tren superior, manguito rotador y salto vertical, piernas frescas para el fútbol',
+      foco: 'Tirón: espalda, bíceps, hombro posterior y manguito; piernas frescas para el fútbol',
       ejercicios: [
         { id: 'salto-vertical-detenido', bloque: 'A', series: 3, reps: [5, 5], rirObjetivo: 0, incremento: 0, descanso: 120 },
-        { id: 'dominadas', bloque: 'B1', series: 4, reps: [4, 6], rirObjetivo: 2, incremento: 2.5, principal: true },
-        { id: 'press-banca', bloque: 'B2', series: 4, reps: [4, 6], rirObjetivo: 2, incremento: 2.5, principal: true },
+        { id: 'dominadas', bloque: 'B', series: 4, reps: [4, 6], rirObjetivo: 2, incremento: 2.5, principal: true },
         { id: 'remo-pecho-apoyado', bloque: 'C1', series: 3, reps: [8, 10], rirObjetivo: 2, incremento: 2 },
-        { id: 'press-hombro-maquina', bloque: 'C2', series: 3, reps: [8, 10], rirObjetivo: 2, incremento: 2.5 },
-        { id: 'rotacion-externa-polea', bloque: 'D1', series: 3, reps: [12, 15], rirObjetivo: 2, incremento: 1, porLado: true },
-        { id: 'plano-escapular-banda', bloque: 'D2', series: 2, reps: [10, 12], rirObjetivo: 2, incremento: 1, porLado: true },
-        { id: 'plancha-lateral', bloque: 'D3', series: 3, reps: [30, 45], rirObjetivo: 0, incremento: 0, porLado: true },
+        { id: 'jalon-agarre-cerrado', bloque: 'C2', series: 3, reps: [10, 12], rirObjetivo: 2, incremento: 2.5 },
+        { id: 'curl-inclinado', bloque: 'D1', series: 3, reps: [8, 12], rirObjetivo: 2, incremento: 1 },
+        { id: 'curl-martillo-cuerda', bloque: 'D2', series: 3, reps: [10, 12], rirObjetivo: 2, incremento: 2.5 },
+        { id: 'pajaros-polea', bloque: 'E1', series: 3, reps: [12, 15], rirObjetivo: 2, incremento: 1 },
+        { id: 'rotacion-externa-polea', bloque: 'E2', series: 2, reps: [12, 15], rirObjetivo: 2, incremento: 1, porLado: true },
+        { id: 'plano-escapular-banda', bloque: 'E3', series: 2, reps: [10, 12], rirObjetivo: 2, incremento: 1, porLado: true },
+        { id: 'plancha-lateral', bloque: 'E4', series: 3, reps: [30, 45], rirObjetivo: 0, incremento: 0, porLado: true },
       ],
     },
     {
@@ -289,46 +297,54 @@ export const PROGRAMA_MESO2: ProgramaDef = {
       lugar: 'Gimnasio · 07:00',
       foco: 'Fuerza de tren inferior y triple extensión, lejos del fútbol',
       ejercicios: [
-        { id: 'salto-contramovimiento', bloque: 'A1', series: 3, reps: [4, 4], rirObjetivo: 0, incremento: 0, descanso: 120 },
-        { id: 'lanzamiento-cuchara', bloque: 'A2', series: 3, reps: [3, 3], rirObjetivo: 0, incremento: 0, descanso: 90 },
-        { id: 'sentadilla-barra', bloque: 'B', series: 4, reps: [4, 6], rirObjetivo: 2, incremento: 5, principal: true },
-        { id: 'sentadilla-hack', bloque: 'C1', series: 3, reps: [8, 10], rirObjetivo: 2, incremento: 5 },
-        { id: 'curl-femoral-sentado', bloque: 'C2', series: 3, reps: [8, 12], rirObjetivo: 2, incremento: 5 },
-        { id: 'peso-muerto-rumano', bloque: 'D1', series: 3, reps: [6, 8], rirObjetivo: 3, incremento: 5, rirFijo: 3 },
-        { id: 'abductor-maquina', bloque: 'D2', series: 3, reps: [12, 15], rirObjetivo: 2, incremento: 5 },
+        { id: 'arco-corto', bloque: 'A1', series: 2, reps: [8, 8], rirObjetivo: 0, incremento: 0, porLado: true },
+        { id: 'pulgar-pie', bloque: 'A2', series: 2, reps: [10, 10], rirObjetivo: 0, incremento: 0, porLado: true },
+        { id: 'tibial-pared', bloque: 'A3', series: 2, reps: [15, 20], rirObjetivo: 1, incremento: 0, descanso: 45 },
+        { id: 'pogos', bloque: 'A4', series: 2, reps: [20, 25], rirObjetivo: 0, incremento: 0, descanso: 60 },
+        { id: 'salto-contramovimiento', bloque: 'B1', series: 3, reps: [4, 4], rirObjetivo: 0, incremento: 0, descanso: 120 },
+        { id: 'lanzamiento-cuchara', bloque: 'B2', series: 3, reps: [3, 3], rirObjetivo: 0, incremento: 0, descanso: 90 },
+        { id: 'sentadilla-barra', bloque: 'C', series: 4, reps: [4, 6], rirObjetivo: 2, incremento: 5, principal: true },
+        { id: 'sentadilla-hack', bloque: 'D1', series: 3, reps: [8, 10], rirObjetivo: 2, incremento: 5 },
+        { id: 'curl-femoral-sentado', bloque: 'D2', series: 3, reps: [8, 12], rirObjetivo: 2, incremento: 5 },
+        { id: 'peso-muerto-rumano', bloque: 'E1', series: 3, reps: [6, 8], rirObjetivo: 3, incremento: 5, rirFijo: 3 },
+        { id: 'abductor-maquina', bloque: 'E2', series: 3, reps: [12, 15], rirObjetivo: 2, incremento: 5 },
+        { id: 'equilibrio-bosu', bloque: 'E3', series: 2, reps: [30, 30], rirObjetivo: 0, incremento: 0, porLado: true, descanso: 0 },
       ],
     },
     {
-      id: 'movilidad',
-      nombre: 'Movilidad',
-      lugar: 'Casa o gimnasio · colchoneta · miércoles o viernes',
-      foco: 'Pies, tobillos, rodillas, cadera y manguito rotador',
+      id: 'viernes',
+      nombre: 'Viernes',
+      lugar: 'Gimnasio',
+      foco: 'Empuje: pecho, hombro anterior y lateral, tríceps y manguito',
       ejercicios: [
-        { id: 'arco-corto', bloque: 'A1', series: 2, reps: [8, 8], rirObjetivo: 0, incremento: 0, porLado: true },
-        { id: 'pulgar-pie', bloque: 'A2', series: 2, reps: [10, 10], rirObjetivo: 0, incremento: 0, porLado: true },
-        { id: 'sentarse-sobre-dedos', bloque: 'A3', series: 2, reps: [30, 30], rirObjetivo: 0, incremento: 0, descanso: 0 },
-        { id: 'rodilla-pared', bloque: 'B1', series: 2, reps: [10, 10], rirObjetivo: 0, incremento: 0, porLado: true },
-        { id: 'tibial-pared', bloque: 'B2', series: 2, reps: [15, 20], rirObjetivo: 1, incremento: 0, descanso: 45 },
-        { id: 'talones-una-pierna', bloque: 'B3', series: 2, reps: [12, 15], rirObjetivo: 1, incremento: 2, porLado: true, descanso: 45 },
-        { id: 'aductor-rana', bloque: 'C1', series: 2, reps: [10, 10], rirObjetivo: 0, incremento: 0, descanso: 0 },
-        { id: 'sentadilla-cosaca', bloque: 'C2', series: 2, reps: [6, 8], rirObjetivo: 2, incremento: 0, porLado: true, descanso: 45 },
-        { id: 'copenhagen-rodilla', bloque: 'C3', series: 2, reps: [20, 25], rirObjetivo: 2, incremento: 0, porLado: true, descanso: 45 },
-        { id: 'zancada-atg', bloque: 'D1', series: 2, reps: [8, 10], rirObjetivo: 2, incremento: 0, porLado: true, descanso: 45 },
-        { id: 'equilibrio-bosu', bloque: 'D2', series: 2, reps: [30, 30], rirObjetivo: 0, incremento: 0, porLado: true, descanso: 0 },
-        { id: 'rotacion-externa-90-banda', bloque: 'E1', series: 3, reps: [12, 15], rirObjetivo: 2, incremento: 1, porLado: true, descanso: 45 },
-        { id: 'rotacion-externa-polea', bloque: 'E2', series: 2, reps: [12, 15], rirObjetivo: 2, incremento: 1, porLado: true, descanso: 45 },
-        { id: 'serrato-pared', bloque: 'E3', series: 2, reps: [10, 10], rirObjetivo: 0, incremento: 0, descanso: 0 },
-        { id: 'estiramiento-cruzado-hombro', bloque: 'E4', series: 2, reps: [30, 30], rirObjetivo: 0, incremento: 0, porLado: true, descanso: 0 },
-        { id: 'pogos', bloque: 'F1', series: 3, reps: [20, 25], rirObjetivo: 0, incremento: 0, descanso: 60 },
+        { id: 'lanzamiento-pecho-balon', bloque: 'A', series: 3, reps: [5, 5], rirObjetivo: 0, incremento: 0, descanso: 90 },
+        { id: 'press-banca', bloque: 'B1', series: 4, reps: [4, 6], rirObjetivo: 2, incremento: 2.5, principal: true },
+        { id: 'serrato-pared', bloque: 'B2', series: 2, reps: [10, 10], rirObjetivo: 0, incremento: 0, descanso: 0 },
+        { id: 'press-hombro-maquina', bloque: 'C1', series: 3, reps: [8, 10], rirObjetivo: 2, incremento: 2.5 },
+        { id: 'elevaciones-laterales-polea', bloque: 'C2', series: 3, reps: [12, 15], rirObjetivo: 2, incremento: 1, porLado: true },
+        { id: 'cruce-poleas', bloque: 'D1', series: 3, reps: [10, 12], rirObjetivo: 2, incremento: 2.5 },
+        { id: 'extension-triceps-polea', bloque: 'D2', series: 3, reps: [10, 12], rirObjetivo: 2, incremento: 2.5 },
+        { id: 'extension-triceps-sobre-cabeza', bloque: 'D3', series: 2, reps: [10, 12], rirObjetivo: 2, incremento: 2.5 },
+        { id: 'rotacion-externa-90-banda', bloque: 'E1', series: 2, reps: [12, 15], rirObjetivo: 2, incremento: 1, porLado: true, descanso: 45 },
+        { id: 'estiramiento-cruzado-hombro', bloque: 'E2', series: 2, reps: [30, 30], rirObjetivo: 0, incremento: 0, porLado: true, descanso: 0 },
       ],
     },
   ],
 };
 
+/**
+ * Descarga del primer bloque con las sesiones del segundo: la semana suave
+ * sirve para estrenar el tiron y el empuje con poca carga. Las semanas 1 a 7
+ * siguen mostrando lo que de verdad se hizo.
+ */
+export const PROGRAMA_SEMANA8: ProgramaDef = { ...PROGRAMA_BASE, sesiones: PROGRAMA_MESO2.sesiones };
+
 /** El bloque de fabrica que le toca a esa semana absoluta. */
 export function programaDeFabrica(semana: number): ProgramaDef {
-  const desde = PROGRAMA_MESO2.desde ?? 9;
-  return Number.isFinite(semana) && semana >= desde ? PROGRAMA_MESO2 : PROGRAMA_BASE;
+  if (!Number.isFinite(semana)) return PROGRAMA_BASE;
+  if (semana >= (PROGRAMA_MESO2.desde ?? 9)) return PROGRAMA_MESO2;
+  if (semana === (PROGRAMA_BASE.desde ?? 1) + PROGRAMA_BASE.semanas - 1) return PROGRAMA_SEMANA8;
+  return PROGRAMA_BASE;
 }
 
 /**
