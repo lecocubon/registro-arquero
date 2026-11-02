@@ -5,14 +5,19 @@ import { guardarPlanificador, guardarPrograma, semanaActual } from '../db/repo';
 import { useArquero } from '../estado/arquero';
 import { numeroMesociclo } from '../lib/periodizacion';
 import {
-  DIAS_POSIBLES,
+  DEPORTES,
+  DIAS_CORTOS,
+  DIAS_SEMANA,
   EXPERIENCIAS,
   LUGARES,
+  MAX_DIAS,
+  MIN_DIAS,
   MINUTOS_POSIBLES,
   MOLESTIAS,
   OBJETIVOS,
   RESPUESTAS_INICIALES,
   generarPrograma,
+  normalizarRespuestas,
   type Respuestas,
 } from '../lib/planificador';
 import { avisar } from './Avisos';
@@ -33,14 +38,17 @@ export function escucharPlanificador(abrir: () => void): () => void {
 /** Lo que no se elige: el cuerpo siempre esta y "otro" no dice nada. */
 const EQUIPO_ELEGIBLE = EQUIPOS.filter((e) => e.id !== 'peso-corporal' && e.id !== 'otro');
 
-const PASOS = ['objetivo', 'tiempo', 'lugar', 'equipo', 'experiencia', 'molestias', 'rutina'] as const;
-type Paso = (typeof PASOS)[number];
-/** Todos los pasos menos el ultimo, que muestra la rutina. */
-const PREGUNTAS = PASOS.length - 1;
+type Paso = 'objetivo' | 'deporte' | 'dias' | 'lugar' | 'equipo' | 'experiencia' | 'molestias' | 'rutina';
+
+/** La pregunta del deporte solo aparece si el objetivo es rendir en uno. */
+function pasosPara(r: Respuestas): Paso[] {
+  return ['objetivo', ...(r.objetivo === 'deporte' ? (['deporte'] as const) : []), 'dias', 'lugar', 'equipo', 'experiencia', 'molestias', 'rutina'];
+}
 
 const BOTON_PRIMARIO =
   'h-12 w-full rounded-[11px] bg-accent font-display text-[16px] font-bold tracking-[0.1em] text-on-accent uppercase disabled:opacity-40';
 const BOTON_SEC = 'h-12 w-full rounded-[11px] border border-line text-[14.5px] font-semibold text-ink2';
+const SUBTITULO = 'mb-2 text-[13px] font-medium tracking-[0.06em] text-ink3 uppercase';
 
 function Opcion({ activa, titulo, detalle, onClick }: { activa: boolean; titulo: string; detalle?: string; onClick: () => void }) {
   return (
@@ -82,6 +90,38 @@ function Ficha({ activa, children, onClick, rol = 'checkbox' }: { activa: boolea
   );
 }
 
+/** Siete fichas de dia; con `maximo`, las no marcadas se apagan al llegar al tope. */
+function Semana({ marcados, onCambio, maximo, tono = 'accent' }: { marcados: number[]; onCambio: (d: number[]) => void; maximo?: number; tono?: 'accent' | 'warn' }) {
+  return (
+    <div className="mb-2 grid grid-cols-7 gap-1.5">
+      {DIAS_CORTOS.map((corto, d) => {
+        const activa = marcados.includes(d);
+        const lleno = maximo !== undefined && marcados.length >= maximo && !activa;
+        return (
+          <button
+            key={corto}
+            type="button"
+            role="checkbox"
+            aria-checked={activa}
+            aria-label={DIAS_SEMANA[d]}
+            disabled={lleno}
+            onClick={() => onCambio(activa ? marcados.filter((x) => x !== d) : [...marcados, d].sort((a, b) => a - b))}
+            className={`h-12 rounded-lg border text-[14px] font-semibold disabled:opacity-35 ${
+              activa
+                ? tono === 'warn'
+                  ? 'border-warn bg-warn text-on-accent'
+                  : 'border-accent bg-accent text-on-accent'
+                : 'border-line bg-surface text-ink2'
+            }`}
+          >
+            {corto}
+          </button>
+        );
+      })}
+    </div>
+  );
+}
+
 function Pregunta({ titulo, ayuda, children }: { titulo: string; ayuda?: string; children: ReactNode }) {
   return (
     <>
@@ -93,28 +133,36 @@ function Pregunta({ titulo, ayuda, children }: { titulo: string; ayuda?: string;
   );
 }
 
+const lista = (dias: number[]) => {
+  const nombres = dias.map((d) => DIAS_SEMANA[d]?.toLowerCase() ?? '');
+  return nombres.length <= 1 ? nombres.join('') : `${nombres.slice(0, -1).join(', ')} y ${nombres[nombres.length - 1]}`;
+};
+
 interface Props {
   /** Respuestas de una vez anterior, para no empezar de cero. */
-  previas?: Respuestas;
+  previas?: Partial<Respuestas>;
   onCerrar: () => void;
 }
 
 export function Planificador({ previas, onCerrar }: Props) {
   const { catalogo, definicion, programa } = useArquero();
-  const [r, setR] = useState<Respuestas>(previas ?? RESPUESTAS_INICIALES);
+  const [r, setR] = useState<Respuestas>(() => (previas ? normalizarRespuestas(previas) : RESPUESTAS_INICIALES));
   const [paso, setPaso] = useState<Paso | 'inicio'>(previas ? 'objetivo' : 'inicio');
   const [guardando, setGuardando] = useState(false);
   const cambiar = (c: Partial<Respuestas>) => setR((x) => ({ ...x, ...c }));
 
   const propuesta = useMemo(() => generarPrograma(r, catalogo), [r, catalogo]);
-  const i = paso === 'inicio' ? -1 : PASOS.indexOf(paso);
-  const siguiente = () => setPaso(PASOS[i + 1] ?? 'rutina');
-  const anterior = () => setPaso(PASOS[i - 1] ?? 'inicio');
+  const pasos = pasosPara(r);
+  const preguntas = pasos.length - 1;
+  const i = paso === 'inicio' ? -1 : pasos.indexOf(paso);
+  const siguiente = () => setPaso(pasos[i + 1] ?? 'rutina');
+  const anterior = () => setPaso(pasos[i - 1] ?? 'inicio');
+  const puedeSeguir = paso !== 'dias' || r.diasSemana.length >= MIN_DIAS;
 
-  const alternar = <T,>(lista: T[], v: T): T[] => (lista.includes(v) ? lista.filter((x) => x !== v) : [...lista, v]);
+  const alternar = <T,>(xs: T[], v: T): T[] => (xs.includes(v) ? xs.filter((x) => x !== v) : [...xs, v]);
 
   const omitir = async () => {
-    await guardarPlanificador({ estado: 'omitido', respuestas: previas });
+    await guardarPlanificador({ estado: 'omitido', respuestas: previas ? normalizarRespuestas(previas) : undefined });
     onCerrar();
   };
 
@@ -136,16 +184,17 @@ export function Planificador({ previas, onCerrar }: Props) {
   };
 
   const tieneSesiones = definicion.sesiones.length > 0;
+  const deporte = DEPORTES.find((d) => d.id === r.deporte);
 
   return (
     <Capa titulo="Armar mi rutina" onCerrar={paso === 'inicio' && !previas ? () => void omitir() : onCerrar}>
       {i >= 0 && (
         <div className="mb-5">
           <p className="mb-1.5 text-[12px] font-medium tracking-[0.06em] text-ink3 uppercase">
-            {paso === 'rutina' ? 'Tu rutina' : `Pregunta ${i + 1} de ${PREGUNTAS}`}
+            {paso === 'rutina' ? 'Tu rutina' : `Pregunta ${i + 1} de ${preguntas}`}
           </p>
           <div className="h-1.5 overflow-hidden rounded-full bg-surface2">
-            <div className="h-full rounded-full bg-accent transition-[width]" style={{ width: `${(Math.min(i + 1, PREGUNTAS) / PREGUNTAS) * 100}%` }} />
+            <div className="h-full rounded-full bg-accent transition-[width]" style={{ width: `${(Math.min(i + 1, preguntas) / preguntas) * 100}%` }} />
           </div>
         </div>
       )}
@@ -154,8 +203,8 @@ export function Planificador({ previas, onCerrar }: Props) {
         <>
           <h3 className="mb-2 font-display text-[26px] leading-tight font-bold tracking-[0.02em] uppercase">Armemos tu rutina</h3>
           <p className="mb-3 text-[15px] leading-relaxed text-ink2">
-            Seis preguntas cortas: qué buscas, cuánto tiempo tienes, con qué equipo cuentas y si algo te molesta. Con eso
-            te propongo un plan de 8 semanas con sus fases, que ves antes de aceptar y puedes cambiar cuando quieras.
+            Unas preguntas cortas: qué buscas, qué días entrenas, con qué equipo cuentas y si algo te molesta. Con eso te
+            propongo un plan de 8 semanas con sus fases, que ves antes de aceptar y puedes cambiar cuando quieras.
           </p>
           <p className="mb-6 text-[13.5px] leading-relaxed text-ink3">Toma un par de minutos.</p>
           <button type="button" onClick={() => setPaso('objetivo')} className={BOTON_PRIMARIO}>
@@ -177,29 +226,42 @@ export function Planificador({ previas, onCerrar }: Props) {
         </Pregunta>
       )}
 
-      {paso === 'tiempo' && (
-        <Pregunta titulo="¿Cuánto puedes entrenar?">
-          <p className="mb-2 text-[13px] font-medium tracking-[0.06em] text-ink3 uppercase">Días por semana</p>
-          <div role="radiogroup" className="mb-5 flex flex-wrap gap-2">
-            {DIAS_POSIBLES.map((d) => (
-              <Ficha key={d} rol="radio" activa={r.dias === d} onClick={() => cambiar({ dias: d })}>
-                {d} días
-              </Ficha>
+      {paso === 'deporte' && (
+        <Pregunta titulo="¿Qué deporte?" ayuda="Cambia los saltos y el trabajo preventivo: lo que más se lesiona en cada deporte.">
+          <div role="radiogroup" className="mb-5">
+            {DEPORTES.map((d) => (
+              <Opcion key={d.id} activa={r.deporte === d.id} titulo={d.nombre} detalle={d.detalle} onClick={() => cambiar({ deporte: d.id })} />
             ))}
           </div>
-          <p className="mb-2 text-[13px] font-medium tracking-[0.06em] text-ink3 uppercase">Minutos por sesión</p>
-          <div role="radiogroup" className="mb-4 flex flex-wrap gap-2">
+          <p className={SUBTITULO}>¿Qué días juegas o compites?</p>
+          <Semana marcados={r.partidos} onCambio={(partidos) => cambiar({ partidos })} tono="warn" />
+          <p className="text-[13px] leading-relaxed text-ink3">
+            {r.partidos.length
+              ? `La pierna pesada se aleja de ${lista(r.partidos)}: nada de saltos la víspera ni el mismo día.`
+              : 'Opcional. Si marcas tus partidos, ordeno la semana para que llegues con las piernas frescas.'}
+          </p>
+        </Pregunta>
+      )}
+
+      {paso === 'dias' && (
+        <Pregunta titulo="¿Qué días entrenas?" ayuda={`Marca entre ${MIN_DIAS} y ${MAX_DIAS} días. Si puedes, deja uno de descanso entre medio.`}>
+          <Semana marcados={r.diasSemana} onCambio={(diasSemana) => cambiar({ diasSemana })} maximo={MAX_DIAS} />
+          <p className="mb-5 text-[13px] leading-relaxed text-ink3">
+            {r.diasSemana.length < MIN_DIAS
+              ? `Marca al menos ${MIN_DIAS} días.`
+              : r.diasSemana.length <= 3
+                ? `${r.diasSemana.length} días: cuerpo completo, cada músculo se trabaja en todas las sesiones.`
+                : `${r.diasSemana.length} días: torso y pierna por separado, más volumen por músculo sin sesiones eternas.`}
+            {r.objetivo === 'deporte' && r.diasSemana.some((d) => r.partidos.includes(d)) && ' Los días de partido van sin saltos y con pierna suave.'}
+          </p>
+          <p className={SUBTITULO}>Minutos por sesión</p>
+          <div role="radiogroup" className="flex flex-wrap gap-2">
             {MINUTOS_POSIBLES.map((m) => (
               <Ficha key={m} rol="radio" activa={r.minutos === m} onClick={() => cambiar({ minutos: m })}>
                 {m === 75 ? '75 o más' : `${m} min`}
               </Ficha>
             ))}
           </div>
-          <p className="text-[13.5px] leading-relaxed text-ink3">
-            {r.dias <= 3
-              ? 'Con 2 o 3 días conviene cuerpo completo: cada músculo se trabaja en todas las sesiones.'
-              : 'Con 4 o más días se separa en torso y pierna: más volumen por músculo sin sesiones eternas.'}
-          </p>
         </Pregunta>
       )}
 
@@ -228,6 +290,9 @@ export function Planificador({ previas, onCerrar }: Props) {
               arregla.
             </p>
           )}
+          {r.objetivo === 'deporte' && !r.equipo.includes('balon-medicinal') && ['arquero', 'combate', 'raqueta'].includes(r.deporte) && (
+            <p className="mt-2 text-[13px] leading-relaxed text-ink3">Con balón medicinal suman lanzamientos para la potencia del tren superior.</p>
+          )}
         </Pregunta>
       )}
 
@@ -253,6 +318,7 @@ export function Planificador({ previas, onCerrar }: Props) {
           <p className="text-[13px] leading-relaxed text-ink3">
             Esto no reemplaza a un kinesiólogo: si algo duele al entrenar, para ese ejercicio y consúltalo.
             {r.molestias.includes('hombro') && ' Con hombro, cada día de torso suma rotación externa para el manguito.'}
+            {r.molestias.includes('rodilla') && r.objetivo === 'deporte' && ' Con rodilla no hay saltos: vuelven cuando entrenes sin dolor.'}
           </p>
         </Pregunta>
       )}
@@ -262,13 +328,15 @@ export function Planificador({ previas, onCerrar }: Props) {
           <h3 className="mb-1 font-display text-[22px] leading-tight font-bold tracking-[0.02em] uppercase">{propuesta.nombre}</h3>
           <p className="mb-3 text-[13.5px] leading-relaxed text-ink2">
             8 semanas: {propuesta.fases.map((f) => `${f.nombre.toLowerCase()} (sem ${f.semanas[0] === f.semanas[1] ? f.semanas[0] : f.semanas.join('–')})`).join(', ')}.
+            {r.objetivo === 'deporte' && deporte && ` Saltos y prevención pensados para ${deporte.nombre.toLowerCase()}.`}
           </p>
           <ul className="mb-4 grid gap-2.5">
             {propuesta.sesiones.map((s) => (
               <li key={s.id} className="rounded-xl border border-line bg-surface px-3.5 py-3">
                 <p className="font-display text-[17px] font-bold tracking-[0.04em] uppercase">{s.nombre}</p>
-                <p className="mb-2 text-[12.5px] text-ink3">{s.foco}</p>
-                <ul className="grid gap-1">
+                <p className="text-[12.5px] text-ink3">{s.foco}</p>
+                {s.lugar.includes('partido') && <p className="text-[12.5px] font-semibold text-warn">{s.lugar.split(' · ').slice(1).join(' · ')}</p>}
+                <ul className="mt-2 grid gap-1">
                   {s.ejercicios.map((e) => {
                     const info = catalogoPorId(e.id, catalogo);
                     const unidad = info?.tipo === 'tiempo' ? ' s' : '';
@@ -309,7 +377,7 @@ export function Planificador({ previas, onCerrar }: Props) {
           <button type="button" onClick={anterior} className={BOTON_SEC}>
             Atrás
           </button>
-          <button type="button" onClick={siguiente} className={BOTON_PRIMARIO}>
+          <button type="button" disabled={!puedeSeguir} onClick={siguiente} className={BOTON_PRIMARIO}>
             {paso === 'molestias' ? 'Ver mi rutina' : 'Siguiente'}
           </button>
         </div>

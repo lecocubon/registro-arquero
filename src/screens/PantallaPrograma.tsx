@@ -1,8 +1,9 @@
-import { useState } from 'react';
-import { catalogoPorId } from '../data/biblioteca';
+import { useMemo, useState } from 'react';
+import { useLiveQuery } from 'dexie-react-hooks';
+import { catalogoPorId, nombreEquipo, type EjercicioCatalogo } from '../data/biblioteca';
 import type { ProgramaDef } from '../data/programa';
 import type { RegistroSerie } from '../db/db';
-import { fijarSemana, guardarPrograma, restaurarPrograma } from '../db/repo';
+import { fijarSemana, guardarPrograma, leerPlanificador, restaurarPrograma } from '../db/repo';
 import { useArquero } from '../estado/arquero';
 import { avisar } from '../components/Avisos';
 import { Capa } from '../components/Capa';
@@ -11,7 +12,9 @@ import { CampoNumero } from '../components/CampoNumero';
 import { FichaEjercicio } from '../components/FichaEjercicio';
 import { FormEjercicioPropio } from '../components/FormEjercicioPropio';
 import { ListaEjercicios } from '../components/ListaEjercicios';
+import { formatoSeries, revisarCobertura, type Cobertura, type Grupo } from '../lib/cobertura';
 import { descansoDe, formatoReloj } from '../lib/descanso';
+import { evitadosPor } from '../lib/planificador';
 import { finMesociclo, inicioMesociclo, numeroMesociclo } from '../lib/periodizacion';
 import {
   actualizarDatosPrograma,
@@ -39,6 +42,94 @@ const TEXTO =
 const BOTON_SEC = 'h-11 rounded-[10px] border border-line px-3 text-[14px] font-semibold text-ink2';
 const FLECHA =
   'flex h-11 w-10 items-center justify-center rounded-lg text-[18px] text-ink3 disabled:opacity-25';
+
+/**
+ * Que le falta a la semana del programa en uso. Si el cuestionario se
+ * respondio, las sugerencias respetan el equipo y las molestias que se marcaron ahi.
+ */
+function useCobertura(): Cobertura {
+  const { definicion, catalogo } = useArquero();
+  const plan = useLiveQuery(() => leerPlanificador(), [], null);
+  const equipo = plan?.respuestas?.equipo;
+  const molestias = plan?.respuestas?.molestias;
+  return useMemo(
+    () => revisarCobertura(definicion, catalogo, { equipo: equipo && new Set(equipo), evitar: molestias && evitadosPor(molestias) }),
+    [definicion, catalogo, equipo, molestias],
+  );
+}
+
+/** Lo que falta en la semana, con ejercicios para cubrirlo que se agregan con un toque. */
+function Sugeridos({ cobertura, deshabilitados, onElegir }: { cobertura: Cobertura; deshabilitados: Set<string>; onElegir: (e: EjercicioCatalogo) => void }) {
+  const faltas = cobertura.faltas
+    .map((f) => ({ ...f, sugeridos: f.sugeridos.filter((e) => !deshabilitados.has(e.id)).slice(0, 2) }))
+    .filter((f) => f.sugeridos.length)
+    .slice(0, 4);
+  if (!faltas.length) return null;
+  return (
+    <section className="mb-4 rounded-xl border border-accent bg-accent-soft px-3.5 pt-3 pb-1.5">
+      <p className="mb-1 font-display text-[13px] font-bold tracking-[0.15em] text-accent-ink uppercase">Sugeridos para tu semana</p>
+      {faltas.map((f) => (
+        <div key={f.grupo} className="mb-2">
+          <p className="mb-1 text-[12.5px] text-ink2">
+            {f.nombre}: {formatoSeries(f.series)} de {f.minimo} series
+          </p>
+          {f.sugeridos.map((e) => (
+            <button
+              key={e.id}
+              type="button"
+              onClick={() => onElegir(e)}
+              className="mb-1 flex w-full items-center gap-2 rounded-lg bg-surface px-3 py-2 text-left"
+            >
+              <span className="min-w-0 flex-1">
+                <span className="block text-[14px] font-semibold text-ink">{e.nombre}</span>
+                <span className="block text-[12px] text-ink3">{e.equipo.map(nombreEquipo).join(', ')}</span>
+              </span>
+              <span className="text-[20px] leading-none text-accent">+</span>
+            </button>
+          ))}
+        </div>
+      ))}
+    </section>
+  );
+}
+
+const NOMBRES_GRUPO: [Grupo, string][] = [
+  ['pecho', 'Pecho'],
+  ['espalda', 'Espalda'],
+  ['hombros', 'Hombros'],
+  ['biceps', 'Bíceps'],
+  ['triceps', 'Tríceps'],
+  ['cuadriceps', 'Cuádriceps'],
+  ['isquiotibiales', 'Isquios'],
+  ['gluteos', 'Glúteos'],
+  ['pantorrillas', 'Pantorrillas'],
+  ['abdominales', 'Core'],
+];
+
+/** Reparto de series por grupo muscular en la semana; lo que no llega al piso va en rojo. */
+function TuSemana({ cobertura }: { cobertura: Cobertura }) {
+  const faltan = new Set(cobertura.faltas.map((f) => f.grupo));
+  return (
+    <section className="mb-4 rounded-xl border border-line bg-surface px-3.5 py-3">
+      <p className="mb-2 font-display text-[13px] font-bold tracking-[0.15em] text-ink3 uppercase">Tu semana · series por músculo</p>
+      <div className="grid grid-cols-2 gap-x-4 gap-y-1">
+        {NOMBRES_GRUPO.map(([id, nombre]) => (
+          <div key={id} className={`flex justify-between text-[13.5px] ${faltan.has(id) ? 'font-semibold text-warn' : 'text-ink2'}`}>
+            <span>{nombre}</span>
+            <span>{formatoSeries(cobertura.series[id])}</span>
+          </div>
+        ))}
+      </div>
+      {cobertura.desbalance && <p className="mt-2.5 text-[13px] leading-snug text-warn">{cobertura.desbalance}</p>}
+      {cobertura.faltas.length > 0 && (
+        <p className="mt-2.5 text-[12.5px] leading-relaxed text-ink3">
+          En rojo, lo que queda corto. Abre una sesión y toca «+ Agregar ejercicio»: arriba aparecen sugerencias para
+          cubrirlo.
+        </p>
+      )}
+    </section>
+  );
+}
 
 /** Guarda y avisa si algo falla (ej. ejercicio repetido en la sesion). */
 function useGuardar() {
@@ -237,9 +328,17 @@ function EditorEjercicio({ sesionId, ejercicioId, onCerrar }: { sesionId: string
 function EditorSesion({ sesionId, todas, onCerrar }: { sesionId: string; todas: RegistroSerie[]; onCerrar: () => void }) {
   const { definicion, programa } = useArquero();
   const guardar = useGuardar();
+  const cobertura = useCobertura();
   const [capa, setCapa] = useState<null | 'agregar' | { ejercicio: string }>(null);
   const sesion = programa.sesiones.find((s) => s.id === sesionId);
   if (!sesion) return null;
+
+  const agregar = (e: EjercicioCatalogo) => {
+    if (guardar(() => agregarEjercicio(definicion, sesionId, e))) {
+      avisar(`${e.nombre} agregado`);
+      setCapa({ ejercicio: e.id });
+    }
+  };
 
   return (
     <Capa titulo={sesion.nombre} onCerrar={onCerrar}>
@@ -315,15 +414,8 @@ function EditorSesion({ sesionId, todas, onCerrar }: { sesionId: string; todas: 
 
       {capa === 'agregar' && (
         <Capa titulo={`Agregar a ${sesion.nombre}`} onCerrar={() => setCapa(null)}>
-          <ListaEjercicios
-            deshabilitados={new Set(sesion.ejercicios.map((e) => e.id))}
-            onElegir={(e) => {
-              if (guardar(() => agregarEjercicio(definicion, sesionId, e))) {
-                avisar(`${e.nombre} agregado`);
-                setCapa({ ejercicio: e.id });
-              }
-            }}
-          />
+          <Sugeridos cobertura={cobertura} deshabilitados={new Set(sesion.ejercicios.map((e) => e.id))} onElegir={agregar} />
+          <ListaEjercicios deshabilitados={new Set(sesion.ejercicios.map((e) => e.id))} onElegir={agregar} />
         </Capa>
       )}
       {capa && typeof capa === 'object' && (
@@ -427,6 +519,7 @@ function EditorFases({ onCerrar }: { onCerrar: () => void }) {
 export function PantallaPrograma({ todas }: { todas: RegistroSerie[] }) {
   const { definicion, programa, personalizado } = useArquero();
   const guardar = useGuardar();
+  const cobertura = useCobertura();
   const [seccion, setSeccion] = useState<'rutinas' | 'ejercicios'>('rutinas');
   const [capa, setCapa] = useState<null | 'fases' | 'nuevo-ejercicio' | { sesion: string } | { ficha: string }>(null);
   const avisos = revisarPrograma(definicion);
@@ -521,10 +614,12 @@ export function PantallaPrograma({ todas }: { todas: RegistroSerie[] }) {
             </ul>
           )}
 
+          {personalizado && programa.sesiones.some((x) => x.ejercicios.length) && <TuSemana cobertura={cobertura} />}
+
           <p className={ETIQUETA}>Sesiones</p>
           <ul className="mb-3 grid gap-2">
             {programa.sesiones.map((s, i) => (
-              <li key={s.id} className="flex items-center gap-1 rounded-xl border border-line bg-surface pl-3.5">
+              <li key={s.id} className="flex min-w-0 items-center gap-1 rounded-xl border border-line bg-surface pl-3.5">
                 <button type="button" onClick={() => setCapa({ sesion: s.id })} className="min-w-0 flex-1 py-3 text-left">
                   <span className="block font-display text-[18px] font-bold tracking-[0.05em] uppercase">{s.nombre}</span>
                   <span className="block truncate text-[12.5px] text-ink3">
